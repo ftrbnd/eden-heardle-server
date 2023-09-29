@@ -1,11 +1,13 @@
 'use client';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import AudioPlayer from '../../components/AudioPlayer';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getSongs } from '@/lib/songsApi';
 import { getSessionUser } from '@/lib/userApi';
 import Link from 'next/link';
+import SignInButton from '@/components/SignInButton';
+import SignOutButton from '@/components/SignOutButton';
 
 export default function Play() {
   const { data: session } = useSession();
@@ -31,14 +33,10 @@ export default function Play() {
       {session ? (
         <>
           <h2>Hello {session.user?.name}!</h2>
-          <button className="btn btn-secondary" onClick={() => signOut()}>
-            Sign Out
-          </button>
+          <SignOutButton />
         </>
       ) : (
-        <button className="btn btn-primary" onClick={() => signIn('discord')}>
-          Sign In
-        </button>
+        <SignInButton />
       )}
       <Link href="/">
         <button className="btn btn-secondary">Home</button>
