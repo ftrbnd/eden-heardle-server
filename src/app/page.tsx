@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import AudioPlayer from '../components/AudioPlayer';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getSongs } from '@/lib/songsApi';
+import { getSessionUser } from '@/lib/userApi';
 
 export default function Home() {
   const { data: session } = useSession();
@@ -15,8 +16,13 @@ export default function Home() {
     queryKey: ['daily'],
     queryFn: getDailySong
   });
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: getSessionUser
+  });
   console.log('SONGS: ', songs);
   console.log('DAILY: ', dailySong);
+  console.log('USER: ', user);
 
   return (
     <div>

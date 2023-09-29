@@ -7,12 +7,8 @@ const api = axios.create({
 
 export const usersUrlEndpoint = '/users';
 
-export const getUser = async (id: string) => {
-  const response = await api.get<User>(usersUrlEndpoint, {
-    params: {
-      id
-    }
-  });
+export const getSessionUser = async () => {
+  const response = await api.get<User>(`${usersUrlEndpoint}/me`);
   return response.data;
 };
 

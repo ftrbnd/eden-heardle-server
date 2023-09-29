@@ -12,8 +12,11 @@ export const options: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      return true;
+    async session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
     }
   },
   debug: process.env.NODE_ENV === 'development'
