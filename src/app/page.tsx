@@ -1,45 +1,32 @@
-'use client';
+import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { options } from './api/auth/[...nextauth]/options';
+import prisma from '@/lib/db';
 
-import { signIn, signOut, useSession } from 'next-auth/react';
-import AudioPlayer from '../components/AudioPlayer';
-import { useQuery } from '@tanstack/react-query';
-import { getDailySong, getSongs } from '@/lib/songsApi';
-import { getSessionUser } from '@/lib/userApi';
+async function getUser() {
+  const session = await getServerSession(options);
+  if (!session) return null;
 
-export default function Home() {
-  const { data: session } = useSession();
-  const { data: songs } = useQuery({
-    queryKey: ['songs'],
-    queryFn: getSongs
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session?.user.id
+    }
   });
-  const { data: dailySong } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong
-  });
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: getSessionUser
-  });
-  console.log('SONGS: ', songs);
-  console.log('DAILY: ', dailySong);
+
+  return user;
+}
+
+export default async function Home() {
+  const user = await getUser();
   console.log('USER: ', user);
 
   return (
     <div>
       <h1>EDEN Heardle</h1>
-      {session ? (
-        <>
-          <h2>Hello {session.user?.name}!</h2>
-          <button className="btn btn-secondary" onClick={() => signOut()}>
-            Sign Out
-          </button>
-        </>
-      ) : (
-        <button className="btn btn-primary" onClick={() => signIn('discord')}>
-          Sign In
-        </button>
-      )}
-      <AudioPlayer songs={songs} />
+      {user && <h2>Hello {user?.name}!</h2>}
+      <Link href="/play">
+        <button className="btn btn-secondary">Play</button>
+      </Link>
     </div>
   );
 }
