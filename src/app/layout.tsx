@@ -1,4 +1,5 @@
-import { AuthSessionProvider } from '@/context/AuthSessionProvider';
+import AuthSessionProvider from '@/context/AuthSessionProvider';
+import TanstackProvider from '@/context/TanstackProvider';
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthSessionProvider>{children}</AuthSessionProvider>
+        <AuthSessionProvider>
+          <TanstackProvider>{children}</TanstackProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

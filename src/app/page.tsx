@@ -2,9 +2,22 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react';
 import AudioPlayer from '../components/AudioPlayer';
+import { useQuery } from '@tanstack/react-query';
+import { getDailySong, getSongs } from '@/lib/songsApi';
 
 export default function Home() {
   const { data: session } = useSession();
+  const { data: songs } = useQuery({
+    queryKey: ['songs'],
+    queryFn: getSongs
+  });
+  const { data: dailySong } = useQuery({
+    queryKey: ['daily'],
+    queryFn: getDailySong
+  });
+  console.log('SONGS: ', songs);
+  console.log('DAILY: ', dailySong);
+
   return (
     <div>
       <h1>EDEN Heardle</h1>
@@ -20,7 +33,7 @@ export default function Home() {
           Sign In
         </button>
       )}
-      <AudioPlayer songs={[]} />
+      <AudioPlayer songs={songs} />
     </div>
   );
 }
