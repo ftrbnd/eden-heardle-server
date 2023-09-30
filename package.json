@@ -20,6 +20,7 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "@tanstack/eslint-plugin-query": "^4.34.1",
     "@types/node": "latest",
     "@types/react": "latest",
