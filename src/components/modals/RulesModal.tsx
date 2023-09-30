@@ -1,3 +1,5 @@
+import CloseRulesButton from './CloseRulesButton';
+
 export default function StatsModal() {
   return (
     <dialog id="rules_modal" className="modal modal-bottom sm:modal-middle">
@@ -17,7 +19,7 @@ export default function StatsModal() {
         <div className="modal-action">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn">Close</button>
+            <CloseRulesButton />
           </form>
         </div>
       </div>

@@ -3,8 +3,10 @@
 import { Session } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import OpenModalButton from './modals/OpenModalButton';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -23,7 +25,7 @@ function ProfileDropdown({ session }: { session: Session | null }) {
             <a>Settings</a>
           </li>
           <li onClick={() => signOut()}>
-            <a>Logout</a>
+            <a>Sign Out</a>
           </li>
         </ul>
       </div>
@@ -33,6 +35,15 @@ function ProfileDropdown({ session }: { session: Session | null }) {
 
 export default function Navbar({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const openRules = searchParams.get('rules');
+
+  useEffect(() => {
+    if (openRules === 'true') {
+      const modal = document.getElementById('rules_modal') as HTMLDialogElement;
+      modal.showModal();
+    }
+  }, [openRules]);
 
   return (
     <div className="navbar bg-primary text-primary-content">
@@ -44,9 +55,11 @@ export default function Navbar({ children }: { children: ReactNode }) {
             </svg>
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            <li>
-              <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-            </li>
+            {session && (
+              <li>
+                <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
+              </li>
+            )}
             <li>
               <a>Leaderboard</a>
             </li>
@@ -55,13 +68,17 @@ export default function Navbar({ children }: { children: ReactNode }) {
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost normal-case text-xl">EDEN Heardle</a>
+        <Link href={'/'} className="btn btn-ghost normal-case text-xl">
+          EDEN Heardle
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li>
-            <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-          </li>
+          {session && (
+            <li>
+              <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
+            </li>
+          )}
           <li>
             <a>Leaderboard</a>
           </li>

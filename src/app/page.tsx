@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { options } from './api/auth/[...nextauth]/options';
 import prisma from '@/lib/db';
-import SignInButton from '@/components/SignInButton';
+import SignInButton from '@/components/buttons/SignInButton';
+import RulesButton from '@/components/buttons/RulesButton';
 
 async function getUserDetails() {
   const session = await getServerSession(options);
@@ -61,6 +62,7 @@ export default async function Home() {
           {user && <h2 className="text-3xl font-semibold">Hello {user?.name}!</h2>}
           <p className="py-6">{getConditionalDescription()}</p>
           <div className="flex justify-center gap-2">
+            {!user && <RulesButton />}
             {!user && <SignInButton />}
             <Link href="/play">
               <button className="btn btn-primary">Play</button>
