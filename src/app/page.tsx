@@ -4,17 +4,23 @@ import { options } from './api/auth/[...nextauth]/options';
 import prisma from '@/lib/db';
 import SignInButton from '@/components/SignInButton';
 
-async function getUser() {
+async function getUserDetails() {
   const session = await getServerSession(options);
-  if (!session) return null;
+  if (!session) return { user: null, guesses: null };
 
   const user = await prisma.user.findUnique({
     where: {
-      id: session?.user.id
+      id: session.user.id
     }
   });
 
-  return user;
+  const guesses = await prisma.guessedSong.findMany({
+    where: {
+      userId: session.user.id
+    }
+  });
+
+  return { user, guesses };
 }
 
 async function getHeardleDayNumber() {
@@ -28,9 +34,8 @@ async function getHeardleDayNumber() {
 }
 
 export default async function Home() {
-  const user = await getUser();
+  const { user, guesses } = await getUserDetails();
   const dayNumber = await getHeardleDayNumber();
-  console.log('USER: ', user);
 
   const getConditionalDescription = (): string => {
     return 'Get 6 chances to guess an EDEN song.';
@@ -41,7 +46,7 @@ export default async function Home() {
       <div className="hero-content text-center">
         <div className="max-w-md">
           <h1 className="text-5xl font-bold">EDEN Heardle</h1>
-          {user && <h2>Hello {user?.name}!</h2>}
+          {user && <h2 className="text-3xl font-semibold">Hello {user?.name}!</h2>}
           <p className="py-6">{getConditionalDescription()}</p>
           <div className="flex justify-center gap-2">
             {!user && <SignInButton />}

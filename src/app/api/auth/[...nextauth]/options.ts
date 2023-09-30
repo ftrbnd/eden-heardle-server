@@ -19,5 +19,17 @@ export const options: NextAuthOptions = {
       return session;
     }
   },
-  debug: process.env.NODE_ENV === 'development'
+  events: {
+    async createUser(message) {
+      await prisma.statistics.create({
+        data: {
+          currentStreak: 0,
+          maxStreak: 0,
+          gamesPlayed: 0,
+          gamesWon: 0,
+          userId: message.user.id
+        }
+      });
+    }
+  }
 };

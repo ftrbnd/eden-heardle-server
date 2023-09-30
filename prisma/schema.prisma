@@ -57,13 +57,13 @@ model VerificationToken {
 // custom models for EDEN Heardle below
 
 model Statistics {
-  id           String @id @default(cuid())
+  id            String @id @default(cuid())
   currentStreak Int    @default(0)
-  maxStreak    Int    @default(0)
-  gamesPlayed  Int    @default(0)
-  gamesWon     Int    @default(0)
-  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String @unique // relation scalar field (used in the `@relation` attribute above)
+  maxStreak     Int    @default(0)
+  gamesPlayed   Int    @default(0)
+  gamesWon      Int    @default(0)
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String @unique // relation scalar field (used in the `@relation` attribute above)
 }
 
 model GuessedSong {

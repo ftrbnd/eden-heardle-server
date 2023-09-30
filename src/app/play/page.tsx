@@ -23,9 +23,6 @@ export default function Play() {
     queryKey: ['user'],
     queryFn: getSessionUser
   });
-  console.log('SONGS: ', songs);
-  console.log('DAILY: ', dailySong);
-  console.log('USER: ', user);
 
   return (
     <div>
