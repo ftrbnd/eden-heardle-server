@@ -1,6 +1,7 @@
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import prisma from '@/lib/db';
 import { getServerSession } from 'next-auth';
+import SignInButton from '../buttons/SignInButton';
 
 async function getStats() {
   const session = await getServerSession(options);
@@ -19,7 +20,7 @@ async function Stats() {
   const stats = await getStats();
 
   return (
-    <div className="grid grid-rows-2 sm:grid-cols-2 gap-2 shadow py-4">
+    <div className="grid grid-rows-2 sm:grid-cols-2 gap-2 py-4">
       <div className="stat shadow">
         <div className="stat-figure text-secondary">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
@@ -27,7 +28,7 @@ async function Stats() {
           </svg>
         </div>
         <div className="stat-title">Games Played</div>
-        <div className="stat-value">{stats?.gamesPlayed}</div>
+        <div className="stat-value">{stats?.gamesPlayed ?? 0}</div>
         <div className="stat-desc">Description</div>
       </div>
 
@@ -54,7 +55,7 @@ async function Stats() {
           </svg>
         </div>
         <div className="stat-title">Current Streak</div>
-        <div className="stat-value">{stats?.currentStreak}</div>
+        <div className="stat-value">{stats?.currentStreak ?? 0}</div>
         <div className="stat-desc">Description</div>
       </div>
 
@@ -65,22 +66,36 @@ async function Stats() {
           </svg>
         </div>
         <div className="stat-title">Max Streak</div>
-        <div className="stat-value">{stats?.maxStreak}</div>
+        <div className="stat-value">{stats?.maxStreak ?? 0}</div>
         <div className="stat-desc">Description</div>
       </div>
     </div>
   );
 }
 
-export default function StatsModal() {
+export default async function StatsModal() {
+  const session = await getServerSession(options);
+
   return (
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box min-w-min">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
-        <div className="modal-action">
-          <form method="dialog">
+        {!session && (
+          <>
+            <div className="divider"></div>
+            <div className="flex flex-col items-center">
+              <p>Stats are not tracked without an account!</p>
+              <p>Sign in to link your stats.</p>
+              <p className="font-bold text-lg highlight bg-primary">TODO: Use localStorage to store stats?</p>
+            </div>
+            <div className="divider"></div>
+          </>
+        )}
+        <div className="modal-action ">
+          <form method="dialog" className="flex gap-2">
             {/* if there is a button in form, it will close the modal */}
+            {!session && <SignInButton />}
             <button className="btn">Close</button>
           </form>
         </div>

@@ -55,11 +55,9 @@ export default function Navbar({ children }: { children: ReactNode }) {
             </svg>
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            {session && (
-              <li>
-                <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-              </li>
-            )}
+            <li>
+              <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
+            </li>
             <li>
               <a>Leaderboard</a>
             </li>
@@ -74,11 +72,9 @@ export default function Navbar({ children }: { children: ReactNode }) {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          {session && (
-            <li>
-              <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-            </li>
-          )}
+          <li>
+            <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
+          </li>
           <li>
             <a>Leaderboard</a>
           </li>
