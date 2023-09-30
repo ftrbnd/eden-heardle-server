@@ -19,10 +19,7 @@ function ProfileDropdown({ session }: { session: Session | null }) {
         </label>
         <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
           <li>
-            <a className="justify-between">Profile</a>
-          </li>
-          <li>
-            <a>Settings</a>
+            <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
           </li>
           <li onClick={() => signOut()}>
             <a>Sign Out</a>
@@ -85,7 +82,15 @@ export default function Navbar({ children }: { children: ReactNode }) {
       </div>
 
       {children}
-      {session ? <ProfileDropdown session={session} /> : <div className="navbar-end"></div>}
+      {session ? (
+        <ProfileDropdown session={session} />
+      ) : (
+        <div className="navbar-end menu menu-horizontal px-1">
+          <li>
+            <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
+          </li>
+        </div>
+      )}
     </div>
   );
 }
