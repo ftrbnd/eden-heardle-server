@@ -3,6 +3,8 @@
 import { Session } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
+import OpenStats from './modals/OpenStats';
+import { ReactNode } from 'react';
 
 function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -29,7 +31,7 @@ function ProfileDropdown({ session }: { session: Session | null }) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
 
   return (
@@ -43,7 +45,7 @@ export default function Navbar() {
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
             <li>
-              <a>Statistics</a>
+              <OpenStats />
             </li>
             <li>
               <a>Leaderboard</a>
@@ -58,7 +60,7 @@ export default function Navbar() {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Statistics</a>
+            <OpenStats />
           </li>
           <li>
             <a>Leaderboard</a>
@@ -69,6 +71,7 @@ export default function Navbar() {
         </ul>
       </div>
 
+      {children}
       {session ? <ProfileDropdown session={session} /> : <div className="navbar-end"></div>}
     </div>
   );
