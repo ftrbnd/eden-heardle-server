@@ -5,6 +5,7 @@ import { options } from '../../auth/[...nextauth]/options';
 
 export async function GET() {
   const session = await getServerSession(options);
+  if (!session) return NextResponse.json(null, { status: 200 });
 
   try {
     const user = await prisma.user.findUnique({

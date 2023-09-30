@@ -8,6 +8,7 @@ import { getSessionUser } from '@/lib/userApi';
 import Link from 'next/link';
 import SignInButton from '@/components/SignInButton';
 import SignOutButton from '@/components/SignOutButton';
+import Navbar from '@/components/Navbar';
 
 export default function Play() {
   const { data: session } = useSession();
@@ -26,6 +27,7 @@ export default function Play() {
 
   return (
     <div>
+      <Navbar />
       <h1>EDEN Heardle</h1>
       {session ? (
         <>
