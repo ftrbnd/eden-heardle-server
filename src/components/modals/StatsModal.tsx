@@ -6,8 +6,6 @@ async function getStats() {
   const session = await getServerSession(options);
   if (!session) return null;
 
-  console.log('SESSION: ', session);
-
   const stats = await prisma.statistics.findUnique({
     where: {
       userId: session.user.id

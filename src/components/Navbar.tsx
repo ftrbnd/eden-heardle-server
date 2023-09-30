@@ -3,8 +3,8 @@
 import { Session } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import OpenStats from './modals/OpenStats';
 import { ReactNode } from 'react';
+import OpenModalButton from './modals/OpenModalButton';
 
 function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -45,13 +45,13 @@ export default function Navbar({ children }: { children: ReactNode }) {
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
             <li>
-              <OpenStats />
+              <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
             </li>
             <li>
               <a>Leaderboard</a>
             </li>
             <li>
-              <a>Rules</a>
+              <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
             </li>
           </ul>
         </div>
@@ -60,13 +60,13 @@ export default function Navbar({ children }: { children: ReactNode }) {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <OpenStats />
+            <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
           </li>
           <li>
             <a>Leaderboard</a>
           </li>
           <li>
-            <a>Rules</a>
+            <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
           </li>
         </ul>
       </div>
