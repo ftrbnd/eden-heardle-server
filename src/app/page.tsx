@@ -38,7 +38,19 @@ export default async function Home() {
   const dayNumber = await getHeardleDayNumber();
 
   const getConditionalDescription = (): string => {
-    return 'Get 6 chances to guess an EDEN song.';
+    if (!guesses || !guesses.length) return 'Get 6 chances to guess an EDEN song.';
+
+    if (guesses.at(-1)?.correctStatus == 'CORRECT') {
+      return "Great job on today's puzzle! Check out your progress.";
+    }
+    if (guesses.length === 6 && guesses.at(-1)?.correctStatus !== 'CORRECT') {
+      return "Tomorrow's a new day, with a new puzzle. See you then.";
+    }
+    if (guesses.length < 6 && guesses.length > 0) {
+      return `You're on attempt ${guesses.length + 1} out of 6. Keep it up!`;
+    } else {
+      return 'Get 6 chances to guess an EDEN song.';
+    }
   };
 
   return (
