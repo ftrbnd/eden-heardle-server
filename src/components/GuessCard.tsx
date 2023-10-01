@@ -1,0 +1,50 @@
+import { faCheck, faX } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
+
+interface IProps {
+  name: string;
+  album: string;
+  cover: string;
+  correctStatus: 'CORRECT' | 'ALBUM' | 'WRONG';
+}
+
+export default function GuessCard({ name, album, cover, correctStatus }: IProps) {
+  const getIcon = () => {
+    switch (correctStatus) {
+      case 'CORRECT':
+        return <FontAwesomeIcon icon={faCheck} style={{ color: '#52fa7c' }} />;
+      case 'ALBUM':
+        return <FontAwesomeIcon icon={faX} style={{ color: '#ffa257' }} />;
+      case 'WRONG':
+        return <FontAwesomeIcon icon={faX} style={{ color: '#ff5757' }} />;
+    }
+  };
+
+  const getTooltip = () => {
+    switch (correctStatus) {
+      case 'CORRECT':
+        return 'You got it!';
+      case 'ALBUM':
+        return 'Same album...';
+      case 'WRONG':
+        return 'Nope!';
+    }
+  };
+
+  return (
+    <div className="card card-side bg-base-100 shadow-xl w-full">
+      <figure>
+        <Image src={cover} alt={name} height={100} width={100} />
+      </figure>
+      <div className="flex items-center w-full justify-between px-4">
+        <div className="tooltip" data-tip={`from ${album}`}>
+          <h2 className="card-title">{name}</h2>
+        </div>
+        <div className="tooltip" data-tip={getTooltip()}>
+          {getIcon()}
+        </div>
+      </div>
+    </div>
+  );
+}

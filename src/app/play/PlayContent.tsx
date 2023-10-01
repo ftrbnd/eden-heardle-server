@@ -8,6 +8,7 @@ import { getSessionUser } from '@/lib/userApi';
 import Navbar from '@/components/Navbar';
 import { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import GuessCard from '@/components/GuessCard';
 
 export default function PlayContent({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
@@ -31,8 +32,13 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <Navbar>{children}</Navbar>
+      <div className="grid grid-rows-6 items-center max-w-fit gap-2">
+        {songs?.map((song) => (
+          <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={'ALBUM'} />
+        ))}
+      </div>
       <AudioPlayer songs={songs} />
     </div>
   );
