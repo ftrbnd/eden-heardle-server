@@ -35,7 +35,7 @@ export default function GuessCard({ name, album, cover, correctStatus }: IProps)
   return (
     <div className="card card-side bg-base-100 shadow-xl w-full">
       <figure>
-        <Image src={cover} alt={name} height={100} width={100} />
+        <Image src={cover} alt={name} height={50} width={50} />
       </figure>
       <div className="flex items-center w-full justify-between px-4">
         <div className="tooltip" data-tip={`from ${album}`}>

@@ -32,7 +32,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center h-full justify-between">
       <Navbar>{children}</Navbar>
       <div className="grid grid-rows-6 items-center max-w-fit gap-2">
         {songs?.map((song) => (
