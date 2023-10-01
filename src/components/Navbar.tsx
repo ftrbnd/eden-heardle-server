@@ -55,7 +55,7 @@ export default function Navbar({ children }: { children: ReactNode }) {
               <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
             </li>
             <li>
-              <a>Leaderboard</a>
+              <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
             </li>
             <li>
               <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
@@ -72,7 +72,7 @@ export default function Navbar({ children }: { children: ReactNode }) {
             <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
           </li>
           <li>
-            <a>Leaderboard</a>
+            <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
           </li>
           <li>
             <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
