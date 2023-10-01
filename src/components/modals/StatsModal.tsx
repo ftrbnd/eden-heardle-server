@@ -87,7 +87,7 @@ export default async function StatsModal() {
             <div className="flex flex-col items-center">
               <p>Stats are not tracked without an account!</p>
               <p>Sign in to link your stats.</p>
-              <p className="font-bold text-lg highlight bg-primary">TODO: Use localStorage to store stats?</p>
+              <p className="font-bold text-lg">TODO: Use localStorage to store stats?</p>
             </div>
             <div className="divider"></div>
           </>
