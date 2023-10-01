@@ -7,25 +7,24 @@ import { ReactNode, useEffect } from 'react';
 import OpenModalButton from './modals/OpenModalButton';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import ThemeButton from './buttons/ThemeButton';
 
 function ProfileDropdown({ session }: { session: Session | null }) {
   return (
-    <div className="navbar-end">
-      <div className="dropdown dropdown-end">
-        <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-          <div className="w-10 rounded-full">
-            <Image src={session?.user.image || '/default.png'} height={100} width={100} alt={`Avatar of ${session?.user.name}`} />
-          </div>
-        </label>
-        <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-          <li>
-            <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
-          </li>
-          <li onClick={() => signOut()}>
-            <a>Sign Out</a>
-          </li>
-        </ul>
-      </div>
+    <div className="dropdown dropdown-end">
+      <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+        <div className="w-10 rounded-full">
+          <Image src={session?.user.image || '/default.png'} height={100} width={100} alt={`Avatar of ${session?.user.name}`} />
+        </div>
+      </label>
+      <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+        <li>
+          <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
+        </li>
+        <li onClick={() => signOut()}>
+          <a>Sign Out</a>
+        </li>
+      </ul>
     </div>
   );
 }
@@ -82,15 +81,19 @@ export default function Navbar({ children }: { children: ReactNode }) {
       </div>
 
       {children}
-      {session ? (
-        <ProfileDropdown session={session} />
-      ) : (
-        <div className="navbar-end menu menu-horizontal px-1">
+
+      <div className="navbar-end menu menu-horizontal px-1">
+        <li>
+          <ThemeButton />
+        </li>
+        {session ? (
+          <ProfileDropdown session={session} />
+        ) : (
           <li>
             <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
           </li>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
