@@ -10,7 +10,13 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GuessCard from '@/components/GuessCard';
 
-function Countdown({ nextReset }: { nextReset?: Date | null }) {
+interface CountdownProps {
+  nextReset?: Date | null;
+  song: string;
+  guessedSong: boolean;
+}
+
+function Countdown({ nextReset, song, guessedSong }: CountdownProps) {
   const [timestamp, setTimestamp] = useState(0);
   const [countdown, setCountdown] = useState({
     hours: 0,
@@ -37,8 +43,8 @@ function Countdown({ nextReset }: { nextReset?: Date | null }) {
   }, [timestamp]);
 
   return (
-    <div className="self-end flex flex-col items-center">
-      <p className="font-bold text-lg">Next song in:</p>
+    <div className="self-end flex flex-col items-center text-center">
+      <p className="font-bold text-lg">{guessedSong ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${song}", try again tomorrow!`}</p>
       <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
         <div className="flex flex-col">
           <span className="countdown font-mono text-5xl">
@@ -91,12 +97,13 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     <div className="flex flex-col items-center h-full justify-between">
       <Navbar>{children}</Navbar>
       <div className="h-full grid grid-rows-2 py-4">
-        <div className="grid grid-rows-6 items-center max-w-fit gap-2">
+        <div className="grid grid-rows-6 items-center max-w-fit gap-2 place-self-center">
           {guessesLoading
             ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
             : guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
         </div>
-        <Countdown nextReset={dailySong?.nextReset} />
+        {guesses?.length === 6 ||
+          (guesses?.at(-1)?.correctStatus === 'CORRECT' && <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />)}
       </div>
       <AudioPlayer dailySong={dailySong} />
     </div>
