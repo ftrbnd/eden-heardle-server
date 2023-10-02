@@ -15,13 +15,16 @@ async function getUserDetails() {
     }
   });
 
-  const guesses = await prisma.guessedSong.findMany({
+  const userGuesses = await prisma.guesses.findUnique({
     where: {
       userId: session.user.id
+    },
+    select: {
+      songs: true
     }
   });
 
-  return { user, guesses };
+  return { user, guesses: userGuesses?.songs };
 }
 
 async function getHeardleDayNumber() {

@@ -35,15 +35,15 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?       @unique
+  email         String?     @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   statistics    Statistics?
-  guesses       GuessedSong[]
+  guesses       Guesses?
 }
 
 model VerificationToken {
@@ -66,14 +66,21 @@ model Statistics {
   userId        String @unique // relation scalar field (used in the `@relation` attribute above)
 }
 
+model Guesses {
+  id     String        @id @default(cuid())
+  songs  GuessedSong[]
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String        @unique // relation scalar field (used in the `@relation` attribute above)
+}
+
 model GuessedSong {
   id            String  @id @default(cuid())
   name          String
   album         String?
   cover         String
   correctStatus String
-  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String  @unique // relation scalar field (used in the `@relation` attribute above)
+  guessList     Guesses @relation(fields: [guessListId], references: [id], onDelete: Cascade)
+  guessListId   String // relation scalar field (used in the `@relation` attribute above)
 }
 
 model DailySong {

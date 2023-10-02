@@ -30,6 +30,12 @@ export const options: NextAuthOptions = {
           userId: message.user.id
         }
       });
+
+      await prisma.guesses.create({
+        data: {
+          userId: message.user.id
+        }
+      });
     }
   }
 };

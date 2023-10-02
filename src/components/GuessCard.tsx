@@ -6,7 +6,7 @@ interface IProps {
   name: string;
   album: string;
   cover: string;
-  correctStatus: 'CORRECT' | 'ALBUM' | 'WRONG';
+  correctStatus?: 'CORRECT' | 'ALBUM' | 'WRONG' | string;
 }
 
 export default function GuessCard({ name, album, cover, correctStatus }: IProps) {
@@ -18,6 +18,8 @@ export default function GuessCard({ name, album, cover, correctStatus }: IProps)
         return <FontAwesomeIcon icon={faX} style={{ color: '#ffa257' }} />;
       case 'WRONG':
         return <FontAwesomeIcon icon={faX} style={{ color: '#ff5757' }} />;
+      default:
+        return <span className="loading loading-ring loading-xs"></span>;
     }
   };
 

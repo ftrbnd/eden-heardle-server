@@ -1,16 +1,20 @@
 'use client';
 
+import { getGuessedSongs, getSongs, updateGuessedSongs } from '@/lib/songsApi';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Song } from '@prisma/client';
+import { createId } from '@paralleldrive/cuid2';
+import { DailySong, GuessedSong, Song } from '@prisma/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 interface IProps {
-  songs?: Song[];
+  dailySong?: DailySong;
 }
 
-export default function AudioPlayer({ songs }: IProps) {
+export default function AudioPlayer({ dailySong }: IProps) {
   const [selected, setSelected] = useState('');
 
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
@@ -18,18 +22,34 @@ export default function AudioPlayer({ songs }: IProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const { theme, setTheme } = useTheme();
+  const { data: session } = useSession();
 
-  const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSelected(event.target.value);
-  };
+  const queryClient = useQueryClient();
+
+  const { data: songs } = useQuery({
+    queryKey: ['songs'],
+    queryFn: getSongs
+  });
+
+  const { data: guesses, isLoading: guessesLoading } = useQuery({
+    queryKey: ['guesses'],
+    queryFn: getGuessedSongs
+  });
+
+  const guessMutation = useMutation({
+    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['guesses'] });
+    }
+  });
 
   useEffect(() => {
     audioRef.current?.addEventListener('playing', () => {
-      console.log('PLAYING');
+      // console.log('PLAYING');
     });
 
     audioRef.current?.addEventListener('timeupdate', () => {
-      console.log(audioRef.current?.currentTime);
+      // console.log(audioRef.current?.currentTime);
     });
   }, []);
 
@@ -40,6 +60,28 @@ export default function AudioPlayer({ songs }: IProps) {
       setColor('#000000');
     }
   }, [theme]);
+
+  const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
+    function getCorrectStatus(song: Song) {
+      return song.name === dailySong?.name ? 'CORRECT' : song?.album === dailySong?.album ? 'ALBUM' : 'WRONG';
+    }
+
+    setSelected(event.target.value);
+
+    // find song object that was selected
+    const selectedSong = songs?.find((song) => song.name === event.target.value);
+    if (!selectedSong) return;
+
+    if (!session) return;
+    guessMutation.mutate({
+      id: createId(),
+      name: selectedSong.name,
+      album: selectedSong.album,
+      cover: selectedSong.cover,
+      correctStatus: getCorrectStatus(selectedSong),
+      guessListId: createId()
+    });
+  };
 
   const togglePlayer = () => {
     if (!audioRef.current) return;
@@ -66,7 +108,7 @@ export default function AudioPlayer({ songs }: IProps) {
       <select className="select select-primary w-full max-w-xs" defaultValue={'Choose a Song'} onChange={handleSelection}>
         <option disabled>Choose a Song</option>
         {songs?.map((song) => (
-          <option key={song.id} value={song.name}>
+          <option key={song.id} value={song.name} disabled={guesses?.some((guess) => guess.name === song.name) || guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT'}>
             {song.name}
           </option>
         ))}
