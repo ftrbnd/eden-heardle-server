@@ -38,7 +38,21 @@ export default function AudioPlayer({ dailySong }: IProps) {
 
   const guessMutation = useMutation({
     mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess),
-    onSuccess: () => {
+    onMutate: async (newGuess: GuessedSong) => {
+      await queryClient.cancelQueries({ queryKey: ['guesses'] });
+
+      const prevGuesses = queryClient.getQueryData<GuessedSong[]>(['guesses']);
+      if (prevGuesses) {
+        queryClient.setQueryData<GuessedSong[]>(['guesses'], [...prevGuesses, newGuess]);
+      }
+
+      return { prevGuesses };
+    },
+    onError: (err, _newGuess, context) => {
+      console.log('GUESS MUTATION ERROR: ', err);
+      queryClient.setQueryData(['guesses'], context?.prevGuesses);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['guesses'] });
     }
   });
