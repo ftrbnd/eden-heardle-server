@@ -8,6 +8,7 @@ import OpenModalButton from './modals/OpenModalButton';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import ThemeButton from './buttons/ThemeButton';
+import StatsModal from './modals/StatsModal';
 
 function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -80,7 +81,9 @@ export default function Navbar({ children }: { children: ReactNode }) {
         </ul>
       </div>
 
+      {/* children are modal server components, stats modal is client component */}
       {children}
+      <StatsModal />
 
       <div className="navbar-end menu menu-horizontal px-1">
         <li>

@@ -102,8 +102,9 @@ export default function PlayContent({ children }: { children: ReactNode }) {
             ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
             : guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
         </div>
-        {guesses?.length === 6 ||
-          (guesses?.at(-1)?.correctStatus === 'CORRECT' && <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />)}
+        {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
+        )}
       </div>
       <AudioPlayer dailySong={dailySong} />
     </div>

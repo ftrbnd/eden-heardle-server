@@ -1,13 +1,15 @@
 'use client';
 
 import { getGuessedSongs, getSongs, updateGuessedSongs } from '@/lib/songsApi';
+import { updateStats } from '@/lib/statsApi';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createId } from '@paralleldrive/cuid2';
-import { DailySong, GuessedSong, Song } from '@prisma/client';
+import { DailySong, GuessedSong, Song, Statistics } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 interface IProps {
@@ -23,6 +25,7 @@ export default function AudioPlayer({ dailySong }: IProps) {
 
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
+  const router = useRouter();
 
   const queryClient = useQueryClient();
 
@@ -34,6 +37,34 @@ export default function AudioPlayer({ dailySong }: IProps) {
   const { data: guesses, isLoading: guessesLoading } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs
+  });
+
+  const statsMutation = useMutation({
+    mutationFn: (guessedSong: boolean) => updateStats(guessedSong),
+    onMutate: async (guessedSong: boolean) => {
+      await queryClient.cancelQueries({ queryKey: ['stats'] });
+
+      const prevStats = queryClient.getQueryData<Statistics>(['stats']);
+      if (prevStats) {
+        queryClient.setQueryData<Statistics>(['stats'], {
+          ...prevStats,
+          gamesPlayed: prevStats.gamesPlayed + 1,
+          gamesWon: guessedSong ? prevStats.gamesWon + 1 : prevStats.gamesWon,
+          currentStreak: guessedSong ? prevStats.currentStreak + 1 : 0,
+          maxStreak: Math.max(prevStats.maxStreak, guessedSong ? prevStats.currentStreak + 1 : 0)
+        });
+      }
+
+      return { prevStats };
+    },
+    onSettled: (_newStats, err, _variables, context) => {
+      if (err) {
+        console.log('STATS MUTATION ERROR: ', err);
+        queryClient.setQueryData(['guesses'], context?.prevStats);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+    }
   });
 
   const guessMutation = useMutation({
@@ -48,11 +79,18 @@ export default function AudioPlayer({ dailySong }: IProps) {
 
       return { prevGuesses };
     },
-    onError: (err, _newGuess, context) => {
-      console.log('GUESS MUTATION ERROR: ', err);
-      queryClient.setQueryData(['guesses'], context?.prevGuesses);
-    },
-    onSettled: () => {
+    onSettled: (newGuesses, err, _variables, context) => {
+      if (err) {
+        console.log('GUESS MUTATION ERROR: ', err);
+        queryClient.setQueryData(['guesses'], context?.prevGuesses);
+      } else {
+        if (newGuesses?.at(-1)?.correctStatus === 'CORRECT') {
+          statsMutation.mutate(true);
+        } else if (newGuesses?.length === 6 && newGuesses.at(-1)?.correctStatus !== 'CORRECT') {
+          statsMutation.mutate(false);
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['guesses'] });
     }
   });
@@ -66,6 +104,13 @@ export default function AudioPlayer({ dailySong }: IProps) {
       // console.log(audioRef.current?.currentTime);
     });
   }, []);
+
+  useEffect(() => {
+    if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
+      const modal = document.getElementById('stats_modal') as HTMLDialogElement;
+      modal.showModal();
+    }
+  }, [guesses]);
 
   useEffect(() => {
     if (theme === 'lofi') {

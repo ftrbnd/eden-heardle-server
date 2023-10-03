@@ -26,7 +26,9 @@ export const getGuessedSongs = async () => {
 };
 
 export const updateGuessedSongs = async (guess: GuessedSong) => {
-  const response = await api.patch<GuessedSong[]>(`${songsUrlEndpoint}/guesses`, { song: guess });
+  const response = await api.patch(`${songsUrlEndpoint}/guesses`, { song: guess });
 
-  return response.data;
+  const { guesses }: { guesses: GuessedSong[] } = response.data;
+
+  return guesses;
 };

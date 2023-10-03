@@ -1,23 +1,15 @@
-import { options } from '@/app/api/auth/[...nextauth]/options';
-import prisma from '@/lib/db';
-import { getServerSession } from 'next-auth';
+'use client';
+
 import SignInButton from '../buttons/SignInButton';
+import { useSession } from 'next-auth/react';
+import { getStats } from '@/lib/statsApi';
+import { useQuery } from '@tanstack/react-query';
 
-async function getStats() {
-  const session = await getServerSession(options);
-  if (!session) return null;
-
-  const stats = await prisma.statistics.findUnique({
-    where: {
-      userId: session.user.id
-    }
+function Stats() {
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['stats'],
+    queryFn: getStats
   });
-
-  return stats;
-}
-
-async function Stats() {
-  const stats = await getStats();
 
   return (
     <div className="grid grid-rows-2 sm:grid-cols-2 gap-2 py-4">
@@ -73,8 +65,8 @@ async function Stats() {
   );
 }
 
-export default async function StatsModal() {
-  const session = await getServerSession(options);
+export default function StatsModal() {
+  const { data: session } = useSession();
 
   return (
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
