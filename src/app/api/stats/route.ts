@@ -29,7 +29,6 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const { guessedSong }: { guessedSong: boolean } = await req.json();
-    console.log(`${session.user.name} won game?:`, guessedSong);
 
     const oldStats = await prisma.statistics.findUnique({
       where: {

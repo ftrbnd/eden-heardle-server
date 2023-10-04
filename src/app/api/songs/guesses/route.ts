@@ -36,7 +36,6 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const { song }: { song: GuessedSong } = await req.json();
-    console.log('PATCH: ', song);
 
     const oldGuesses = await prisma.guesses.findUnique({
       where: {
