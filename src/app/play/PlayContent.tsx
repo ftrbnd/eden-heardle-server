@@ -97,8 +97,8 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col items-center h-full justify-between">
       <Navbar>{children}</Navbar>
-      <div className="h-full grid grid-rows-2 py-4">
-        <div className="grid grid-rows-6 items-center max-w-fit gap-2 place-self-center">
+      <div className="h-full grid grid-rows-2 py-4 w-full">
+        <div className="grid grid-rows-6 items-center w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
           {guessesLoading
             ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
             : guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
