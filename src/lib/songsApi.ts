@@ -8,8 +8,10 @@ const api = axios.create({
 export const songsUrlEndpoint = '/songs';
 
 export const getSongs = async () => {
-  const response = await api.get<Song[]>(songsUrlEndpoint);
-  return response.data;
+  const response = await api.get(songsUrlEndpoint);
+  const { songs }: { songs: Song[] } = response.data;
+
+  return songs;
 };
 
 export const getDailySong = async () => {
