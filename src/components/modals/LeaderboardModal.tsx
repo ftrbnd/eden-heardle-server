@@ -1,167 +1,120 @@
 'use client';
 
+import { getLeaderboard } from '@/lib/statsApi';
+import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import { useState } from 'react';
 
 type Tab = 'TODAY' | 'WIN_PCT' | 'CUR_STRK' | 'MAX_STRK';
 
-function StatTable({ statType }: { statType: Tab }) {
-  switch (statType) {
-    case 'TODAY':
-    case 'WIN_PCT':
-    case 'CUR_STRK':
-    case 'MAX_STRK':
-  }
+function StatTable({ activeTab }: { activeTab: Tab }) {
+  const { data: leaderboard } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: getLeaderboard
+  });
+
+  const showSpecificStat = () => {
+    switch (activeTab) {
+      case 'TODAY':
+        return (
+          <tbody>
+            {leaderboard?.today.map((userDaily, index) => (
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <Image src={userDaily.user.image || '/default.png'} alt={`${userDaily.user.name}'s Avatar`} height={48} width={48} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">{userDaily.user.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{userDaily.data}</td>
+              </tr>
+            ))}
+          </tbody>
+        );
+      case 'WIN_PCT':
+        return (
+          <tbody>
+            {leaderboard?.winPercentages.map((winPct, index) => (
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <Image src={winPct.user.image || '/default.png'} alt={`${winPct.user.name}'s Avatar`} height={48} width={48} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">{winPct.user.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{winPct.data}</td>
+              </tr>
+            ))}
+          </tbody>
+        );
+      case 'CUR_STRK':
+        return (
+          <tbody>
+            {leaderboard?.currentStreaks.map((streak, index) => (
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">{streak.user.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{streak.data}</td>
+              </tr>
+            ))}
+          </tbody>
+        );
+      case 'MAX_STRK':
+        return (
+          <tbody>
+            {leaderboard?.maxStreaks.map((streak, index) => (
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">{streak.user.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{streak.data}</td>
+              </tr>
+            ))}
+          </tbody>
+        );
+      default:
+        return <tbody></tbody>;
+    }
+  };
 
   return (
     <div className="overflow-x-auto">
-      <table className="table">
-        {/* head */}
-        <thead>
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
-            <th>Name</th>
-            <th>Job</th>
-            <th>Favorite Color</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* row 1 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center space-x-3">
-                <div className="avatar">
-                  <div className="mask mask-squircle w-12 h-12">
-                    <img src="/tailwind-css-component-profile-2@56w.png" alt="Avatar Tailwind CSS Component" />
-                  </div>
-                </div>
-                <div>
-                  <div className="font-bold">Hart Hagerty</div>
-                  <div className="text-sm opacity-50">United States</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Zemlak, Daniel and Leannon
-              <br />
-              <span className="badge badge-ghost badge-sm">Desktop Support Technician</span>
-            </td>
-            <td>Purple</td>
-            <th>
-              <button className="btn btn-ghost btn-xs">details</button>
-            </th>
-          </tr>
-          {/* row 2 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center space-x-3">
-                <div className="avatar">
-                  <div className="mask mask-squircle w-12 h-12">
-                    <img src="/tailwind-css-component-profile-3@56w.png" alt="Avatar Tailwind CSS Component" />
-                  </div>
-                </div>
-                <div>
-                  <div className="font-bold">Brice Swyre</div>
-                  <div className="text-sm opacity-50">China</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Carroll Group
-              <br />
-              <span className="badge badge-ghost badge-sm">Tax Accountant</span>
-            </td>
-            <td>Red</td>
-            <th>
-              <button className="btn btn-ghost btn-xs">details</button>
-            </th>
-          </tr>
-          {/* row 3 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center space-x-3">
-                <div className="avatar">
-                  <div className="mask mask-squircle w-12 h-12">
-                    <img src="/tailwind-css-component-profile-4@56w.png" alt="Avatar Tailwind CSS Component" />
-                  </div>
-                </div>
-                <div>
-                  <div className="font-bold">Marjy Ferencz</div>
-                  <div className="text-sm opacity-50">Russia</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Rowe-Schoen
-              <br />
-              <span className="badge badge-ghost badge-sm">Office Assistant I</span>
-            </td>
-            <td>Crimson</td>
-            <th>
-              <button className="btn btn-ghost btn-xs">details</button>
-            </th>
-          </tr>
-          {/* row 4 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center space-x-3">
-                <div className="avatar">
-                  <div className="mask mask-squircle w-12 h-12">
-                    <img src="/tailwind-css-component-profile-5@56w.png" alt="Avatar Tailwind CSS Component" />
-                  </div>
-                </div>
-                <div>
-                  <div className="font-bold">Yancy Tear</div>
-                  <div className="text-sm opacity-50">Brazil</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              Wyman-Ledner
-              <br />
-              <span className="badge badge-ghost badge-sm">Community Outreach Specialist</span>
-            </td>
-            <td>Indigo</td>
-            <th>
-              <button className="btn btn-ghost btn-xs">details</button>
-            </th>
-          </tr>
-        </tbody>
-        {/* foot */}
-        <tfoot>
-          <tr>
-            <th></th>
-            <th>Name</th>
-            <th>Job</th>
-            <th>Favorite Color</th>
-            <th></th>
-          </tr>
-        </tfoot>
-      </table>
+      <table className="table">{showSpecificStat()}</table>
     </div>
   );
 }
@@ -193,7 +146,7 @@ export default function LeaderboardModal() {
       <div className="modal-box min-w-min">
         <h3 className="font-bold text-lg">Leaderboard</h3>
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        <StatTable statType={activeTab} />
+        <StatTable activeTab={activeTab} />
         <div className="modal-action ">
           <form method="dialog" className="flex gap-2">
             {/* if there is a button in form, it will close the modal */}

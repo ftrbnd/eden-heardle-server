@@ -1,3 +1,4 @@
+import { LeaderboardStats } from '@/app/api/stats/all/route';
 import { Statistics } from '@prisma/client';
 import axios from 'axios';
 
@@ -21,4 +22,12 @@ export const updateStats = async (guessedSong: boolean) => {
   const { stats }: { stats: Statistics } = response.data;
 
   return stats;
+};
+
+export const getLeaderboard = async () => {
+  const response = await api.get(`${statsUrlEndpoint}/all`);
+
+  const { leaderboard }: { leaderboard: LeaderboardStats } = response.data;
+
+  return leaderboard;
 };
