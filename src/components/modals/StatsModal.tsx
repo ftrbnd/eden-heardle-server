@@ -4,9 +4,11 @@ import SignInButton from '../buttons/SignInButton';
 import { useSession } from 'next-auth/react';
 import { getStats } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
+import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
+import { MouseEvent } from 'react';
 
 function Stats() {
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats
   });
@@ -68,11 +70,50 @@ function Stats() {
 export default function StatsModal() {
   const { data: session } = useSession();
 
+  const { data: guesses, isLoading: guessesLoading } = useQuery({
+    queryKey: ['guesses'],
+    queryFn: getGuessedSongs
+  });
+
+  const { data: dailySong } = useQuery({
+    queryKey: ['daily'],
+    queryFn: getDailySong
+  });
+
+  const statusSquares = (): string => {
+    function getStatusSquare(status: string) {
+      switch (status) {
+        case 'CORRECT':
+          return '🟩';
+        case 'ALBUM':
+          return '🟧';
+        case 'WRONG':
+          return '🟥';
+        default:
+          return '⬜';
+      }
+    }
+
+    let squares: string[] = [];
+    guesses?.forEach((guess) => {
+      squares.push(getStatusSquare(guess.correctStatus));
+    });
+
+    return squares.join('');
+  };
+
+  const copyToClipboard = async (e: MouseEvent) => {
+    e.preventDefault();
+
+    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares()}`);
+  };
+
   return (
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box min-w-min">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
+        <div className="flex justify-center">{guessesLoading ? '⬜⬜⬜⬜⬜⬜' : guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? statusSquares() : null}</div>
         {!session && (
           <>
             <div className="divider"></div>
@@ -88,6 +129,11 @@ export default function StatsModal() {
           <form method="dialog" className="flex gap-2">
             {/* if there is a button in form, it will close the modal */}
             {!session && <SignInButton />}
+            {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+              <button className="btn btn-primary" onClick={(e) => copyToClipboard(e)}>
+                Share
+              </button>
+            )}
             <button className="btn">Close</button>
           </form>
         </div>
