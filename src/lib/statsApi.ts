@@ -10,6 +10,7 @@ export const statsUrlEndpoint = '/stats';
 
 export const getStats = async () => {
   const response = await api.get(statsUrlEndpoint);
+  if (!response.data) return null;
 
   const { stats }: { stats: Statistics } = response.data;
 

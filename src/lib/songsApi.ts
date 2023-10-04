@@ -15,12 +15,15 @@ export const getSongs = async () => {
 };
 
 export const getDailySong = async () => {
-  const response = await api.get<DailySong>(`${songsUrlEndpoint}/daily`);
-  return response.data;
+  const response = await api.get(`${songsUrlEndpoint}/daily`);
+
+  const { song }: { song: DailySong } = response.data;
+  return song;
 };
 
 export const getGuessedSongs = async () => {
   const response = await api.get(`${songsUrlEndpoint}/guesses`);
+  if (!response.data) return null;
 
   const { guesses }: { guesses: GuessedSong[] } = response.data;
 
