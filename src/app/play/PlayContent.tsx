@@ -9,6 +9,7 @@ import Navbar from '@/components/Navbar';
 import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GuessCard from '@/components/GuessCard';
+import SongSelectInput from '@/components/SongSelectInput';
 
 interface CountdownProps {
   nextReset?: Date | null;
@@ -106,7 +107,10 @@ export default function PlayContent({ children }: { children: ReactNode }) {
           <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
         )}
       </div>
-      <AudioPlayer dailySong={dailySong} />
+      <div className="flex flex-col gap-2 items-center w-full card shadow-2xl p-4">
+        <SongSelectInput dailySong={dailySong} />
+        <AudioPlayer />
+      </div>
     </div>
   );
 }
