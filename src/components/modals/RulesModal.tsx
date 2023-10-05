@@ -53,13 +53,11 @@ export default async function RulesModal() {
             for reminders.
           </p>
         </div>
-        <div className="modal-action">
-          <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
-            <CloseRulesButton />
-          </form>
-        </div>
       </div>
+
+      <form method="dialog" className="modal-backdrop">
+        <button>Close</button>
+      </form>
     </dialog>
   );
 }

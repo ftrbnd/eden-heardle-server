@@ -27,14 +27,12 @@ export default async function SettingsModal() {
           <div className="divider m-0"></div>
         </div>
         <p className="font-bold text-xs">© 2023 giosalad</p>
-        <div className="modal-action">
-          <form method="dialog" className="flex gap-2">
-            {/* if there is a button in form, it will close the modal */}
-            {session ? <SignOutButton /> : <SignInButton />}
-            <button className="btn">Close</button>
-          </form>
-        </div>
+        <div className="flex flex-col items-end">{session ? <SignOutButton /> : <SignInButton />}</div>
       </div>
+
+      <form method="dialog" className="modal-backdrop">
+        <button>Close</button>
+      </form>
     </dialog>
   );
 }

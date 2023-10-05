@@ -107,19 +107,19 @@ export default function StatsModal() {
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
         <div className="flex justify-center">{guessesLoading ? '⬜⬜⬜⬜⬜⬜' : guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? statusSquares() : null}</div>
-        <div className="modal-action ">
-          <form method="dialog" className="flex gap-2">
-            {/* if there is a button in form, it will close the modal */}
-            {!session && <SignInButton />}
-            {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <button className="btn btn-primary" onClick={(e) => copyToClipboard(e)}>
-                Share
-              </button>
-            )}
-            <button className="btn">Close</button>
-          </form>
+        <div className="flex flex-col items-end">
+          {!session && <SignInButton />}
+          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+            <button className="btn btn-primary" onClick={(e) => copyToClipboard(e)}>
+              Share
+            </button>
+          )}
         </div>
       </div>
+
+      <form method="dialog" className="modal-backdrop">
+        <button>Close</button>
+      </form>
     </dialog>
   );
 }

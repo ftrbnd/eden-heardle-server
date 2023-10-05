@@ -159,14 +159,16 @@ export default function LeaderboardModal() {
             <div className="divider mt-0"></div>
           </>
         )}
-        <div className="modal-action ">
-          <form method="dialog" className="flex gap-2">
-            {/* if there is a button in form, it will close the modal */}
-            {!session && <SignInButton />}
-            <button className="btn">Close</button>
-          </form>
-        </div>
+        {!session && (
+          <div className="flex flex-col items-end">
+            <SignInButton />
+          </div>
+        )}
       </div>
+
+      <form method="dialog" className="modal-backdrop">
+        <button>Close</button>
+      </form>
     </dialog>
   );
 }
