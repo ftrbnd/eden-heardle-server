@@ -5,15 +5,16 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { LocalUserProvider } from '@/context/LocalUserProvider';
+import { ReactNode } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'EDEN Heardle',
-  description: 'Get 6 chances to guess the EDEN song'
+  description: 'Get 6 chances to guess the EDEN song!'
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>

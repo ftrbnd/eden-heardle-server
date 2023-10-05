@@ -10,7 +10,7 @@ import SignInButton from '../buttons/SignInButton';
 type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
 
 function StatTable({ activeTab }: { activeTab: Tab }) {
-  const { data: leaderboard } = useQuery({
+  const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: getLeaderboard
   });
@@ -139,7 +139,30 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="table">{showSpecificStat()}</table>
+      <table className="table">
+        {leaderboardLoading ? (
+          <tbody>
+            <tr>
+              <th>0</th>
+              <td>
+                <div className="flex items-center space-x-3">
+                  <div className="avatar">
+                    <div className="mask mask-squircle w-12 h-12">
+                      <Image src={'/default.png'} alt={`Default Avatar`} height={48} width={48} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold">Getting users...</div>
+                  </div>
+                </div>
+              </td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        ) : (
+          showSpecificStat()
+        )}
+      </table>
     </div>
   );
 }

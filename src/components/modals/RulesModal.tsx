@@ -4,18 +4,23 @@ import Link from 'next/link';
 import prisma from '@/lib/db';
 
 async function getTwoRandomSongs() {
-  const songsCount = await prisma.song.count();
-  const skip = Math.floor(Math.random() * songsCount);
+  try {
+    const songsCount = await prisma.song.count();
+    const skip = Math.floor(Math.random() * songsCount);
 
-  let songs: Song[] = [];
-  while (songs.length !== 3) {
-    songs = await prisma.song.findMany({
-      skip: skip,
-      take: 3
-    });
+    let songs: Song[] = [];
+    while (songs.length !== 3) {
+      songs = await prisma.song.findMany({
+        skip: skip,
+        take: 3
+      });
+    }
+
+    return songs;
+  } catch (err) {
+    console.log('Failed to get two random songs for example: ', err);
+    return [];
   }
-
-  return songs;
 }
 
 export default async function RulesModal() {

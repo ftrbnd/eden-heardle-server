@@ -8,32 +8,48 @@ const api = axios.create({
 export const songsUrlEndpoint = '/songs';
 
 export const getSongs = async () => {
-  const response = await api.get(songsUrlEndpoint);
-  const { songs }: { songs: Song[] } = response.data;
+  try {
+    const response = await api.get(songsUrlEndpoint);
+    const { songs }: { songs: Song[] } = response.data;
 
-  return songs;
+    return songs;
+  } catch (err) {
+    console.error('Failed to get songs: ', err);
+  }
 };
 
 export const getDailySong = async () => {
-  const response = await api.get(`${songsUrlEndpoint}/daily`);
+  try {
+    const response = await api.get(`${songsUrlEndpoint}/daily`);
 
-  const { song }: { song: DailySong } = response.data;
-  return song;
+    const { song }: { song: DailySong } = response.data;
+    return song;
+  } catch (err) {
+    console.error('Failed to get daily song: ', err);
+  }
 };
 
 export const getGuessedSongs = async () => {
-  const response = await api.get(`${songsUrlEndpoint}/guesses`);
-  if (!response.data) return null;
+  try {
+    const response = await api.get(`${songsUrlEndpoint}/guesses`);
+    if (!response.data) return null;
 
-  const { guesses }: { guesses: GuessedSong[] } = response.data;
+    const { guesses }: { guesses: GuessedSong[] } = response.data;
 
-  return guesses;
+    return guesses;
+  } catch (err) {
+    console.error("Failed to get user's guessed songs: ', err");
+  }
 };
 
 export const updateGuessedSongs = async (guess: GuessedSong) => {
-  const response = await api.patch(`${songsUrlEndpoint}/guesses`, { song: guess });
+  try {
+    const response = await api.patch(`${songsUrlEndpoint}/guesses`, { song: guess });
 
-  const { guesses }: { guesses: GuessedSong[] } = response.data;
+    const { guesses }: { guesses: GuessedSong[] } = response.data;
 
-  return guesses;
+    return guesses;
+  } catch (err) {
+    console.error("Failed to update user's guessed songs: ", err);
+  }
 };

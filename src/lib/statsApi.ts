@@ -9,26 +9,38 @@ const api = axios.create({
 export const statsUrlEndpoint = '/stats';
 
 export const getStats = async () => {
-  const response = await api.get(statsUrlEndpoint);
-  if (!response.data) return null;
+  try {
+    const response = await api.get(statsUrlEndpoint);
+    if (!response.data) return null;
 
-  const { stats }: { stats: Statistics } = response.data;
+    const { stats }: { stats: Statistics } = response.data;
 
-  return stats;
+    return stats;
+  } catch (err) {
+    console.error("Failed to get user's stats: ", err);
+  }
 };
 
 export const updateStats = async (guessedSong: boolean) => {
-  const response = await api.patch(statsUrlEndpoint, { guessedSong });
+  try {
+    const response = await api.patch(statsUrlEndpoint, { guessedSong });
 
-  const { stats }: { stats: Statistics } = response.data;
+    const { stats }: { stats: Statistics } = response.data;
 
-  return stats;
+    return stats;
+  } catch (err) {
+    console.error("Failed to update user's stats: ", err);
+  }
 };
 
 export const getLeaderboard = async () => {
-  const response = await api.get(`${statsUrlEndpoint}/all`);
+  try {
+    const response = await api.get(`${statsUrlEndpoint}/all`);
 
-  const { leaderboard }: { leaderboard: LeaderboardStats } = response.data;
+    const { leaderboard }: { leaderboard: LeaderboardStats } = response.data;
 
-  return leaderboard;
+    return leaderboard;
+  } catch (err) {
+    console.error('Failed to get leaderboard stats: ', err);
+  }
 };

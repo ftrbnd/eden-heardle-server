@@ -9,32 +9,42 @@ async function getUserDetails() {
   const session = await getServerSession(options);
   if (!session) return { user: null, guesses: null };
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id
-    }
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id
+      }
+    });
 
-  const userGuesses = await prisma.guesses.findUnique({
-    where: {
-      userId: session.user.id
-    },
-    select: {
-      songs: true
-    }
-  });
+    const userGuesses = await prisma.guesses.findUnique({
+      where: {
+        userId: session.user.id
+      },
+      select: {
+        songs: true
+      }
+    });
 
-  return { user, guesses: userGuesses?.songs };
+    return { user, guesses: userGuesses?.songs };
+  } catch (err) {
+    console.log('Failed to get user details: ', err);
+    return { user: null, guesses: null };
+  }
 }
 
 async function getHeardleDayNumber() {
-  const dayNumber = await prisma.dailySong.findFirst({
-    select: {
-      heardleDay: true
-    }
-  });
+  try {
+    const dayNumber = await prisma.dailySong.findFirst({
+      select: {
+        heardleDay: true
+      }
+    });
 
-  return dayNumber?.heardleDay;
+    return dayNumber?.heardleDay;
+  } catch (err) {
+    console.log('Failed to get Heardle Day Number: ', err);
+    return -1;
+  }
 }
 
 export default async function Home() {
