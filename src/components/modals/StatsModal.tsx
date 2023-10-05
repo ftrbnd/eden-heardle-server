@@ -62,6 +62,7 @@ function Stats() {
 
 export default function StatsModal() {
   const { data: session } = useSession();
+  const localUser = useLocalUser();
 
   const { data: guesses, isLoading: guessesLoading } = useQuery({
     queryKey: ['guesses'],
@@ -88,9 +89,15 @@ export default function StatsModal() {
     }
 
     let squares: string[] = [];
-    guesses?.forEach((guess) => {
-      squares.push(getStatusSquare(guess.correctStatus));
-    });
+    if (session) {
+      guesses?.forEach((guess) => {
+        squares.push(getStatusSquare(guess.correctStatus));
+      });
+    } else {
+      localUser.user?.guesses.forEach((guess) => {
+        squares.push(getStatusSquare(guess.correctStatus));
+      });
+    }
 
     return squares.join('');
   };
@@ -106,10 +113,14 @@ export default function StatsModal() {
       <div className="modal-box min-w-min">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
-        <div className="flex justify-center">{guessesLoading ? '⬜⬜⬜⬜⬜⬜' : guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? statusSquares() : null}</div>
-        <div className="flex flex-col items-end">
+        <div className="flex justify-center">
+          {session
+            ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()
+            : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()}
+        </div>
+        <div className="flex justify-end gap-2">
           {!session && <SignInButton />}
-          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' || localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
             <button className="btn btn-primary" onClick={(e) => copyToClipboard(e)}>
               Share
             </button>
