@@ -14,6 +14,7 @@ interface LocalStatistics {
   gamesWon: number;
   currentStreak: number;
   maxStreak: number;
+  accuracy: number;
 }
 
 interface LocalUser {
@@ -27,7 +28,8 @@ const initialUser: LocalUser = {
     gamesPlayed: 0,
     gamesWon: 0,
     currentStreak: 0,
-    maxStreak: 0
+    maxStreak: 0,
+    accuracy: 0
   },
   guesses: [],
   name: 'anon'

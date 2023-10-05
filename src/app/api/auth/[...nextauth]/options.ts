@@ -27,6 +27,7 @@ export const options: NextAuthOptions = {
           maxStreak: 0,
           gamesPlayed: 0,
           gamesWon: 0,
+          accuracy: 0,
           userId: message.user.id
         }
       });
