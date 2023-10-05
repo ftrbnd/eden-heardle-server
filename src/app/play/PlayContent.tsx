@@ -44,23 +44,23 @@ function Countdown({ nextReset, song, guessedSong }: CountdownProps) {
   }, [timestamp]);
 
   return (
-    <div className="self-end flex flex-col items-center text-center">
-      <p className="font-bold text-lg">{guessedSong ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${song}", try again tomorrow!`}</p>
+    <div className="self-end flex flex-col items-center text-center gap-1">
+      <p className="font-bold text-md sm:text-lg">{guessedSong ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${song}", try again tomorrow!`}</p>
       <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
-        <div className="flex flex-col">
-          <span className="countdown font-mono text-5xl">
+        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span className="countdown font-mono text-3xl sm:text-5xl">
             <span id="hours" style={{ '--value': countdown.hours }}></span>
           </span>
           hours
         </div>
-        <div className="flex flex-col">
-          <span className="countdown font-mono text-5xl">
+        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span className="countdown font-mono text-3xl sm:text-5xl">
             <span id="minutes" style={{ '--value': countdown.minutes }}></span>
           </span>
           min
         </div>
-        <div className="flex flex-col">
-          <span className="countdown font-mono text-5xl">
+        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span className="countdown font-mono text-3xl sm:text-5xl">
             <span id="seconds" style={{ '--value': countdown.seconds }}></span>
           </span>
           sec
@@ -92,8 +92,8 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col items-center h-full justify-between">
       <Navbar>{children}</Navbar>
-      <div className="h-full grid grid-rows-2 py-4 w-full">
-        <div className="grid grid-rows-6 items-center w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
+      <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+        <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
           {sessionStatus === 'loading' && !guessesFetched
             ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
             : sessionStatus === 'authenticated' && guessesFetched
@@ -109,7 +109,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
               <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
             )}
       </div>
-      <div className="flex flex-col gap-2 items-center w-full card shadow-2xl p-4">
+      <div className="grid grid-rows-2 flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         <SongSelectInput dailySong={dailySong} />
         <AudioPlayer />
       </div>

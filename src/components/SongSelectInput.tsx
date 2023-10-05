@@ -140,7 +140,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
   };
 
   return (
-    <select className="select select-primary w-full md:w-3/5 xl:w-2/5" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
+    <select className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
       <option disabled>Choose a song!</option>
       {songs?.map((song) => (
         <option key={song.id} value={song.name} disabled={disableOption(song)}>
