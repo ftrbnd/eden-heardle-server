@@ -154,7 +154,7 @@ export default function LeaderboardModal() {
           <>
             <div className="divider mb-0"></div>
             <div className="flex flex-col items-center">
-              <p>Stats are not stored in the database without an account!</p>
+              <p>Your stats are not stored in the cloud without an account!</p>
             </div>
             <div className="divider mt-0"></div>
           </>
