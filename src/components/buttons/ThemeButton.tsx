@@ -18,7 +18,7 @@ export default function ThemeButton() {
 
   return (
     <label className="swap swap-rotate">
-      <input type="checkbox" onClick={() => setTheme(theme === 'lofi' ? 'black' : 'lofi')} />
+      <input type="checkbox" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
       <FontAwesomeIcon icon={faMoon} className="w-6 h-6 swap-on" />
       <FontAwesomeIcon icon={faSun} className="w-6 h-6 swap-off" />
     </label>
