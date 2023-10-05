@@ -1,29 +1,30 @@
 import { Song } from '@prisma/client';
 import GuessCard from '../GuessCard';
-import CloseRulesButton from './CloseRulesButton';
 import Link from 'next/link';
+import prisma from '@/lib/db';
 
 async function getTwoRandomSongs() {
-  const res = await fetch('http://localhost:3000/api/songs?limit=2');
+  const songsCount = await prisma.song.count();
+  const skip = Math.floor(Math.random() * songsCount);
 
-  if (!res.ok) throw new Error('Failed to fetch 2 random songs');
+  let songs: Song[] = [];
+  while (songs.length !== 3) {
+    songs = await prisma.song.findMany({
+      skip: skip,
+      take: 3
+    });
+  }
 
-  const data = await res.json();
-  return data;
+  return songs;
 }
 
 export default async function RulesModal() {
-  const { songs }: { songs: Song[] } = await getTwoRandomSongs();
-
-  const exampleDailySong = {
-    name: 'End Credits',
-    album: 'End Credits'
-  };
+  const songs = await getTwoRandomSongs();
 
   const getCorrectStatus = (song: Song) => {
-    if (song.name === exampleDailySong.name) {
+    if (song.name === songs[0].name) {
       return 'CORRECT';
-    } else if (song.album === exampleDailySong.album) {
+    } else if (song.album === songs[0].album) {
       return 'ALBUM';
     } else {
       return 'WRONG';
@@ -41,9 +42,15 @@ export default async function RulesModal() {
             <li>Every incorrect guess extends the {"song's"} playback duration by one second.</li>
             <li>The {"tiles'"} icon will change if your guess belongs to the same album.</li>
           </ul>
-          <h3 className="font-bold text-lg">Examples</h3>
+          <h3 className="text-lg">
+            Example:{' '}
+            <span className="font-bold">
+              {songs[0].name} ({songs[0].album})
+            </span>
+          </h3>
           <div className="grid grid-rows-2 gap-2 py-2">
-            {songs && songs?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={getCorrectStatus(song)} />)}
+            <GuessCard key={songs[1].id} name={songs[1].name} album={songs[1].album || ''} cover={songs[1].cover} correctStatus={getCorrectStatus(songs[1])} />
+            <GuessCard key={songs[2].id} name={songs[2].name} album={songs[2].album || ''} cover={songs[2].cover} correctStatus={getCorrectStatus(songs[2])} />
           </div>
           <p className="text-md pt-2">
             A new puzzle is released daily at midnight (Eastern Time). If you {"haven't"} already, you can join our{' '}
