@@ -72,10 +72,10 @@ function Countdown({ nextReset, song, guessedSong }: CountdownProps) {
 
 export default function PlayContent({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const localUser = useLocalUser();
 
-  const { data: guesses, isLoading: guessesLoading } = useQuery({
+  const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs
   });
@@ -94,17 +94,20 @@ export default function PlayContent({ children }: { children: ReactNode }) {
       <Navbar>{children}</Navbar>
       <div className="h-full grid grid-rows-2 py-4 w-full">
         <div className="grid grid-rows-6 items-center w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-          {session && guessesLoading
+          {sessionStatus === 'loading' && !guessesFetched
             ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
-            : guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
-          {!session && localUser.user?.guesses.map((song, index) => <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
+            : sessionStatus === 'authenticated' && guessesFetched
+            ? guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)
+            : localUser.user?.guesses.map((song, index) => <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
         </div>
-        {session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-          <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
-        )}
-        {!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-          <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
-        )}
+
+        {session
+          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+              <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
+            )
+          : (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+              <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
+            )}
       </div>
       <div className="flex flex-col gap-2 items-center w-full card shadow-2xl p-4">
         <SongSelectInput dailySong={dailySong} />
