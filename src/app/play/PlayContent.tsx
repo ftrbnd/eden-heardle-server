@@ -99,6 +99,18 @@ export default function PlayContent({ children }: { children: ReactNode }) {
             : sessionStatus === 'authenticated' && guessesFetched
             ? guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)
             : localUser.user?.guesses.map((song, index) => <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
+          {session && guesses?.length === 0 && (
+            <div className="row-span-full text-center">
+              <h1 className="text-5xl font-bold">Hello there</h1>
+              <p className="py-6">Press play and choose a song to get started!</p>
+            </div>
+          )}
+          {!session && localUser.user?.guesses.length === 0 && (
+            <div className="row-span-full text-center">
+              <h1 className="text-5xl font-bold">Hello there</h1>
+              <p className="py-6">Press play and choose a song to get started!</p>
+            </div>
+          )}
         </div>
 
         {session
