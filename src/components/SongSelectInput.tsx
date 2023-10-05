@@ -1,5 +1,6 @@
 'use client';
 
+import useLocalUser from '@/context/LocalUserProvider';
 import { getSongs, getGuessedSongs, updateGuessedSongs } from '@/lib/songsApi';
 import { updateStats } from '@/lib/statsApi';
 import { createId } from '@paralleldrive/cuid2';
@@ -10,6 +11,7 @@ import { useEffect, ChangeEvent } from 'react';
 
 export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }) {
   const { data: session } = useSession();
+  const localUser = useLocalUser();
   const queryClient = useQueryClient();
 
   const { data: songs, isLoading: songsLoading } = useQuery({
@@ -79,11 +81,18 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
   });
 
   useEffect(() => {
-    if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
-      const modal = document.getElementById('stats_modal') as HTMLDialogElement;
-      modal.showModal();
+    if (guesses) {
+      if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
+        const modal = document.getElementById('stats_modal') as HTMLDialogElement;
+        modal.showModal();
+      }
+    } else {
+      if (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') {
+        const modal = document.getElementById('stats_modal') as HTMLDialogElement;
+        modal.showModal();
+      }
     }
-  }, [guesses]);
+  }, [guesses, localUser.user?.guesses]);
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {
@@ -94,22 +103,38 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
     const selectedSong = songs?.find((song) => song.name === event.target.value);
     if (!selectedSong) return;
 
-    if (!session) return;
-    guessMutation.mutate({
-      id: createId(),
-      name: selectedSong.name,
-      album: selectedSong.album,
-      cover: selectedSong.cover,
-      correctStatus: getCorrectStatus(selectedSong),
-      guessListId: createId()
-    });
+    if (session) {
+      guessMutation.mutate({
+        id: createId(),
+        name: selectedSong.name,
+        album: selectedSong.album,
+        cover: selectedSong.cover,
+        correctStatus: getCorrectStatus(selectedSong),
+        guessListId: createId()
+      });
+    } else {
+      localUser.updateGuesses({
+        name: selectedSong.name,
+        album: selectedSong.album || '',
+        cover: selectedSong.cover,
+        correctStatus: getCorrectStatus(selectedSong)
+      });
+    }
+  };
+
+  const disableOption = (song: Song) => {
+    if (session) {
+      return guesses?.some((guess) => guess.name === song.name) || guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT';
+    } else {
+      return localUser.user?.guesses?.some((guess) => guess.name === song.name) || localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT';
+    }
   };
 
   return (
     <select className="select select-primary w-full md:w-3/5 xl:w-2/5" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
       <option disabled>Choose a Song</option>
       {songs?.map((song) => (
-        <option key={song.id} value={song.name} disabled={guesses?.some((guess) => guess.name === song.name) || guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT'}>
+        <option key={song.id} value={song.name} disabled={disableOption(song)}>
           {song.name}
         </option>
       ))}

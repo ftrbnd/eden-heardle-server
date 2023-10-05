@@ -2,8 +2,10 @@
 
 import { getLeaderboard } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
+import SignInButton from '../buttons/SignInButton';
 
 type Tab = 'TODAY' | 'WIN_PCT' | 'CUR_STRK' | 'MAX_STRK';
 
@@ -140,6 +142,7 @@ function Tabs({ activeTab, setActiveTab }: { activeTab: Tab; setActiveTab: (tab:
 
 export default function LeaderboardModal() {
   const [activeTab, setActiveTab] = useState<Tab>('TODAY');
+  const { data: session } = useSession();
 
   return (
     <dialog id="leaderboard_modal" className="modal modal-bottom sm:modal-middle">
@@ -147,9 +150,19 @@ export default function LeaderboardModal() {
         <h3 className="font-bold text-lg">Leaderboard</h3>
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         <StatTable activeTab={activeTab} />
+        {!session && (
+          <>
+            <div className="divider mb-0"></div>
+            <div className="flex flex-col items-center">
+              <p>Stats are not stored in the database without an account!</p>
+            </div>
+            <div className="divider mt-0"></div>
+          </>
+        )}
         <div className="modal-action ">
           <form method="dialog" className="flex gap-2">
             {/* if there is a button in form, it will close the modal */}
+            {!session && <SignInButton />}
             <button className="btn">Close</button>
           </form>
         </div>

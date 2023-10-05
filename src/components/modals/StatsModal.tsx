@@ -8,8 +8,12 @@ import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import { MouseEvent } from 'react';
 import { faArrowTrendUp, faCalendarDays, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useLocalUser from '@/context/LocalUserProvider';
 
 function Stats() {
+  const { data: session } = useSession();
+  const localUser = useLocalUser();
+
   const { data: stats } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats
@@ -22,7 +26,7 @@ function Stats() {
           <FontAwesomeIcon icon={faCalendarDays} className="w-8 h-8" />
         </div>
         <div className="stat-title">Games Played</div>
-        <div className="stat-value">{stats?.gamesPlayed ?? 0}</div>
+        <div className="stat-value">{session ? stats?.gamesPlayed ?? 0 : localUser.user?.statistics.gamesPlayed}</div>
       </div>
 
       <div className="stat shadow">
@@ -30,7 +34,11 @@ function Stats() {
           <FontAwesomeIcon icon={faPercent} className="w-8 h-8" />
         </div>
         <div className="stat-title">Win Percentage</div>
-        <div className="stat-value">{Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)}</div>
+        <div className="stat-value">
+          {session
+            ? Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)
+            : Math.round(((localUser.user?.statistics?.gamesWon ?? 0) / (localUser.user?.statistics?.gamesPlayed || 1)) * 100)}
+        </div>
       </div>
 
       <div className="stat shadow">
@@ -38,7 +46,7 @@ function Stats() {
           <FontAwesomeIcon icon={faArrowTrendUp} className="w-8 h-8" />
         </div>
         <div className="stat-title">Current Streak</div>
-        <div className="stat-value">{stats?.currentStreak ?? 0}</div>
+        <div className="stat-value">{session ? stats?.currentStreak ?? 0 : localUser.user?.statistics.currentStreak}</div>
       </div>
 
       <div className="stat shadow">
@@ -46,7 +54,7 @@ function Stats() {
           <FontAwesomeIcon icon={faTrophy} className="w-8 h-8" />
         </div>
         <div className="stat-title">Max Streak</div>
-        <div className="stat-value">{stats?.maxStreak ?? 0}</div>
+        <div className="stat-value">{session ? stats?.maxStreak ?? 0 : localUser.user?.statistics.maxStreak}</div>
       </div>
     </div>
   );
@@ -99,17 +107,6 @@ export default function StatsModal() {
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
         <div className="flex justify-center">{guessesLoading ? '⬜⬜⬜⬜⬜⬜' : guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? statusSquares() : null}</div>
-        {!session && (
-          <>
-            <div className="divider"></div>
-            <div className="flex flex-col items-center">
-              <p>Stats are not tracked without an account!</p>
-              <p>Sign in to link your stats.</p>
-              <p className="font-bold text-lg">TODO: Use localStorage to store stats?</p>
-            </div>
-            <div className="divider"></div>
-          </>
-        )}
         <div className="modal-action ">
           <form method="dialog" className="flex gap-2">
             {/* if there is a button in form, it will close the modal */}

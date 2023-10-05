@@ -4,6 +4,7 @@ import NextThemesProvider from '@/context/NextThemesProvider';
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { LocalUserProvider } from '@/context/LocalUserProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <NextThemesProvider>
           <AuthSessionProvider>
-            <TanstackProvider>{children}</TanstackProvider>
+            <TanstackProvider>
+              <LocalUserProvider>{children}</LocalUserProvider>
+            </TanstackProvider>
           </AuthSessionProvider>
         </NextThemesProvider>
       </body>

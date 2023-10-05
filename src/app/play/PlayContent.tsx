@@ -4,12 +4,12 @@ import { useSession } from 'next-auth/react';
 import AudioPlayer from '../../components/AudioPlayer';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
-import { getSessionUser } from '@/lib/userApi';
 import Navbar from '@/components/Navbar';
 import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GuessCard from '@/components/GuessCard';
 import SongSelectInput from '@/components/SongSelectInput';
+import useLocalUser from '@/context/LocalUserProvider';
 
 interface CountdownProps {
   nextReset?: Date | null;
@@ -71,7 +71,9 @@ function Countdown({ nextReset, song, guessedSong }: CountdownProps) {
 }
 
 export default function PlayContent({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const { data: session } = useSession();
+  const localUser = useLocalUser();
 
   const { data: guesses, isLoading: guessesLoading } = useQuery({
     queryKey: ['guesses'],
@@ -83,13 +85,6 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     queryFn: getDailySong
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: getSessionUser
-  });
-
-  const router = useRouter();
-
   useEffect(() => {
     router.replace('/play');
   }, [router]);
@@ -99,12 +94,16 @@ export default function PlayContent({ children }: { children: ReactNode }) {
       <Navbar>{children}</Navbar>
       <div className="h-full grid grid-rows-2 py-4 w-full">
         <div className="grid grid-rows-6 items-center w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-          {guessesLoading
+          {session && guessesLoading
             ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
             : guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
+          {!session && localUser.user?.guesses.map((song, index) => <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
         </div>
-        {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+        {session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
           <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
+        )}
+        {!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
         )}
       </div>
       <div className="flex flex-col gap-2 items-center w-full card shadow-2xl p-4">
