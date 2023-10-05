@@ -19,7 +19,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
     queryFn: getSongs
   });
 
-  const { data: guesses } = useQuery({
+  const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs
   });
@@ -31,12 +31,19 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
 
       const prevStats = queryClient.getQueryData<Statistics>(['stats']);
       if (prevStats) {
+        let gameAccuracy = 0;
+        // find index of first green square
+        const greenSquareIndex = guesses?.findIndex((guess) => guess.correctStatus === 'CORRECT');
+        // calculate accuracy for this game [0,6]
+        gameAccuracy = greenSquareIndex === -1 ? 0 : 6 - (greenSquareIndex ?? 6);
+
         queryClient.setQueryData<Statistics>(['stats'], {
           ...prevStats,
           gamesPlayed: prevStats.gamesPlayed + 1,
           gamesWon: guessedSong ? prevStats.gamesWon + 1 : prevStats.gamesWon,
           currentStreak: guessedSong ? prevStats.currentStreak + 1 : 0,
-          maxStreak: Math.max(prevStats.maxStreak, guessedSong ? prevStats.currentStreak + 1 : 0)
+          maxStreak: Math.max(prevStats.maxStreak, guessedSong ? prevStats.currentStreak + 1 : 0),
+          accuracy: prevStats.accuracy + gameAccuracy
         });
       }
 
@@ -81,18 +88,20 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
   });
 
   useEffect(() => {
-    if (guesses) {
-      if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
-        const modal = document.getElementById('stats_modal') as HTMLDialogElement;
-        modal.showModal();
-      }
-    } else {
-      if (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') {
-        const modal = document.getElementById('stats_modal') as HTMLDialogElement;
-        modal.showModal();
+    if (guessesFetched) {
+      if (guesses) {
+        if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
+          const modal = document.getElementById('stats_modal') as HTMLDialogElement;
+          modal.showModal();
+        }
+      } else {
+        if (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') {
+          const modal = document.getElementById('stats_modal') as HTMLDialogElement;
+          modal.showModal();
+        }
       }
     }
-  }, [guesses, localUser.user?.guesses]);
+  }, [guessesFetched, guesses, localUser.user?.guesses]);
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {

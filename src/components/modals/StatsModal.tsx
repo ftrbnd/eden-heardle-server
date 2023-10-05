@@ -6,7 +6,7 @@ import { getStats } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import { MouseEvent } from 'react';
-import { faArrowTrendUp, faCalendarDays, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { faArrowTrendUp, faBullseye, faCalendarDays, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useLocalUser from '@/context/LocalUserProvider';
 
@@ -20,13 +20,13 @@ function Stats() {
   });
 
   return (
-    <div className="grid grid-rows-2 sm:grid-cols-2 gap-2 py-4">
+    <div className="grid grid-rows-3 sm:grid-cols-2 gap-2 py-4">
       <div className="stat shadow">
         <div className="stat-figure text-secondary">
           <FontAwesomeIcon icon={faCalendarDays} className="w-8 h-8" />
         </div>
         <div className="stat-title">Games Played</div>
-        <div className="stat-value">{session ? stats?.gamesPlayed ?? 0 : localUser.user?.statistics.gamesPlayed}</div>
+        <div className="stat-value text-left">{session ? stats?.gamesPlayed ?? 0 : localUser.user?.statistics.gamesPlayed}</div>
       </div>
 
       <div className="stat shadow">
@@ -34,10 +34,31 @@ function Stats() {
           <FontAwesomeIcon icon={faPercent} className="w-8 h-8" />
         </div>
         <div className="stat-title">Win Percentage</div>
-        <div className="stat-value">
-          {session
-            ? Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)
-            : Math.round(((localUser.user?.statistics?.gamesWon ?? 0) / (localUser.user?.statistics?.gamesPlayed || 1)) * 100)}
+        <div className="tooltip" data-tip={`${session ? stats?.gamesWon : localUser.user?.statistics.gamesWon} games won`}>
+          <div className="stat-value text-left">
+            {session
+              ? Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)
+              : Math.round(((localUser.user?.statistics?.gamesWon ?? 0) / (localUser.user?.statistics?.gamesPlayed || 1)) * 100)}
+          </div>
+        </div>
+      </div>
+
+      <div className="stat shadow">
+        <div className="stat-figure text-secondary">
+          <FontAwesomeIcon icon={faBullseye} className="w-8 h-8" />
+        </div>
+        <div className="stat-title">Accuracy</div>
+        <div
+          className="tooltip"
+          data-tip={`${
+            session ? (stats?.gamesPlayed ?? 0) * 6 - (stats?.accuracy ?? 0) : (localUser.user?.statistics.gamesPlayed ?? 0) * 6 - (localUser.user?.statistics.accuracy ?? 0)
+          } incorrect guesses overall`}
+        >
+          <div className="stat-value text-left">
+            {session
+              ? Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)
+              : Math.round(((localUser.user?.statistics.accuracy ?? 0) / ((localUser.user?.statistics.gamesPlayed || 1) * 6)) * 100)}
+          </div>
         </div>
       </div>
 
@@ -46,7 +67,7 @@ function Stats() {
           <FontAwesomeIcon icon={faArrowTrendUp} className="w-8 h-8" />
         </div>
         <div className="stat-title">Current Streak</div>
-        <div className="stat-value">{session ? stats?.currentStreak ?? 0 : localUser.user?.statistics.currentStreak}</div>
+        <div className="stat-value text-left">{session ? stats?.currentStreak ?? 0 : localUser.user?.statistics.currentStreak}</div>
       </div>
 
       <div className="stat shadow">
@@ -54,7 +75,7 @@ function Stats() {
           <FontAwesomeIcon icon={faTrophy} className="w-8 h-8" />
         </div>
         <div className="stat-title">Max Streak</div>
-        <div className="stat-value">{session ? stats?.maxStreak ?? 0 : localUser.user?.statistics.maxStreak}</div>
+        <div className="stat-value text-left">{session ? stats?.maxStreak ?? 0 : localUser.user?.statistics.maxStreak}</div>
       </div>
     </div>
   );
@@ -64,7 +85,7 @@ export default function StatsModal() {
   const { data: session } = useSession();
   const localUser = useLocalUser();
 
-  const { data: guesses, isLoading: guessesLoading } = useQuery({
+  const { data: guesses } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs
   });
@@ -120,7 +141,8 @@ export default function StatsModal() {
         </div>
         <div className="flex justify-end gap-2">
           {!session && <SignInButton />}
-          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' || localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          {((session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT')) ||
+            (!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'))) && (
             <button className="btn btn-primary" onClick={(e) => copyToClipboard(e)}>
               Share
             </button>

@@ -38,7 +38,6 @@ const initialUser: LocalUser = {
 type LocalUserState = {
   user: LocalUser | null;
   updateGuesses: (guess: LocalGuessedSong) => void;
-  reset: () => void;
 };
 
 const LocalUserContext = createContext<LocalUserState | null>(null);
@@ -74,14 +73,25 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
   }, [user]);
 
   const updateGuesses = (guess: LocalGuessedSong) => {
-    function updateStatistics(guessedSong: boolean) {
+    /**
+     * Only runs when a user completes the game
+     * @param guessedSong whether the user guessed the song within 6 attempts
+     */
+    function updateStatistics(guessedSong: boolean, finalGuesses: LocalGuessedSong[]) {
       const oldStats = { ...user.statistics };
+
+      // find index of first green square
+      const greenSquareIndex = finalGuesses.findIndex((guess) => guess.correctStatus === 'CORRECT');
+
+      // calculate accuracy for this game [0,6]
+      const gameAccuracy = greenSquareIndex === -1 ? 0 : 6 - greenSquareIndex;
 
       const newStats: LocalStatistics = {
         gamesPlayed: oldStats.gamesPlayed + 1,
         gamesWon: guessedSong ? oldStats.gamesWon + 1 : oldStats.gamesWon,
         currentStreak: guessedSong ? oldStats.currentStreak + 1 : 0,
-        maxStreak: Math.max(oldStats.maxStreak, guessedSong ? oldStats.currentStreak + 1 : 0)
+        maxStreak: Math.max(oldStats.maxStreak, guessedSong ? oldStats.currentStreak + 1 : 0),
+        accuracy: oldStats.accuracy + gameAccuracy
       };
 
       setUser((prevUser) => ({
@@ -118,18 +128,36 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
     );
 
     if (newGuesses.at(-1)?.correctStatus === 'CORRECT') {
-      updateStatistics(true);
+      updateStatistics(true, newGuesses);
     } else if (newGuesses.length === 6 && newGuesses.at(-1)?.correctStatus !== 'CORRECT') {
-      updateStatistics(false);
+      updateStatistics(false, newGuesses);
     }
   };
 
-  const reset = () => {
-    localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
-    setUser(initialUser);
-  };
+  // FOR DEV ONLY:
+  // const reset = () => {
+  //   localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
+  //   setUser(initialUser);
+  // };
 
-  return <LocalUserContext.Provider value={{ user, updateGuesses, reset }}>{props.children}</LocalUserContext.Provider>;
+  // const resetGuesses = () => {
+  //   setUser((prevUser) => ({
+  //     name: prevUser.name,
+  //     guesses: [],
+  //     statistics: prevUser.statistics
+  //   }));
+
+  //   localStorage.setItem(
+  //     'eden_heardle_user',
+  //     JSON.stringify({
+  //       name: user.name,
+  //       guesses: [],
+  //       statistics: user.statistics
+  //     })
+  //   );
+  // };
+
+  return <LocalUserContext.Provider value={{ user, updateGuesses }}>{props.children}</LocalUserContext.Provider>;
 };
 
 export default useLocalUser;

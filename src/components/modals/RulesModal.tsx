@@ -42,12 +42,14 @@ export default async function RulesModal() {
             <li>Every incorrect guess extends the {"song's"} playback duration by one second.</li>
             <li>The {"tiles'"} icon will change if your guess belongs to the same album.</li>
           </ul>
-          <h3 className="text-lg">
-            Example:{' '}
-            <span className="font-bold">
-              {songs[0].name} ({songs[0].album})
-            </span>
-          </h3>
+          <div className="tooltip" data-tip={'Refresh for a new example!'}>
+            <h3 className="text-lg">
+              Example:{' '}
+              <span className="font-bold">
+                {songs[0].name} ({songs[0].album})
+              </span>
+            </h3>
+          </div>
           <div className="grid grid-rows-2 gap-2 py-2">
             <GuessCard key={songs[1].id} name={songs[1].name} album={songs[1].album || ''} cover={songs[1].cover} correctStatus={getCorrectStatus(songs[1])} />
             <GuessCard key={songs[2].id} name={songs[2].name} album={songs[2].album || ''} cover={songs[2].cover} correctStatus={getCorrectStatus(songs[2])} />

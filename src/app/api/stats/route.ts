@@ -37,12 +37,30 @@ export async function PATCH(req: NextRequest) {
     });
     if (!oldStats) return NextResponse.json({ message: "Failed to find user's stats" }, { status: 404 });
 
-    // do calculations here
+    const guesses = await prisma.guesses.findUnique({
+      where: {
+        userId: session.user.id
+      },
+      include: {
+        songs: true
+      }
+    });
+
+    let gameAccuracy = 0;
+    if (guesses?.songs) {
+      // find index of first green square
+      const greenSquareIndex = guesses.songs.findIndex((guess) => guess.correctStatus === 'CORRECT');
+
+      // calculate accuracy for this game [0,6]
+      gameAccuracy = greenSquareIndex === -1 ? 0 : 6 - greenSquareIndex;
+    }
+
     const newStats: Statistics = {
       gamesPlayed: oldStats.gamesPlayed + 1,
       gamesWon: guessedSong ? oldStats.gamesWon + 1 : oldStats.gamesWon,
       currentStreak: guessedSong ? oldStats.currentStreak + 1 : 0,
       maxStreak: Math.max(oldStats.maxStreak, guessedSong ? oldStats.currentStreak + 1 : 0),
+      accuracy: oldStats.accuracy + gameAccuracy,
       id: 'fakeid',
       userId: 'fakeuserid'
     };
@@ -55,7 +73,8 @@ export async function PATCH(req: NextRequest) {
         gamesPlayed: newStats.gamesPlayed,
         gamesWon: newStats.gamesWon,
         currentStreak: newStats.currentStreak,
-        maxStreak: newStats.maxStreak
+        maxStreak: newStats.maxStreak,
+        accuracy: newStats.accuracy
       }
     });
 

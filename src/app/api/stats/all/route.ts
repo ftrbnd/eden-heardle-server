@@ -12,6 +12,11 @@ interface WinPctStat {
   user: User;
 }
 
+interface AccuracyStat {
+  data: number;
+  user: User;
+}
+
 interface CurStrkStat {
   data: number;
   user: User;
@@ -25,6 +30,7 @@ interface MaxStrkStat {
 export interface LeaderboardStats {
   today: TodayStat[];
   winPercentages: WinPctStat[];
+  accuracies: AccuracyStat[];
   currentStreaks: CurStrkStat[];
   maxStreaks: MaxStrkStat[];
 }
@@ -63,6 +69,7 @@ export async function GET() {
     const leaderboard: LeaderboardStats = {
       today: [],
       winPercentages: [],
+      accuracies: [],
       currentStreaks: [],
       maxStreaks: []
     };
@@ -88,10 +95,15 @@ export async function GET() {
         });
       }
 
-      // win percentages
+      // win percentages and accuracies
       if (userStat.gamesPlayed > 0) {
         leaderboard.winPercentages.push({
           data: Math.round(((userStat?.gamesWon ?? 0) / (userStat?.gamesPlayed || 1)) * 100),
+          user: userGuesses.user
+        });
+
+        leaderboard.accuracies.push({
+          data: Math.round(((userStat.accuracy ?? 0) / (userStat.gamesPlayed * 6)) * 100),
           user: userGuesses.user
         });
       }
@@ -120,6 +132,7 @@ export async function GET() {
       return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex); // if they didn't get the song, 'CORRECT' is not in any of their GuessedSongs, so return any number greater than 6 instead of -1
     });
     leaderboard.winPercentages.sort((a, b) => b.data - a.data);
+    leaderboard.accuracies.sort((a, b) => b.data - a.data);
     leaderboard.currentStreaks.sort((a, b) => b.data - a.data);
     leaderboard.maxStreaks.sort((a, b) => b.data - a.data);
 

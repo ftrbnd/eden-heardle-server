@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import SignInButton from '../buttons/SignInButton';
 
-type Tab = 'TODAY' | 'WIN_PCT' | 'CUR_STRK' | 'MAX_STRK';
+type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
 
 function StatTable({ activeTab }: { activeTab: Tab }) {
   const { data: leaderboard } = useQuery({
@@ -59,6 +59,29 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                   </div>
                 </td>
                 <td>{winPct.data}</td>
+              </tr>
+            ))}
+          </tbody>
+        );
+      case 'ACC':
+        return (
+          <tbody>
+            {leaderboard?.accuracies.map((accuracy, index) => (
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>
+                  <div className="flex items-center space-x-3">
+                    <div className="avatar">
+                      <div className="mask mask-squircle w-12 h-12">
+                        <Image src={accuracy.user.image || '/default.png'} alt={`${accuracy.user.name}'s Avatar`} height={48} width={48} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-bold">{accuracy.user.name}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{accuracy.data}</td>
               </tr>
             ))}
           </tbody>
@@ -129,6 +152,9 @@ function Tabs({ activeTab, setActiveTab }: { activeTab: Tab; setActiveTab: (tab:
       </a>
       <a onClick={() => setActiveTab('WIN_PCT')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'WIN_PCT' && 'tab-active'}`}>
         Win Percentage
+      </a>
+      <a onClick={() => setActiveTab('ACC')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'ACC' && 'tab-active'}`}>
+        Accuracy
       </a>
       <a onClick={() => setActiveTab('CUR_STRK')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'CUR_STRK' && 'tab-active'}`}>
         Current Streaks
