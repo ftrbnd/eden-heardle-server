@@ -3,7 +3,7 @@ import { Statistics } from '@prisma/client';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api'
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api`
 });
 
 export const statsUrlEndpoint = '/stats';

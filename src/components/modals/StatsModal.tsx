@@ -142,13 +142,19 @@ export default function StatsModal() {
       <div className="modal-box min-w-min">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
-        <div className="flex justify-center pb-4">
-          <kbd className="kbd">
-            {session
-              ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()
-              : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()}
-          </kbd>
-        </div>
+
+        {session
+          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+              <div className="flex justify-center pb-4">
+                <kbd className="kbd">statusSquares()</kbd>
+              </div>
+            )
+          : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+              <div className="flex justify-center pb-4">
+                <kbd className="kbd">statusSquares()</kbd>
+              </div>
+            )}
+
         <div className="flex justify-end gap-2">
           {!session && <SignInButton />}
           {((session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT')) ||
