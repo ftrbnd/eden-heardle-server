@@ -5,8 +5,8 @@ import { useSession } from 'next-auth/react';
 import { getStats } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
-import { MouseEvent } from 'react';
-import { faArrowTrendUp, faBullseye, faCalendarDays, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { MouseEvent, useState } from 'react';
+import { faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useLocalUser from '@/context/LocalUserProvider';
 
@@ -82,6 +82,8 @@ function Stats() {
 }
 
 export default function StatsModal() {
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const { data: session } = useSession();
   const localUser = useLocalUser();
 
@@ -120,13 +122,19 @@ export default function StatsModal() {
       });
     }
 
-    return squares.join('');
+    return squares.join(' ');
   };
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
+    if (showSuccess) return;
 
+    setShowSuccess(true);
     await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares()}`);
+
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
   };
 
   return (
@@ -134,17 +142,20 @@ export default function StatsModal() {
       <div className="modal-box min-w-min">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
-        <div className="flex justify-center">
-          {session
-            ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()
-            : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()}
+        <div className="flex justify-center pb-4">
+          <kbd className="kbd">
+            {session
+              ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()
+              : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && statusSquares()}
+          </kbd>
         </div>
         <div className="flex justify-end gap-2">
           {!session && <SignInButton />}
           {((session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT')) ||
             (!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'))) && (
-            <button className="btn btn-primary" onClick={(e) => copyToClipboard(e)}>
-              Share
+            <button className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
+              {showSuccess ? 'Copied!' : 'Share'}
+              <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
             </button>
           )}
         </div>
