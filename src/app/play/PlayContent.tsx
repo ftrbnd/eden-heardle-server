@@ -121,7 +121,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
               <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
             )}
       </div>
-      <div className="grid grid-rows-2 flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
+      <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         <SongSelectInput dailySong={dailySong} />
         <AudioPlayer />
       </div>

@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AudioPlayer() {
+  const [second, setSecond] = useState(0.0);
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -16,34 +17,55 @@ export default function AudioPlayer() {
   });
 
   useEffect(() => {
-    audioRef.current?.addEventListener('playing', () => {
-      // console.log('PLAYING');
-    });
+    const handleTimeUpdate = () => {
+      if (currentAudio) {
+        // update time for progress bar and timer
+        setSecond(currentAudio.currentTime);
+      }
 
-    audioRef.current?.addEventListener('timeupdate', () => {
-      // console.log(audioRef.current?.currentTime);
-    });
-  }, []);
+      if (currentAudio && guesses?.length) {
+        if (Math.floor(currentAudio.currentTime) > guesses.length) {
+          // time passes their allowed time
+          pauseSong();
+        }
+      }
+    };
 
-  const togglePlayer = () => {
+    const currentAudio = audioRef.current;
+    currentAudio?.addEventListener('timeupdate', handleTimeUpdate);
+
+    return () => {
+      if (currentAudio) {
+        currentAudio.removeEventListener('timeupdate', handleTimeUpdate);
+      }
+    };
+  }, [guesses?.length]);
+
+  const pauseSong = () => {
     if (!audioRef.current) return;
 
-    if (icon === faPlay) {
-      audioRef.current?.play();
-      setIcon(faPause);
-    } else {
-      audioRef.current?.pause();
-      setIcon(faPlay);
-      audioRef.current.currentTime = 0;
-    }
+    audioRef.current.pause();
+    setIcon(faPlay);
+    audioRef.current.currentTime = 0;
+  };
+
+  const playSong = () => {
+    if (!audioRef.current) return;
+
+    audioRef.current.play();
+    setIcon(faPause);
+  };
+
+  const togglePlayer = () => {
+    icon === faPlay ? playSong() : pauseSong();
   };
 
   return (
     <div className="flex flex-col items-center gap-2 w-full">
-      <progress className="progress progress-primary w-full md:w-3/5 xl:w-2/5" value={guesses?.length} max="6"></progress>
+      <progress className="progress progress-primary w-full md:w-3/5 xl:w-2/5" value={second} max="6"></progress>
 
-      <div className="flex justify-between w-full md:w-3/5 xl:w-2/5">
-        <kbd className="kbd">00:0{audioRef.current?.currentTime}</kbd>
+      <div className="flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5">
+        <kbd className="kbd">00:{String(Math.floor(second)).padStart(2, '0')}</kbd>
         <button className="btn btn-ghost" onClick={togglePlayer}>
           <FontAwesomeIcon icon={icon} className="w-6 h-6" />
         </button>
