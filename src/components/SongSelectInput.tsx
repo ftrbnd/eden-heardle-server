@@ -56,6 +56,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
       }
 
       queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['leaderboard'] });
     }
   });
 
