@@ -8,7 +8,7 @@ export default async function SettingsModal() {
 
   return (
     <dialog id="settings_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box min-w-min">
+      <div className="modal-box min-w-min max-h-80 md:max-h-max">
         <h3 className="font-bold text-lg">Settings</h3>
         <div className="flex flex-col py-4 gap-1">
           <div className="flex justify-between">

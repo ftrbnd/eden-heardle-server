@@ -1,46 +1,50 @@
 import { LeaderboardStats } from '@/app/api/stats/all/route';
 import { Statistics } from '@prisma/client';
-import axios from 'axios';
 
-const api = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}/api`
-});
-
-export const statsUrlEndpoint = '/stats';
+const statsUrlEndpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stats`;
 
 export const getStats = async () => {
   try {
-    const response = await api.get(statsUrlEndpoint);
-    if (!response.data) return null;
+    const response = await fetch(statsUrlEndpoint, {
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('Failed to get stats');
 
-    const { stats }: { stats: Statistics } = response.data;
+    const { stats }: { stats: Statistics } = await response.json();
+    if (!stats) return null;
 
     return stats;
   } catch (err) {
-    console.error("Failed to get user's stats: ", err);
+    console.error(err);
   }
 };
 
 export const updateStats = async (guessedSong: boolean) => {
   try {
-    const response = await api.patch(statsUrlEndpoint, { guessedSong });
+    const response = await fetch(statsUrlEndpoint, {
+      method: 'PATCH',
+      body: JSON.stringify({ guessedSong: guessedSong }),
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('Failed to update stats');
 
-    const { stats }: { stats: Statistics } = response.data;
-
+    const { stats }: { stats: Statistics } = await response.json();
     return stats;
   } catch (err) {
-    console.error("Failed to update user's stats: ", err);
+    console.error(err);
   }
 };
 
 export const getLeaderboard = async () => {
   try {
-    const response = await api.get(`${statsUrlEndpoint}/all`);
+    const response = await fetch(`${statsUrlEndpoint}/all`, {
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('Failed to get leaderboard');
 
-    const { leaderboard }: { leaderboard: LeaderboardStats } = response.data;
-
+    const { leaderboard }: { leaderboard: LeaderboardStats } = await response.json();
     return leaderboard;
   } catch (err) {
-    console.error('Failed to get leaderboard stats: ', err);
+    console.error(err);
   }
 };
