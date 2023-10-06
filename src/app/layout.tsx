@@ -22,7 +22,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <NextThemesProvider>
           <AuthSessionProvider>
             <TanstackProvider>
-              <LocalUserProvider>{children}</LocalUserProvider>
+              <LocalUserProvider>
+                {children} <Analytics />
+              </LocalUserProvider>
             </TanstackProvider>
           </AuthSessionProvider>
         </NextThemesProvider>
