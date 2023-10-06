@@ -22,13 +22,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <NextThemesProvider>
           <AuthSessionProvider>
             <TanstackProvider>
-              <LocalUserProvider>
-                {children}
-                <Analytics />
-              </LocalUserProvider>
+              <LocalUserProvider>{children}</LocalUserProvider>
             </TanstackProvider>
           </AuthSessionProvider>
         </NextThemesProvider>
+        <Analytics />
       </body>
     </html>
   );
