@@ -5,7 +5,7 @@ import ytdl from 'ytdl-core';
 export async function GET() {
   try {
     const currentTime = new Date();
-    if (currentTime.getUTCHours() !== 4) return;
+    if (currentTime.getUTCHours() !== 4) return NextResponse.json({ message: "It's not time to run the cron job." }, { status: 200 });
 
     // get a new random song
     const songsCount = await prisma.song.count();
@@ -94,7 +94,7 @@ export async function GET() {
     // reset all users' guesses
     await prisma.guessedSong.deleteMany({});
 
-    return NextResponse.json({ message: 'Successfully set new daily song!' }, { status: 500 });
+    return NextResponse.json({ message: 'Successfully set new daily song!' }, { status: 200 });
   } catch (error) {
     console.error('Error setting new daily song: ', error);
     return NextResponse.json({ error: 'Error setting new daily song' }, { status: 500 });
