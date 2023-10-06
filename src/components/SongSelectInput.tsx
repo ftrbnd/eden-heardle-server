@@ -106,6 +106,9 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {
+      console.log('Guessed song: ', song);
+      console.log('Daily song: ', dailySong);
+
       return song.name === dailySong?.name ? 'CORRECT' : song?.album === dailySong?.album ? 'ALBUM' : 'WRONG';
     }
 
