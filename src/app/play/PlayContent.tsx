@@ -109,7 +109,9 @@ export default function PlayContent({ children }: { children: ReactNode }) {
 
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
-    queryFn: getDailySong
+    queryFn: getDailySong,
+    refetchInterval: 30 * 1000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   useEffect(() => {

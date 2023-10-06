@@ -16,7 +16,9 @@ function Stats() {
 
   const { data: stats } = useQuery({
     queryKey: ['stats'],
-    queryFn: getStats
+    queryFn: getStats,
+    refetchInterval: 30 * 1000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   return (

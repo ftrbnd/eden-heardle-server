@@ -12,7 +12,9 @@ type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
 function StatTable({ activeTab }: { activeTab: Tab }) {
   const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
     queryKey: ['leaderboard'],
-    queryFn: getLeaderboard
+    queryFn: getLeaderboard,
+    refetchInterval: 30 * 1000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const showSpecificStat = () => {
