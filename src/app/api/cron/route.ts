@@ -4,6 +4,9 @@ import ytdl from 'ytdl-core';
 
 export async function GET() {
   try {
+    const currentTime = new Date();
+    if (currentTime.getUTCHours() !== 4) return;
+
     // get a new random song
     const songsCount = await prisma.song.count();
     const skip = Math.floor(Math.random() * songsCount);
