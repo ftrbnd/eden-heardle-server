@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { LocalUserProvider } from '@/context/LocalUserProvider';
 import { ReactNode } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,7 +22,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <NextThemesProvider>
           <AuthSessionProvider>
             <TanstackProvider>
-              <LocalUserProvider>{children}</LocalUserProvider>
+              <LocalUserProvider>
+                {children}
+                <Analytics />
+              </LocalUserProvider>
             </TanstackProvider>
           </AuthSessionProvider>
         </NextThemesProvider>
