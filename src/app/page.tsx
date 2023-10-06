@@ -72,11 +72,11 @@ export default async function Home() {
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          <div className="flex gap-2 items-center h-3/5">
+          <div className="flex gap-2 justify-center items-center h-3/5">
             <Image src={'/icon.png'} alt="EDEN logo" height={50} width={50} />
-            <h1 className="text-5xl font-bold">EDEN Heardle</h1>
+            <h1 className="text-4xl md:text-5xl font-bold">EDEN Heardle</h1>
           </div>
-          {user && <h2 className="text-3xl font-semibold">Hello {user?.name}!</h2>}
+          {user && <h2 className="text-2xl md:text-3xl font-semibold">Hello {user?.name}!</h2>}
           <p className="py-6">{getConditionalDescription()}</p>
           <div className="flex justify-center gap-2">
             {!user && <RulesButton />}

@@ -139,19 +139,19 @@ export default function StatsModal() {
 
   return (
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box min-w-min">
+      <div className="modal-box min-w-min max-h-80 md:max-h-max">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
 
         {session
           ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
               <div className="flex justify-center pb-4">
-                <kbd className="kbd">statusSquares()</kbd>
+                <kbd className="kbd">{statusSquares()}</kbd>
               </div>
             )
           : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
               <div className="flex justify-center pb-4">
-                <kbd className="kbd">statusSquares()</kbd>
+                <kbd className="kbd">{statusSquares()}</kbd>
               </div>
             )}
 
