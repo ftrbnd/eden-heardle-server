@@ -5,43 +5,70 @@ import AudioPlayer from '../../components/AudioPlayer';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import Navbar from '@/components/Navbar';
-import { ReactNode, useEffect, useState } from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GuessCard from '@/components/GuessCard';
 import SongSelectInput from '@/components/SongSelectInput';
 import useLocalUser from '@/context/LocalUserProvider';
 
 interface CountdownProps {
-  nextReset?: Date | null;
   song: string;
   guessedSong: boolean;
 }
 
-function Countdown({ nextReset, song, guessedSong }: CountdownProps) {
-  const [timestamp, setTimestamp] = useState(0);
-  const [countdown, setCountdown] = useState({
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  });
+interface CSSPropertiesWithVars extends CSSProperties {
+  '--value': number;
+}
+
+function Countdown({ song, guessedSong }: CountdownProps) {
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
-    setTimestamp(new Date(nextReset as unknown as string).getTime());
-  }, [nextReset]);
+    const now = new Date();
 
-  useEffect(() => {
+    const currentUTCHours = now.getUTCHours();
+    const currentUTCMinutes = now.getUTCMinutes();
+    const currentUTCSeconds = now.getUTCSeconds();
+
+    const targetHour = 3;
+    const targetMinute = 0;
+    const targetSecond = 0;
+
+    let hoursRemaining = (targetHour - currentUTCHours + 24) % 24;
+    let minutesRemaining = (targetMinute - currentUTCMinutes + 60) % 60;
+    let secondsRemaining = (targetSecond - currentUTCSeconds + 60) % 60;
+
     const intervalId = setInterval(() => {
-      const timeDifference = timestamp - new Date().getTime() / 1000;
+      secondsRemaining--;
+      setSeconds(secondsRemaining);
+      setMinutes(minutesRemaining);
+      setHours(hoursRemaining);
 
-      setCountdown({
-        hours: new Date(timeDifference * 1000).getHours(),
-        minutes: new Date(timeDifference * 1000).getMinutes(),
-        seconds: new Date(timeDifference * 1000).getSeconds()
-      });
+      if (secondsRemaining < 0) {
+        secondsRemaining = 59;
+        minutesRemaining--;
+        setSeconds(secondsRemaining);
+        setMinutes(minutesRemaining);
+
+        if (minutesRemaining < 0) {
+          minutesRemaining = 59;
+          hoursRemaining--;
+          setMinutes(minutesRemaining);
+          setHours(hoursRemaining);
+
+          if (hoursRemaining < 0) {
+            setHours(hoursRemaining);
+            clearInterval(intervalId);
+            console.log('Countdown to 4 AM UTC has reached 0!');
+          }
+        }
+      }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [timestamp]);
+  }, []);
 
   return (
     <div className="self-end flex flex-col items-center text-center gap-1">
@@ -49,19 +76,19 @@ function Countdown({ nextReset, song, guessedSong }: CountdownProps) {
       <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
         <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
           <span className="countdown font-mono text-3xl sm:text-5xl">
-            <span id="hours" style={{ '--value': countdown.hours }}></span>
+            <span id="hours" style={{ '--value': hours } as CSSPropertiesWithVars}></span>
           </span>
           hours
         </div>
         <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
           <span className="countdown font-mono text-3xl sm:text-5xl">
-            <span id="minutes" style={{ '--value': countdown.minutes }}></span>
+            <span id="minutes" style={{ '--value': minutes } as CSSPropertiesWithVars}></span>
           </span>
           min
         </div>
         <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
           <span className="countdown font-mono text-3xl sm:text-5xl">
-            <span id="seconds" style={{ '--value': countdown.seconds }}></span>
+            <span id="seconds" style={{ '--value': seconds } as CSSPropertiesWithVars}></span>
           </span>
           sec
         </div>
@@ -114,11 +141,9 @@ export default function PlayContent({ children }: { children: ReactNode }) {
         </div>
 
         {session
-          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
-            )
+          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && <Countdown song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
           : (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <Countdown nextReset={dailySong?.nextReset} song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
+              <Countdown song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
             )}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">

@@ -12,13 +12,12 @@ export async function GET() {
       take: 1
     });
     const newDailySong = randomSongs[0];
-    console.log('New daily song: ', newDailySong);
+    console.log('New daily song: ', newDailySong.name);
 
     // determine the random start time
     const dailySongInfo = await ytdl.getBasicInfo(newDailySong.link);
     const songLength = parseInt(dailySongInfo.videoDetails.lengthSeconds);
     const randomStartTime = Math.floor(Math.random() * songLength) - 7;
-    console.log('Random start time: ', randomStartTime);
 
     // get yesterday's daily song and ensure it exists
     const previousDailySong = await prisma.dailySong.findUnique({
@@ -30,7 +29,6 @@ export async function GET() {
     if (!previousDailySong.heardleDay) return NextResponse.json({ error: "Couldn't find previous daily song's heardle day number" }, { status: 500 });
     if (!previousDailySong.nextReset) return NextResponse.json({ error: "Couldn't find previous daily song's next reset" }, { status: 500 });
 
-    console.log('Previous daily song: ', previousDailySong);
     // update daily song or create it if it doesn't exist
     await prisma.dailySong.upsert({
       where: {
@@ -59,8 +57,6 @@ export async function GET() {
     // check users' current streaks
     const users = await prisma.user.findMany();
     for (const user of users) {
-      console.log(`Resetting ${user.name}...`);
-
       const dailyGuesses = await prisma.guesses.findUnique({
         where: {
           userId: user.id
@@ -76,7 +72,6 @@ export async function GET() {
           userId: user.id
         }
       });
-      console.log('Old stats: ', prevStats);
 
       if (!completedDaily) {
         const newStats = await prisma.statistics.update({
@@ -90,13 +85,11 @@ export async function GET() {
             maxStreak: prevStats?.maxStreak
           }
         });
-        console.log('New stats: ', newStats);
       }
     }
 
     // reset all users' guesses
-    const deleteGuesses = await prisma.guessedSong.deleteMany({});
-    console.log('Deleted guesses: ', deleteGuesses);
+    await prisma.guessedSong.deleteMany({});
 
     return NextResponse.json({ message: 'Successfully set new daily song!' }, { status: 500 });
   } catch (error) {
