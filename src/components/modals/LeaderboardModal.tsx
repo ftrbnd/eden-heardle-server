@@ -13,7 +13,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
   const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: getLeaderboard,
-    refetchInterval: 30 * 1000, // 30 seconds,
+    refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
   console.log('leaderboard from query: ', leaderboard);
@@ -198,7 +198,7 @@ export default function LeaderboardModal() {
 
   return (
     <dialog id="leaderboard_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box min-w-min max-h-80 md:max-h-max">
+      <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <h3 className="font-bold text-lg">Leaderboard</h3>
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         <StatTable activeTab={activeTab} />

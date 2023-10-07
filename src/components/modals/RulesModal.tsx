@@ -38,7 +38,7 @@ export default async function RulesModal() {
 
   return (
     <dialog id="rules_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box min-w-min max-h-80 md:max-h-max">
+      <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <h3 className="font-bold text-2xl">How To Play</h3>
         <div className="py-4">
           <p className="font-bold text-lg">Guess the song in 6 tries.</p>

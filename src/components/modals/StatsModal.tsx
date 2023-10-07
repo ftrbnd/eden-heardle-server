@@ -17,7 +17,7 @@ function Stats() {
   const { data: stats } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats,
-    refetchInterval: 30 * 1000, // 30 seconds,
+    refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
 
@@ -91,7 +91,9 @@ export default function StatsModal() {
 
   const { data: guesses } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs
+    queryFn: getGuessedSongs,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const { data: dailySong } = useQuery({
@@ -143,7 +145,7 @@ export default function StatsModal() {
 
   return (
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box min-w-min max-h-80 md:max-h-max">
+      <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
 

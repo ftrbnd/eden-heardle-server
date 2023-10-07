@@ -16,12 +16,16 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
 
   const { data: songs, isLoading: songsLoading } = useQuery({
     queryKey: ['songs'],
-    queryFn: getSongs
+    queryFn: getSongs,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs
+    queryFn: getGuessedSongs,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const statsMutation = useMutation({

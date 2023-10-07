@@ -104,7 +104,9 @@ export default function PlayContent({ children }: { children: ReactNode }) {
 
   const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs
+    queryFn: getGuessedSongs,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const { data: dailySong } = useQuery({

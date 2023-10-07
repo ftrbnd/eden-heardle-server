@@ -13,7 +13,9 @@ export default function AudioPlayer() {
 
   const { data: guesses } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs
+    queryFn: getGuessedSongs,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   useEffect(() => {
