@@ -71,7 +71,7 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   }, []);
 
   return (
-    <div className="self-end flex flex-col items-center text-center gap-1">
+    <div className="self-end flex flex-col items-center text-center gap-1 p-2">
       <p className="font-bold text-md sm:text-lg">{guessedSong ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${song}", try again tomorrow!`}</p>
       <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
         <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">

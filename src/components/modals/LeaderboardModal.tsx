@@ -16,123 +16,142 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
-  console.log('leaderboard from query: ', leaderboard);
 
   const showSpecificStat = () => {
     switch (activeTab) {
       case 'TODAY':
         return (
           <tbody>
-            {leaderboard?.today.map((userDaily, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <Image src={userDaily.user.image || '/default.png'} alt={`${userDaily.user.name}'s Avatar`} height={48} width={48} />
+            {leaderboard?.today.length ? (
+              leaderboard.today.map((userDaily, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <Image src={userDaily.user.image || '/default.png'} alt={`${userDaily.user.name}'s Avatar`} height={48} width={48} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{userDaily.user.name}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-bold">{userDaily.user.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{userDaily.data}</td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{userDaily.data}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>Nobody has completed {"today's"} Heardle yet!</tr>
+            )}
           </tbody>
         );
       case 'WIN_PCT':
         return (
           <tbody>
-            {leaderboard?.winPercentages.map((winPct, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <Image src={winPct.user.image || '/default.png'} alt={`${winPct.user.name}'s Avatar`} height={48} width={48} />
+            {leaderboard?.winPercentages.length ? (
+              leaderboard.winPercentages.map((winPct, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <Image src={winPct.user.image || '/default.png'} alt={`${winPct.user.name}'s Avatar`} height={48} width={48} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{winPct.user.name}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-bold">{winPct.user.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{winPct.data}</td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{winPct.data}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>Nobody has won a game yet!</tr>
+            )}
           </tbody>
         );
       case 'ACC':
         return (
           <tbody>
-            {leaderboard?.accuracies.map((accuracy, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <Image src={accuracy.user.image || '/default.png'} alt={`${accuracy.user.name}'s Avatar`} height={48} width={48} />
+            {leaderboard?.accuracies.length ? (
+              leaderboard.accuracies.map((accuracy, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <Image src={accuracy.user.image || '/default.png'} alt={`${accuracy.user.name}'s Avatar`} height={48} width={48} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{accuracy.user.name}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-bold">{accuracy.user.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{accuracy.data}</td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{accuracy.data}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>No one has completed a game yet!</tr>
+            )}
           </tbody>
         );
       case 'CUR_STRK':
         return (
           <tbody>
-            {leaderboard?.currentStreaks.map((streak, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
+            {leaderboard?.currentStreaks.length ? (
+              leaderboard.currentStreaks.map((streak, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{streak.user.name}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-bold">{streak.user.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{streak.data}</td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{streak.data}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>There are no active streaks.</tr>
+            )}
           </tbody>
         );
       case 'MAX_STRK':
         return (
           <tbody>
-            {leaderboard?.maxStreaks.map((streak, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>
-                  <div className="flex items-center space-x-3">
-                    <div className="avatar">
-                      <div className="mask mask-squircle w-12 h-12">
-                        <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
+            {leaderboard?.maxStreaks.length ? (
+              leaderboard.maxStreaks.map((streak, index) => (
+                <tr key={index}>
+                  <th>{index + 1}</th>
+                  <td>
+                    <div className="flex items-center space-x-3">
+                      <div className="avatar">
+                        <div className="mask mask-squircle w-12 h-12">
+                          <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="font-bold">{streak.user.name}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="font-bold">{streak.user.name}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{streak.data}</td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{streak.data}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>No max streaks available yet.</tr>
+            )}
           </tbody>
         );
       default:

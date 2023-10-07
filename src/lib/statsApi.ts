@@ -43,7 +43,6 @@ export const getLeaderboard = async () => {
     if (!response.ok) throw new Error('Failed to get leaderboard');
 
     const { leaderboard }: { leaderboard: LeaderboardStats } = await response.json();
-    console.log('leaderboard from api: ', leaderboard);
 
     return leaderboard;
   } catch (err) {
