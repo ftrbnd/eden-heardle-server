@@ -28,7 +28,9 @@ export const getDailySong = async () => {
 
 export const getGuessedSongs = async () => {
   try {
-    const response = await fetch(`${songsUrlEndpoint}/guesses`);
+    const response = await fetch(`${songsUrlEndpoint}/guesses`, {
+      cache: 'no-store'
+    });
     if (!response.ok) throw new Error('Failed to get guessed songs');
 
     const { guesses }: { guesses: GuessedSong[] } = await response.json();
@@ -43,7 +45,8 @@ export const updateGuessedSongs = async (guess: GuessedSong) => {
   try {
     const response = await fetch(`${songsUrlEndpoint}/guesses`, {
       method: 'PATCH',
-      body: JSON.stringify({ song: guess })
+      body: JSON.stringify({ song: guess }),
+      cache: 'no-store'
     });
     if (!response.ok) throw new Error('Failed to update guesses');
 

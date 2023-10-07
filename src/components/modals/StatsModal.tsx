@@ -91,7 +91,9 @@ export default function StatsModal() {
 
   const { data: guesses } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs
+    queryFn: getGuessedSongs,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const { data: dailySong } = useQuery({
