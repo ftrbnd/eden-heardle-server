@@ -16,6 +16,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
     refetchInterval: 30 * 1000, // 30 seconds,
     refetchIntervalInBackground: true
   });
+  console.log('leaderboard from query: ', leaderboard);
 
   const showSpecificStat = () => {
     switch (activeTab) {
