@@ -38,7 +38,10 @@ export const updateStats = async (guessedSong: boolean) => {
 export const getLeaderboard = async () => {
   try {
     const response = await fetch(`${statsUrlEndpoint}/all`, {
-      cache: 'no-store'
+      cache: 'no-store',
+      next: {
+        revalidate: 30
+      }
     });
     if (!response.ok) throw new Error('Failed to get leaderboard');
 
