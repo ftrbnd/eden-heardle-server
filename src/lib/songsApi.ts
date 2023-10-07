@@ -4,9 +4,7 @@ const songsUrlEndpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/songs`;
 
 export const getSongs = async () => {
   try {
-    const response = await fetch(songsUrlEndpoint, {
-      cache: 'no-store'
-    });
+    const response = await fetch(songsUrlEndpoint);
     if (!response.ok) throw new Error('Failed to get songs');
 
     const { songs }: { songs: Song[] } = await response.json();
@@ -18,9 +16,7 @@ export const getSongs = async () => {
 
 export const getDailySong = async () => {
   try {
-    const response = await fetch(`${songsUrlEndpoint}/daily`, {
-      cache: 'no-store'
-    });
+    const response = await fetch(`${songsUrlEndpoint}/daily`);
     if (!response.ok) throw new Error('Failed to get daily song');
 
     const { song }: { song: DailySong } = await response.json();
@@ -32,9 +28,7 @@ export const getDailySong = async () => {
 
 export const getGuessedSongs = async () => {
   try {
-    const response = await fetch(`${songsUrlEndpoint}/guesses`, {
-      cache: 'no-store'
-    });
+    const response = await fetch(`${songsUrlEndpoint}/guesses`);
     if (!response.ok) throw new Error('Failed to get guessed songs');
 
     const { guesses }: { guesses: GuessedSong[] } = await response.json();
@@ -49,8 +43,7 @@ export const updateGuessedSongs = async (guess: GuessedSong) => {
   try {
     const response = await fetch(`${songsUrlEndpoint}/guesses`, {
       method: 'PATCH',
-      body: JSON.stringify({ song: guess }),
-      cache: 'no-store'
+      body: JSON.stringify({ song: guess })
     });
     if (!response.ok) throw new Error('Failed to update guesses');
 

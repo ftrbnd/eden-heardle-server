@@ -57,6 +57,8 @@ function statusSquares(guesses: GuessedSong[]): string {
   return squares.join('');
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const allStats = await prisma.statistics.findMany({

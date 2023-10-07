@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { options } from '../auth/[...nextauth]/options';
 import { Statistics } from '@prisma/client';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const session = await getServerSession(options);
   if (!session) return NextResponse.json(null, { status: 200 });

@@ -91,16 +91,12 @@ export default function StatsModal() {
 
   const { data: guesses } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
+    queryFn: getGuessedSongs
   });
 
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30 * 1000, // 30 seconds,
-    refetchIntervalInBackground: true
+    queryFn: getDailySong
   });
 
   const statusSquares = (): string => {
