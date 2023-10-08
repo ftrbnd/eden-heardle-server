@@ -22,6 +22,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
   const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs,
+    enabled: session !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });

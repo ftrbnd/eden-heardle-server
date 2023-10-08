@@ -4,6 +4,7 @@ import { getGuessedSongs } from '@/lib/songsApi';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AudioPlayer() {
@@ -11,9 +12,11 @@ export default function AudioPlayer() {
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  const { data: session } = useSession();
   const { data: guesses } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs,
+    enabled: session !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });

@@ -17,6 +17,7 @@ function Stats() {
   const { data: stats } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats,
+    enabled: session !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
@@ -92,6 +93,7 @@ export default function StatsModal() {
   const { data: guesses } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs,
+    enabled: session !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });

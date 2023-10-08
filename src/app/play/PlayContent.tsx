@@ -105,6 +105,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs,
+    enabled: session !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
@@ -118,40 +119,74 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     router.replace('/play');
   }, [router]);
 
-  return (
-    <div className="flex flex-col items-center h-full justify-between">
-      <Navbar>{children}</Navbar>
-      <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
-        <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-          {sessionStatus === 'loading' && !guessesFetched
-            ? [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" />)
-            : sessionStatus === 'authenticated' && guessesFetched
-            ? guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)
-            : localUser.user?.guesses.map((song, index) => <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
-          {session && guesses?.length === 0 && (
+  if (sessionStatus === 'loading') {
+    return (
+      <div className="flex flex-col items-center h-full justify-between">
+        <Navbar>{children}</Navbar>
+        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+          <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
+            {[1, 2, 3, 4, 5, 6].map((num) => (
+              <GuessCard key={num} name="" album="" cover="/default_song.png" />
+            ))}
             <div className="row-span-full text-center">
               <h1 className="text-5xl font-bold">Hello there</h1>
               <p className="py-6">Press play and choose a song to get started!</p>
             </div>
-          )}
-          {!session && localUser.user?.guesses.length === 0 && (
-            <div className="row-span-full text-center">
-              <h1 className="text-5xl font-bold">Hello there</h1>
-              <p className="py-6">Press play and choose a song to get started!</p>
-            </div>
-          )}
+          </div>
         </div>
-
-        {session
-          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && <Countdown song={dailySong?.name || ''} guessedSong={guesses.at(-1)?.correctStatus === 'CORRECT'} />
-          : (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <Countdown song={dailySong?.name || ''} guessedSong={localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT'} />
+        <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
+          <SongSelectInput dailySong={dailySong} />
+          <AudioPlayer />
+        </div>
+      </div>
+    );
+  } else if (sessionStatus === 'authenticated') {
+    return (
+      <div className="flex flex-col items-center h-full justify-between">
+        <Navbar>{children}</Navbar>
+        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+          <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
+            {guessesFetched && guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
+            {guesses?.length === 0 && (
+              <div className="row-span-full text-center">
+                <h1 className="text-5xl font-bold">Hello there</h1>
+                <p className="py-6">Press play and choose a song to get started!</p>
+              </div>
             )}
+          </div>
+
+          <Countdown song={dailySong?.name || ''} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} />
+        </div>
+        <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
+          <SongSelectInput dailySong={dailySong} />
+          <AudioPlayer />
+        </div>
       </div>
-      <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput dailySong={dailySong} />
-        <AudioPlayer />
+    );
+  } else if (sessionStatus === 'unauthenticated') {
+    return (
+      <div className="flex flex-col items-center h-full justify-between">
+        <Navbar>{children}</Navbar>
+        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+          <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
+            {localUser.user?.guesses.map((song, index) => (
+              <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />
+            ))}
+            {localUser.user?.guesses.length === 0 && (
+              <div className="row-span-full text-center">
+                <h1 className="text-5xl font-bold">Hello there</h1>
+                <p className="py-6">Press play and choose a song to get started!</p>
+              </div>
+            )}
+          </div>
+
+          <Countdown song={dailySong?.name || ''} guessedSong={localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'} />
+        </div>
+        <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
+          <SongSelectInput dailySong={dailySong} />
+          <AudioPlayer />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
