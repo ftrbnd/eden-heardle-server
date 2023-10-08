@@ -72,7 +72,10 @@ function Countdown({ song, guessedSong }: CountdownProps) {
 
   return (
     <div className="self-end flex flex-col items-center text-center gap-1 p-2">
-      <p className="font-bold text-md sm:text-lg">{guessedSong ? "Great job on today's puzzle! Check back tomorrow for a new song." : `The song was "${song}", try again tomorrow!`}</p>
+      <div className="row-span-full text-center">
+        <h1 className="text-3xl font-bold">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song}`}</h1>
+        <p className="py-6">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
+      </div>
       <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
         <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
           <span className="countdown font-mono text-3xl sm:text-5xl">
@@ -128,10 +131,6 @@ export default function PlayContent({ children }: { children: ReactNode }) {
             {[1, 2, 3, 4, 5, 6].map((num) => (
               <GuessCard key={num} name="" album="" cover="/default_song.png" />
             ))}
-            <div className="row-span-full text-center">
-              <h1 className="text-5xl font-bold">Hello there</h1>
-              <p className="py-6">Press play and choose a song to get started!</p>
-            </div>
           </div>
         </div>
         <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
