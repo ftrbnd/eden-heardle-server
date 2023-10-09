@@ -154,7 +154,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <Countdown song={dailySong?.name || ''} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} />
+          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && <Countdown song={dailySong?.name || ''} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} />}
         </div>
         <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
           <SongSelectInput dailySong={dailySong} />
@@ -179,7 +179,9 @@ export default function PlayContent({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <Countdown song={dailySong?.name || ''} guessedSong={localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'} />
+          {(localUser.user?.guesses.length === 6 || localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT') && (
+            <Countdown song={dailySong?.name || ''} guessedSong={localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'} />
+          )}
         </div>
         <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
           <SongSelectInput dailySong={dailySong} />

@@ -42,7 +42,9 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 </tr>
               ))
             ) : (
-              <tr>Nobody has completed {"today's"} Heardle yet!</tr>
+              <tr>
+                <td>{"Nobody has completed today's Heardle yet!"}</td>
+              </tr>
             )}
           </tbody>
         );
@@ -69,7 +71,9 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 </tr>
               ))
             ) : (
-              <tr>Nobody has won a game yet!</tr>
+              <tr>
+                <td>{'Nobody has won a game yet!'}</td>
+              </tr>
             )}
           </tbody>
         );
@@ -96,7 +100,9 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 </tr>
               ))
             ) : (
-              <tr>No one has completed a game yet!</tr>
+              <tr>
+                <td>{'No one has completed a game yet!'}</td>
+              </tr>
             )}
           </tbody>
         );
@@ -123,7 +129,9 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 </tr>
               ))
             ) : (
-              <tr>There are no active streaks.</tr>
+              <tr>
+                <td>{'There are no active streaks.'}</td>
+              </tr>
             )}
           </tbody>
         );
@@ -150,7 +158,9 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 </tr>
               ))
             ) : (
-              <tr>No max streaks available yet.</tr>
+              <tr>
+                <td>{'No max streaks available yet.'}</td>
+              </tr>
             )}
           </tbody>
         );
