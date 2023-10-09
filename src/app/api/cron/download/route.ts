@@ -2,9 +2,7 @@ import prisma from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import ytdl from 'ytdl-core';
 import fs from 'fs';
-import { UTApi } from 'uploadthing/server';
-
-export const utapi = new UTApi();
+import { utapi } from '../../uploadthing/core';
 
 // download new daily song audio from youtube using ytdl-core
 // upload .m4a file to upload thing

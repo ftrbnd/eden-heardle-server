@@ -1,8 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { options } from '../auth/[...nextauth]/options';
+import { UTApi } from 'uploadthing/server';
 
 const f = createUploadthing();
+
+export const utapi = new UTApi();
 
 export const ourFileRouter = {
   dailySong: f({ audio: { maxFileSize: '8MB' } })
