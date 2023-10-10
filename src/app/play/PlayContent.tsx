@@ -126,7 +126,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     return (
       <div className="flex flex-col items-center h-full justify-between">
         <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
             {[1, 2, 3, 4, 5, 6].map((num) => (
               <GuessCard key={num} name="" album="" cover="/default_song.png" />
@@ -143,7 +143,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     return (
       <div className="flex flex-col items-center h-full justify-between">
         <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
             {guessesFetched && guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
             {guesses?.length === 0 && (
@@ -166,7 +166,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     return (
       <div className="flex flex-col items-center h-full justify-between">
         <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full">
+        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
             {localUser.user?.guesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />

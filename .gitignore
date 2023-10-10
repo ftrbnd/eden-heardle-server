@@ -35,4 +35,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/public/daily_song.mp3
+/public/daily_song.m4a

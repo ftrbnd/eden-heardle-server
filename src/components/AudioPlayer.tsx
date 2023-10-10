@@ -1,6 +1,7 @@
 'use client';
 
-import { getGuessedSongs } from '@/lib/songsApi';
+import useLocalUser from '@/context/LocalUserProvider';
+import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
@@ -8,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AudioPlayer() {
-  const [second, setSecond] = useState(0.0);
+  const [second, setSecond] = useState(0);
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -20,23 +21,37 @@ export default function AudioPlayer() {
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
+  const localUser = useLocalUser();
+
+  const { data: dailySong, isLoading: dailyLoading } = useQuery({
+    queryKey: ['daily'],
+    queryFn: getDailySong
+  });
 
   useEffect(() => {
     const handleTimeUpdate = () => {
-      if (currentAudio) {
-        // update time for progress bar and timer
-        setSecond(currentAudio.currentTime);
+      let currentSecond = 0;
+      if (audioRef.current && dailySong?.startTime) {
+        currentSecond = audioRef.current.currentTime - dailySong.startTime;
+
+        setSecond(audioRef.current.currentTime - dailySong.startTime);
       }
 
-      if (currentAudio && guesses?.length) {
-        if (Math.floor(currentAudio.currentTime) > guesses.length) {
-          // time passes their allowed time
+      if (session && guesses?.length !== undefined) {
+        if (currentSecond >= guesses.length + 1) {
           pauseSong();
+        }
+      } else {
+        if (localUser.user?.guesses.length !== undefined) {
+          if (currentSecond >= localUser.user.guesses.length + 1) {
+            pauseSong();
+          }
         }
       }
     };
 
     const currentAudio = audioRef.current;
+    if (currentAudio) currentAudio.volume = 0.5;
     currentAudio?.addEventListener('timeupdate', handleTimeUpdate);
 
     return () => {
@@ -44,21 +59,24 @@ export default function AudioPlayer() {
         currentAudio.removeEventListener('timeupdate', handleTimeUpdate);
       }
     };
-  }, [guesses?.length]);
+  });
 
   const pauseSong = () => {
-    if (!audioRef.current) return;
+    if (audioRef.current && dailySong?.startTime) {
+      audioRef.current.pause();
+      setIcon(faPlay);
 
-    audioRef.current.pause();
-    setIcon(faPlay);
-    audioRef.current.currentTime = 0;
+      audioRef.current.currentTime = dailySong.startTime;
+    }
   };
 
   const playSong = () => {
-    if (!audioRef.current) return;
+    if (audioRef.current && dailySong?.startTime) {
+      audioRef.current.currentTime = dailySong?.startTime;
 
-    audioRef.current.play();
-    setIcon(faPause);
+      audioRef.current.play();
+      setIcon(faPause);
+    }
   };
 
   const togglePlayer = () => {
@@ -71,13 +89,19 @@ export default function AudioPlayer() {
 
       <div className="flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5">
         <kbd className="kbd">00:{String(Math.floor(second)).padStart(2, '0')}</kbd>
-        <button className="btn btn-ghost" onClick={togglePlayer}>
-          <FontAwesomeIcon icon={icon} className="w-6 h-6" />
-        </button>
+        {dailyLoading ? (
+          <button className="btn btn-ghost btn-disabled">
+            <span className="loading loading-ring loading-md"></span>
+          </button>
+        ) : (
+          <button className="btn btn-ghost" onClick={togglePlayer}>
+            <FontAwesomeIcon icon={icon} className="w-6 h-6" />
+          </button>
+        )}
         <kbd className="kbd">00:06</kbd>
       </div>
 
-      <audio ref={audioRef} className="hidden" src="/daily_song.mp3" />
+      <audio ref={audioRef} className="hidden" src={dailySong?.link} />
     </div>
   );
 }

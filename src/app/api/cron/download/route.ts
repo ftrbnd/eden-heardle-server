@@ -8,7 +8,7 @@ import { utapi } from '../../uploadthing/core';
 // upload .m4a file to upload thing
 export async function GET(request: NextRequest) {
   try {
-    // verify upstash
+    // verify cron job from upstash
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Missing authorization' }, { status: 401 });
@@ -92,6 +92,7 @@ export async function GET(request: NextRequest) {
               // 'nextReset' field is not needed with a cron job
             },
             create: {
+              id: '1',
               name: newDailySong.name,
               album: newDailySong.name,
               cover: newDailySong.cover,
@@ -100,6 +101,7 @@ export async function GET(request: NextRequest) {
               heardleDay: previousDailySong.heardleDay + 1
             }
           });
+          console.log('Sent uploadthing url to Supabase');
 
           return NextResponse.json({ message: `Successfully uploaded new daily song! ${response.data?.url}` }, { status: 200 });
         } catch (err) {
