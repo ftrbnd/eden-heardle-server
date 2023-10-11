@@ -1,25 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
-import prisma from '../lib/database';
+import prisma from './database';
 import ytdl from 'ytdl-core';
 import { createWriteStream, readFileSync } from 'fs';
-import supabase from '../lib/supabase';
+import supabase from './supabase';
 
-// middleware to verify cron job from upstash
-export const verify_qstash = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Missing authorization' });
-  }
-
-  const token = authHeader.split(' ')[1];
-  if (token !== process.env.QSTASH_TOKEN) {
-    return res.status(401).json({ error: 'Authentication failed' });
-  }
-
-  next();
-};
-
-export const dailySong_download = async (_req: Request, res: Response) => {
+export async function download() {
   try {
     // get a new random song
     const songsCount = await prisma.song.count();
@@ -65,13 +49,13 @@ export const dailySong_download = async (_req: Request, res: Response) => {
           const { error: updateError } = await supabase.storage.from('daily_song').update('daily_song.m4a', audioFile);
           if (updateError) {
             console.log(updateError);
-            return res.status(500).json({ error: 'Error uploading file to Supabase' });
+            throw new Error('Error uploading file to Supabase');
           }
 
           const { data, error: urlError } = await supabase.storage.from('daily_song').createSignedUrl('daily_song.m4a', 172800); // expires in 48 hours
           if (urlError) {
             console.log(urlError);
-            return res.status(500).json({ error: 'Error getting signed url from Supabase' });
+            throw new Error('Error getting signed url from Supabase');
           }
 
           // get current daily song and ensure it exists
@@ -80,7 +64,7 @@ export const dailySong_download = async (_req: Request, res: Response) => {
               id: '0'
             }
           });
-          if (!previousDailySong || !previousDailySong.heardleDay) return res.status(500).json({ error: "Couldn't find previous daily song or its day number" });
+          if (!previousDailySong || !previousDailySong.heardleDay) throw new Error("Couldn't find previous daily song or its day number");
 
           await prisma.dailySong.upsert({
             where: {
@@ -107,23 +91,20 @@ export const dailySong_download = async (_req: Request, res: Response) => {
           });
           console.log('Sent audio url from Supabase Storage to Supabase Database');
 
-          return res.json({ message: `Successfully uploaded new daily song! ${data?.signedUrl}` });
+          return { message: `Successfully uploaded new daily song! ${data?.signedUrl}` };
         } catch (err) {
           console.log('Error uploading new daily song: ', err);
-          return res.status(500).json({ error: `Error downloading ${newDailySong}` });
         }
       })
       .on('error', (err) => {
         console.log(`Error downloading ${newDailySong}: `, err);
-        return res.json({ error: `Error downloading ${newDailySong}` });
       });
   } catch (error) {
     console.error('Error downloading/uploading song: ', error);
-    return res.status(500).json({ error: 'Error setting new daily song' });
   }
-};
+}
 
-export const dailySong_reset = async (_req: Request, res: Response) => {
+export async function reset() {
   try {
     // check users' current streaks
     const users = await prisma.user.findMany();
@@ -168,7 +149,7 @@ export const dailySong_reset = async (_req: Request, res: Response) => {
         id: '1'
       }
     });
-    if (!nextDailySong) return res.status(404).json({ error: 'Error finding next daily song' });
+    if (!nextDailySong) throw new Error('Error finding next daily song');
 
     await prisma.dailySong.upsert({
       where: {
@@ -192,9 +173,8 @@ export const dailySong_reset = async (_req: Request, res: Response) => {
       }
     });
 
-    return res.json({ message: 'Successfully reset users and set new daily song!' });
+    return { message: 'Successfully reset users and set new daily song!' };
   } catch (error) {
     console.error('Error setting new daily song: ', error);
-    return res.status(500).json({ error: 'Error setting new daily song' });
   }
-};
+}
