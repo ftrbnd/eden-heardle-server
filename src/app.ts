@@ -16,7 +16,7 @@ app.use((_req, res) => {
   res.status(404).json({ message: 'Route does not exist' });
 });
 
-const job = new CronJob('0 4 * * *', download, reset, true, 'utc');
+const job = new CronJob('0 4 * * *', download, null, true, 'utc');
 
 app.listen(process.env.PORT || 3001, () => {
   console.log(`Server ready at port ${process.env.PORT || 3001} `);

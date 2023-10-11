@@ -103,7 +103,7 @@ export async function download() {
               });
               console.log('Sent audio url from Supabase Storage to Supabase Database');
 
-              return { message: `Successfully uploaded new daily song! ${data?.signedUrl}` };
+              await reset();
             })
             .on('error', (err) => {
               console.log('File conversion error: ', err);
@@ -124,6 +124,7 @@ export async function download() {
 
 export async function reset() {
   try {
+    console.log('Resetting stats and updating daily song...');
     // check users' current streaks
     const users = await prisma.user.findMany();
     for (const user of users) {
@@ -190,6 +191,8 @@ export async function reset() {
         heardleDay: nextDailySong.heardleDay
       }
     });
+
+    console.log('DONE');
 
     return { message: 'Successfully reset users and set new daily song!' };
   } catch (error) {
