@@ -84,7 +84,7 @@ export async function download() {
                 },
                 update: {
                   name: newDailySong.name,
-                  album: newDailySong.name,
+                  album: newDailySong.album,
                   cover: newDailySong.cover,
                   link: data?.signedUrl,
                   startTime: randomStartTime,
@@ -94,7 +94,7 @@ export async function download() {
                 create: {
                   id: '1',
                   name: newDailySong.name,
-                  album: newDailySong.name,
+                  album: newDailySong.album,
                   cover: newDailySong.cover,
                   link: data?.signedUrl ?? newDailySong.link,
                   startTime: randomStartTime,
@@ -176,7 +176,7 @@ export async function reset() {
       },
       update: {
         name: nextDailySong.name,
-        album: nextDailySong.name,
+        album: nextDailySong.album,
         cover: nextDailySong.cover,
         link: nextDailySong.link,
         startTime: nextDailySong.startTime,
@@ -184,7 +184,7 @@ export async function reset() {
       },
       create: {
         name: nextDailySong.name,
-        album: nextDailySong.name,
+        album: nextDailySong.album,
         cover: nextDailySong.cover,
         link: nextDailySong.link,
         startTime: nextDailySong.startTime,
