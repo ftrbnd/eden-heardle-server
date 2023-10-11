@@ -1,23 +1,26 @@
-import { File } from 'buffer';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import prisma from '../lib/database';
 import ytdl from 'ytdl-core';
 import { createWriteStream, readFileSync } from 'fs';
 import supabase from '../lib/supabase';
 
-export const dailySong_download = async (req: Request, res: Response) => {
+// middleware to verify cron job from upstash
+export const verify_qstash = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing authorization' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (token !== process.env.QSTASH_TOKEN) {
+    return res.status(401).json({ error: 'Authentication failed' });
+  }
+
+  next();
+};
+
+export const dailySong_download = async (_req: Request, res: Response) => {
   try {
-    // // verify cron job from upstash
-    // const authHeader = req.headers.authorization;
-    // if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    //   return res.status(401).json({ error: 'Missing authorization' });
-    // }
-
-    // const token = authHeader.split(' ')[1];
-    // if (token !== process.env.QSTASH_TOKEN) {
-    //   return res.status(401).json({ error: 'Authentication failed' });
-    // }
-
     // get a new random song
     const songsCount = await prisma.song.count();
     const skip = Math.floor(Math.random() * songsCount);
@@ -55,6 +58,8 @@ export const dailySong_download = async (req: Request, res: Response) => {
             lastModified: new Date().getTime(),
             webkitRelativePath: ''
           });
+
+          // TODO: Convert .m4a to .mp3
 
           console.log('Uploading to Supabase...');
           const { error: updateError } = await supabase.storage.from('daily_song').update('daily_song.m4a', audioFile);
@@ -118,19 +123,8 @@ export const dailySong_download = async (req: Request, res: Response) => {
   }
 };
 
-export const dailySong_reset = async (req: Request, res: Response) => {
+export const dailySong_reset = async (_req: Request, res: Response) => {
   try {
-    // // verify cron job from upstash
-    // const authHeader = req.headers.authorization;
-    // if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    //   return res.status(401).json({ error: 'Missing authorization' });
-    // }
-
-    // const token = authHeader.split(' ')[1];
-    // if (token !== process.env.QSTASH_TOKEN) {
-    //   return res.status(401).json({ error: 'Authentication failed' });
-    // }
-
     // check users' current streaks
     const users = await prisma.user.findMany();
     for (const user of users) {
