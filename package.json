@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon - exec 'ts-node' src/app.ts",
-    "postinstall": "tsc",
+    "build": "tsc",
     "start": "node dist/app.js"
   },
   "dependencies": {
@@ -23,6 +23,6 @@
     "typescript": "5.2.2"
   },
   "engines": {
-    "node": "18.18.x"
+    "node": "18.x"
   }
 }
