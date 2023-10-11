@@ -50,7 +50,7 @@ export const dailySong_download = async (req: Request, res: Response) => {
           const audioBlob = new Blob([fileBuffer], { type: 'audio/mp4' });
           console.log('Blob created from file: ', audioBlob);
 
-          const audioFile: File = Object.assign(audioBlob, {
+          const audioFile = Object.assign(audioBlob, {
             name: 'daily_song.m4a',
             lastModified: new Date().getTime(),
             webkitRelativePath: ''
