@@ -41,12 +41,12 @@ export const dailySong_download = async (req: Request, res: Response) => {
       filter: 'audioonly',
       quality: 'highestaudio'
     })
-      .pipe(createWriteStream('./public/daily_song.m4a'))
+      .pipe(createWriteStream('daily_song.m4a'))
       .on('finish', async () => {
         try {
           console.log(`${newDailySong.name} downloaded successfully!`);
 
-          const fileBuffer = readFileSync('./public/daily_song.m4a');
+          const fileBuffer = readFileSync('daily_song.m4a');
           const audioBlob = new Blob([fileBuffer], { type: 'audio/mp4' });
           console.log('Blob created from file: ', audioBlob);
 
