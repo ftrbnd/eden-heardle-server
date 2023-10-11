@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { currentDailySong_get, nextDailySong_get, dailySongs_get } from '../controllers/dailySongController';
-import { dailySong_download, dailySong_reset, verify_qstash } from '../controllers/cronController';
+import { dailySong_download, dailySong_reset } from '../controllers/cronController';
 
 const apiRouter = Router();
 
@@ -16,8 +16,8 @@ apiRouter.get('/dailySong/next', nextDailySong_get);
 
 // CRON JOBS BELOW
 
-apiRouter.get('/dailySong/download', verify_qstash, dailySong_download);
+apiRouter.get('/dailySong/download', dailySong_download);
 
-apiRouter.get('/dailySong/reset', verify_qstash, dailySong_reset);
+apiRouter.get('/dailySong/reset', dailySong_reset);
 
 export default apiRouter;
