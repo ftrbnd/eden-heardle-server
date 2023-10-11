@@ -10,9 +10,10 @@ import { useRouter } from 'next/navigation';
 import GuessCard from '@/components/GuessCard';
 import SongSelectInput from '@/components/SongSelectInput';
 import useLocalUser from '@/context/LocalUserProvider';
-
+import { DailySong } from '@prisma/client';
+import Image from 'next/image';
 interface CountdownProps {
-  song: string;
+  song: DailySong;
   guessedSong: boolean;
 }
 
@@ -71,29 +72,34 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   }, []);
 
   return (
-    <div className="self-end flex flex-col items-center text-center gap-1 p-2">
-      <div className="row-span-full text-center">
-        <h1 className="text-3xl font-bold">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song}`}</h1>
-        <p className="py-6">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
-      </div>
-      <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
-        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-          <span className="countdown font-mono text-3xl sm:text-5xl">
-            <span id="hours" style={{ '--value': hours } as CSSPropertiesWithVars}></span>
-          </span>
-          hours
-        </div>
-        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-          <span className="countdown font-mono text-3xl sm:text-5xl">
-            <span id="minutes" style={{ '--value': minutes } as CSSPropertiesWithVars}></span>
-          </span>
-          min
-        </div>
-        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-          <span className="countdown font-mono text-3xl sm:text-5xl">
-            <span id="seconds" style={{ '--value': seconds } as CSSPropertiesWithVars}></span>
-          </span>
-          sec
+    <div className="self-end card w-full bg-base-100 shadow-xl image-full overflow-hidden mb-4">
+      <figure>
+        <Image src={song.cover} alt={song.name} fill objectFit="cover" />
+      </figure>
+      <div className="card-body">
+        <h2 className="card-title">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song.name}`}</h2>
+        <p>{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
+        <div className="card-actions justify-center">
+          <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
+            <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+              <span className="countdown font-mono text-3xl sm:text-5xl">
+                <span id="hours" style={{ '--value': hours } as CSSPropertiesWithVars}></span>
+              </span>
+              hours
+            </div>
+            <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+              <span className="countdown font-mono text-3xl sm:text-5xl">
+                <span id="minutes" style={{ '--value': minutes } as CSSPropertiesWithVars}></span>
+              </span>
+              min
+            </div>
+            <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+              <span className="countdown font-mono text-3xl sm:text-5xl">
+                <span id="seconds" style={{ '--value': seconds } as CSSPropertiesWithVars}></span>
+              </span>
+              sec
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -155,7 +161,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && <Countdown song={dailySong?.name || ''} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} />}
+          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && <Countdown song={dailySong!} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} />}
         </div>
         <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
           <SongSelectInput dailySong={dailySong} />
@@ -181,7 +187,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
           </div>
 
           {(localUser.user?.guesses.length === 6 || localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT') && (
-            <Countdown song={dailySong?.name || ''} guessedSong={localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'} />
+            <Countdown song={dailySong!} guessedSong={localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'} />
           )}
         </div>
         <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">

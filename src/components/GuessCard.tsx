@@ -41,7 +41,7 @@ export default function GuessCard({ name, album, cover, correctStatus }: IProps)
       </figure>
       <div className="flex items-center w-full justify-between px-4">
         <div className="tooltip" data-tip={`From: ${album}`}>
-          <h2 className="card-title">{name}</h2>
+          <h2 className="card-title text-left">{name}</h2>
         </div>
         <div className="tooltip tooltip-left" data-tip={getTooltip()}>
           {getIcon()}
