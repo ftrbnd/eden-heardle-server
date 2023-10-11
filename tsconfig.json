@@ -3,8 +3,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
-    "target": "ES5",
-    "lib": ["esnext"],
+    "target": "ES6",
+    "lib": ["ES2015"],
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "Node"
