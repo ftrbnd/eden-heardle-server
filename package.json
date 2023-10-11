@@ -17,15 +17,12 @@
     "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.3.1",
     "@tanstack/react-query": "^4.35.3",
-    "@uploadthing/react": "^5.6.2",
     "@vercel/analytics": "^1.1.0",
     "next": "latest",
     "next-auth": "^4.23.1",
     "next-themes": "^0.2.1",
     "react": "latest",
-    "react-dom": "latest",
-    "uploadthing": "^5.7.1",
-    "ytdl-core": "^4.11.5"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
