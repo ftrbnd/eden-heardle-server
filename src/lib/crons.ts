@@ -2,6 +2,10 @@ import prisma from './database';
 import ytdl from 'ytdl-core';
 import { createWriteStream, readFileSync } from 'fs';
 import supabase from './supabase';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
+
+ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export async function download() {
   try {
@@ -35,63 +39,77 @@ export async function download() {
 
           const fileBuffer = readFileSync('daily_song.m4a');
           const audioBlob = new Blob([fileBuffer], { type: 'audio/mp4' });
-          console.log('Blob created from file: ', audioBlob);
+          console.log('.m4a blob created from file: ', audioBlob);
 
-          const audioFile = Object.assign(audioBlob, {
-            name: 'daily_song.m4a',
-            lastModified: new Date().getTime(),
-            webkitRelativePath: ''
-          });
+          // Convert .m4a to .mp3
+          ffmpeg('daily_song.m4a')
+            .format('mp3')
+            .on('end', async () => {
+              console.log('File conversion complete!');
 
-          // TODO: Convert .m4a to .mp3
+              const fileBuffer = readFileSync('daily_song.mp3');
+              const mp3Blob = new Blob([fileBuffer], { type: 'audio/mp3' });
+              console.log('New .mp3 blob: ', mp3Blob);
 
-          console.log('Uploading to Supabase...');
-          const { error: updateError } = await supabase.storage.from('daily_song').update('daily_song.m4a', audioFile);
-          if (updateError) {
-            console.log(updateError);
-            throw new Error('Error uploading file to Supabase');
-          }
+              const mp3File = Object.assign(mp3Blob, {
+                name: 'daily_song.mp3',
+                lastModified: new Date().getTime(),
+                webkitRelativePath: ''
+              });
 
-          const { data, error: urlError } = await supabase.storage.from('daily_song').createSignedUrl('daily_song.m4a', 172800); // expires in 48 hours
-          if (urlError) {
-            console.log(urlError);
-            throw new Error('Error getting signed url from Supabase');
-          }
+              console.log('Uploading to Supabase...');
+              const { error: updateError } = await supabase.storage.from('daily_song').update('daily_song.mp3', mp3File);
+              if (updateError) {
+                console.log(updateError);
+                throw new Error('Error uploading file to Supabase');
+              }
 
-          // get current daily song and ensure it exists
-          const previousDailySong = await prisma.dailySong.findUnique({
-            where: {
-              id: '0'
-            }
-          });
-          if (!previousDailySong || !previousDailySong.heardleDay) throw new Error("Couldn't find previous daily song or its day number");
+              const { data, error: urlError } = await supabase.storage.from('daily_song').createSignedUrl('daily_song.mp3', 172800); // expires in 48 hours
+              if (urlError) {
+                console.log(urlError);
+                throw new Error('Error getting signed url from Supabase');
+              }
 
-          await prisma.dailySong.upsert({
-            where: {
-              id: '1'
-            },
-            update: {
-              name: newDailySong.name,
-              album: newDailySong.name,
-              cover: newDailySong.cover,
-              link: data?.signedUrl,
-              startTime: randomStartTime,
-              heardleDay: previousDailySong.heardleDay + 1
-              // 'nextReset' field is not needed with a cron job
-            },
-            create: {
-              id: '1',
-              name: newDailySong.name,
-              album: newDailySong.name,
-              cover: newDailySong.cover,
-              link: data?.signedUrl ?? newDailySong.link,
-              startTime: randomStartTime,
-              heardleDay: previousDailySong.heardleDay + 1
-            }
-          });
-          console.log('Sent audio url from Supabase Storage to Supabase Database');
+              // get current daily song and ensure it exists
+              const previousDailySong = await prisma.dailySong.findUnique({
+                where: {
+                  id: '0'
+                }
+              });
+              if (!previousDailySong || !previousDailySong.heardleDay) throw new Error("Couldn't find previous daily song or its day number");
 
-          return { message: `Successfully uploaded new daily song! ${data?.signedUrl}` };
+              await prisma.dailySong.upsert({
+                where: {
+                  id: '1'
+                },
+                update: {
+                  name: newDailySong.name,
+                  album: newDailySong.name,
+                  cover: newDailySong.cover,
+                  link: data?.signedUrl,
+                  startTime: randomStartTime,
+                  heardleDay: previousDailySong.heardleDay + 1
+                  // 'nextReset' field is not needed with a cron job
+                },
+                create: {
+                  id: '1',
+                  name: newDailySong.name,
+                  album: newDailySong.name,
+                  cover: newDailySong.cover,
+                  link: data?.signedUrl ?? newDailySong.link,
+                  startTime: randomStartTime,
+                  heardleDay: previousDailySong.heardleDay + 1
+                }
+              });
+              console.log('Sent audio url from Supabase Storage to Supabase Database');
+
+              return { message: `Successfully uploaded new daily song! ${data?.signedUrl}` };
+            })
+            .on('error', (err) => {
+              console.log('File conversion error: ', err);
+              throw new Error('File conversion error!');
+            })
+            .save('daily_song.mp3');
         } catch (err) {
           console.log('Error uploading new daily song: ', err);
         }
