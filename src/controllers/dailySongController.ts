@@ -28,7 +28,3 @@ export const nextDailySong_get = async (req: Request, res: Response) => {
 
   res.json({ nextDailySong });
 };
-
-export const dailySong_download = async (req: Request, res: Response) => {
-  res.json({ message: 'GET dailySong/download' });
-};
