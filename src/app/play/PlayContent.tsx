@@ -115,7 +115,8 @@ export default function PlayContent({ children }: { children: ReactNode }) {
 
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
-    queryFn: getDailySong
+    queryFn: getDailySong,
+    staleTime: 1 * 60 * 1000
   });
 
   useEffect(() => {

@@ -100,7 +100,8 @@ export default function StatsModal() {
 
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
-    queryFn: getDailySong
+    queryFn: getDailySong,
+    staleTime: 1 * 60 * 1000
   });
 
   const statusSquares = (): string => {

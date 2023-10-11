@@ -25,8 +25,10 @@ export default function AudioPlayer() {
 
   const { data: dailySong, isLoading: dailyLoading } = useQuery({
     queryKey: ['daily'],
-    queryFn: getDailySong
+    queryFn: getDailySong,
+    staleTime: 1 * 60 * 1000
   });
+  console.log('daily song: ', dailySong);
 
   useEffect(() => {
     const handleTimeUpdate = () => {
