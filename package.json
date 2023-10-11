@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon - exec 'ts-node' src/app.ts",
-    "postinstall": "tsc  && mv -i -v public dist/ && rm -v -rf src",
+    "postinstall": "tsc",
     "start": "node dist/app.js"
   },
   "dependencies": {
