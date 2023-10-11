@@ -4,9 +4,10 @@
     "outDir": "dist",
     "strict": true,
     "target": "ES6",
-    "lib": ["ES2015"],
+    "lib": ["ES2022"],
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "Node"
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }

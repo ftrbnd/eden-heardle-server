@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import prisma from '../lib/database';
 import ytdl from 'ytdl-core';
 import { createWriteStream, readFileSync } from 'fs';
-import { utapi } from '../lib/uploadthing';
+import supabase from '../lib/supabase';
 
 export const dailySong_download = async (req: Request, res: Response) => {
   try {
@@ -56,18 +56,18 @@ export const dailySong_download = async (req: Request, res: Response) => {
             webkitRelativePath: ''
           });
 
-          // delete existing daily song
-          const fileUrls = await utapi.listFiles();
-          console.log('File urls: ', fileUrls);
-
-          for (const fileUrl of fileUrls) {
-            console.log(`Deleting file key ${fileUrl.key}...`);
-            await utapi.deleteFiles(fileUrl.key);
+          console.log('Uploading to Supabase...');
+          const { error: updateError } = await supabase.storage.from('daily_song').update('daily_song.m4a', audioFile);
+          if (updateError) {
+            console.log(updateError);
+            return res.status(500).json({ error: 'Error uploading file to Supabase' });
           }
 
-          console.log('Uploading to uploadthing...');
-          const response = await utapi.uploadFiles(audioFile);
-          console.log('utapi response: ', response);
+          const { data, error: urlError } = await supabase.storage.from('daily_song').createSignedUrl('daily_song.m4a', 172800); // expires in 48 hours
+          if (urlError) {
+            console.log(urlError);
+            return res.status(500).json({ error: 'Error getting signed url from Supabase' });
+          }
 
           // get current daily song and ensure it exists
           const previousDailySong = await prisma.dailySong.findUnique({
@@ -85,7 +85,7 @@ export const dailySong_download = async (req: Request, res: Response) => {
               name: newDailySong.name,
               album: newDailySong.name,
               cover: newDailySong.cover,
-              link: response.data?.url,
+              link: data?.signedUrl,
               startTime: randomStartTime,
               heardleDay: previousDailySong.heardleDay + 1
               // 'nextReset' field is not needed with a cron job
@@ -95,14 +95,14 @@ export const dailySong_download = async (req: Request, res: Response) => {
               name: newDailySong.name,
               album: newDailySong.name,
               cover: newDailySong.cover,
-              link: response.data?.url ?? newDailySong.link,
+              link: data?.signedUrl ?? newDailySong.link,
               startTime: randomStartTime,
               heardleDay: previousDailySong.heardleDay + 1
             }
           });
-          console.log('Sent uploadthing url to Supabase');
+          console.log('Sent audio url from Supabase Storage to Supabase Database');
 
-          return res.json({ message: `Successfully uploaded new daily song! ${response.data?.url}` });
+          return res.json({ message: `Successfully uploaded new daily song! ${data?.signedUrl}` });
         } catch (err) {
           console.log('Error uploading new daily song: ', err);
           return res.status(500).json({ error: `Error downloading ${newDailySong}` });
