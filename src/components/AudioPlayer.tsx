@@ -26,7 +26,8 @@ export default function AudioPlayer() {
   const { data: dailySong, isLoading: dailyLoading } = useQuery({
     queryKey: ['daily'],
     queryFn: getDailySong,
-    staleTime: 1 * 60 * 1000
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   useEffect(() => {

@@ -16,7 +16,9 @@ export const getSongs = async () => {
 
 export const getDailySong = async () => {
   try {
-    const response = await fetch(`${songsUrlEndpoint}/daily`);
+    const response = await fetch(`${songsUrlEndpoint}/daily`, {
+      cache: 'no-store'
+    });
     if (!response.ok) throw new Error('Failed to get daily song');
 
     const { song }: { song: DailySong } = await response.json();

@@ -101,7 +101,8 @@ export default function StatsModal() {
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
     queryFn: getDailySong,
-    staleTime: 1 * 60 * 1000
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
   });
 
   const statusSquares = (): string => {
