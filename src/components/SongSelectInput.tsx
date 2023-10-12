@@ -135,6 +135,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
     }
   };
 
+  // disable the song if it has already been selected or the user has completed today's heardle
   const disableOption = (song: Song) => {
     if (session) {
       return guesses?.some((guess) => guess.name === song.name) || guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT';
