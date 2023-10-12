@@ -23,6 +23,12 @@ interface LocalUser {
   name?: 'anon';
 }
 
+interface LoggedInDate {
+  month: number;
+  date: number;
+  year: number;
+}
+
 const initialUser: LocalUser = {
   statistics: {
     gamesPlayed: 0,
@@ -69,6 +75,52 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
   useEffect(() => {
     if (user !== initialUser) {
       localStorage.setItem('eden_heardle_user', JSON.stringify(user));
+    }
+
+    const lastLoggedIn = localStorage.getItem('eden_heardle_last_logged_in');
+    const today = new Date();
+
+    if (lastLoggedIn) {
+      // check streaks
+      const lastDay = new Date(JSON.parse(lastLoggedIn));
+
+      const timeDifference = today.getTime() - lastDay.getTime();
+      const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+      if (dayDifference >= 1) {
+        if (localStorage.getItem('eden_heardle_user')) {
+          // reset guesses and current streak
+          const oldUser: LocalUser = JSON.parse(localStorage.getItem('eden_heardle_user')!);
+
+          const oldStats = { ...oldUser.statistics };
+          const newStats: LocalStatistics = {
+            gamesPlayed: oldStats.gamesPlayed,
+            gamesWon: oldStats.gamesWon,
+            currentStreak: 0,
+            maxStreak: oldStats.maxStreak,
+            accuracy: oldStats.accuracy
+          };
+
+          setUser((prevUser) => ({
+            name: prevUser.name,
+            guesses: [],
+            statistics: newStats
+          }));
+
+          localStorage.setItem(
+            'eden_heardle_user',
+            JSON.stringify({
+              name: user.name,
+              guesses: [],
+              statistics: newStats
+            })
+          );
+        }
+
+        localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(today));
+      }
+    } else {
+      localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(today));
     }
   }, [user]);
 
@@ -136,6 +188,7 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
 
   // FOR DEV ONLY:
   // const reset = () => {
+  //   localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(new Date()));
   //   localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
   //   setUser(initialUser);
   // };

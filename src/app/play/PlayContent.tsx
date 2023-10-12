@@ -72,12 +72,12 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   }, []);
 
   return (
-    <div className="self-end card w-full bg-base-100 shadow-xl image-full overflow-hidden mb-4">
+    <div className="self-end w-4/5 md:w-3/5 xl:w-2/5 card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4">
       <figure>
-        <Image src={song.cover} alt={song.name} fill objectFit="cover" />
+        <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
       </figure>
-      <div className="card-body">
-        <h2 className="card-title">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song.name}`}</h2>
+      <div className="card-body items-center">
+        <h2 className="card-title text-center">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
         <p>{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
         <div className="card-actions justify-center">
           <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
@@ -150,7 +150,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     return (
       <div className="flex flex-col items-center h-full justify-between">
         <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
+        <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
             {guessesFetched && guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />)}
             {guesses?.length === 0 && (
@@ -173,7 +173,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     return (
       <div className="flex flex-col items-center h-full justify-between">
         <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
+        <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
             {localUser.user?.guesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />

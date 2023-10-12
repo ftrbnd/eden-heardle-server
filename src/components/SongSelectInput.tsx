@@ -54,7 +54,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
     },
     onSettled: (_newStats, err, _variables, context) => {
       if (err) {
-        console.log('STATS MUTATION ERROR: ', err);
+        console.error('STATS MUTATION ERROR: ', err);
         queryClient.setQueryData(['guesses'], context?.prevStats);
       }
 
@@ -109,9 +109,6 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {
-      console.log('Guessed song: ', song);
-      console.log('Daily song: ', dailySong);
-
       return song.name === dailySong?.name ? 'CORRECT' : song?.album === dailySong?.album ? 'ALBUM' : 'WRONG';
     }
 
