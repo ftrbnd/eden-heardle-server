@@ -76,7 +76,7 @@ export async function download() {
                   id: '0'
                 }
               });
-              if (!previousDailySong || !previousDailySong.heardleDay) throw new Error("Couldn't find previous daily song or its day number");
+              if (!previousDailySong || previousDailySong.heardleDay === null || previousDailySong.heardleDay === undefined) throw new Error("Couldn't find previous daily song or its day number");
 
               await prisma.dailySong.upsert({
                 where: {
