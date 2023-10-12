@@ -19,6 +19,20 @@ export const getStats = async () => {
   }
 };
 
+export const getUserStats = async (userId: string) => {
+  try {
+    const response = await fetch(`${statsUrlEndpoint}/${userId}`);
+    if (!response.ok) throw new Error('Failed to get stats');
+
+    const { stats }: { stats: Statistics } = await response.json();
+    if (!stats) return null;
+
+    return stats;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const updateStats = async (guessedSong: boolean) => {
   try {
     const response = await fetch(statsUrlEndpoint, {

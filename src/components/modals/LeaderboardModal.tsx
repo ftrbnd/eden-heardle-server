@@ -1,13 +1,52 @@
 'use client';
 
-import { getLeaderboard } from '@/lib/statsApi';
-import { useQuery } from '@tanstack/react-query';
+import { getLeaderboard, getUserStats } from '@/lib/statsApi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
 import SignInButton from '../buttons/SignInButton';
+import { User } from '@prisma/client';
+import ProfileModal from './ProfileModal';
 
 type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
+
+function ProfileColumn({ user }: { user: User }) {
+  const queryClient = useQueryClient();
+
+  const showProfileModal = () => {
+    const modal = document.getElementById(`profile_${user.id}_modal`) as HTMLDialogElement;
+    modal.showModal();
+  };
+
+  const prefetchUserStats = async () => {
+    await queryClient.prefetchQuery({
+      queryKey: ['stats', user.id],
+      queryFn: () => getUserStats(user.id)
+    });
+  };
+
+  return (
+    <td>
+      <div
+        onClick={showProfileModal}
+        onMouseOver={prefetchUserStats}
+        className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200 tooltip tooltip-right"
+        data-tip="View Profile"
+      >
+        <div className="avatar p-2">
+          <div className="mask mask-squircle w-8 h-8">
+            <Image src={user.image || '/default.png'} alt={`${user.name}'s Avatar`} height={48} width={48} />
+          </div>
+        </div>
+        <div>
+          <div className="font-bold">{user.name}</div>
+        </div>
+      </div>
+      <ProfileModal user={user} />
+    </td>
+  );
+}
 
 function StatTable({ activeTab }: { activeTab: Tab }) {
   const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
@@ -26,24 +65,13 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
               leaderboard.today.map((userDaily, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <Image src={userDaily.user.image || '/default.png'} alt={`${userDaily.user.name}'s Avatar`} height={48} width={48} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold">{userDaily.user.name}</div>
-                      </div>
-                    </div>
-                  </td>
+                  <ProfileColumn user={userDaily.user} />
                   <td>{userDaily.data}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td>{"Nobody has completed today's Heardle yet!"}</td>
+                <td>{"No one has completed today's Heardle yet!"}</td>
               </tr>
             )}
           </tbody>
@@ -55,24 +83,13 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
               leaderboard.winPercentages.map((winPct, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <Image src={winPct.user.image || '/default.png'} alt={`${winPct.user.name}'s Avatar`} height={48} width={48} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold">{winPct.user.name}</div>
-                      </div>
-                    </div>
-                  </td>
+                  <ProfileColumn user={winPct.user} />
                   <td>{winPct.data}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td>{'Nobody has won a game yet!'}</td>
+                <td>{'No one has won a game yet!'}</td>
               </tr>
             )}
           </tbody>
@@ -84,18 +101,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
               leaderboard.accuracies.map((accuracy, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <Image src={accuracy.user.image || '/default.png'} alt={`${accuracy.user.name}'s Avatar`} height={48} width={48} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold">{accuracy.user.name}</div>
-                      </div>
-                    </div>
-                  </td>
+                  <ProfileColumn user={accuracy.user} />
                   <td>{accuracy.data}</td>
                 </tr>
               ))
@@ -113,18 +119,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
               leaderboard.currentStreaks.map((streak, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold">{streak.user.name}</div>
-                      </div>
-                    </div>
-                  </td>
+                  <ProfileColumn user={streak.user} />
                   <td>{streak.data}</td>
                 </tr>
               ))
@@ -142,18 +137,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
               leaderboard.maxStreaks.map((streak, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar">
-                        <div className="mask mask-squircle w-12 h-12">
-                          <Image src={streak.user.image || '/default.png'} alt={`${streak.user.name}'s Avatar`} height={48} width={48} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="font-bold">{streak.user.name}</div>
-                      </div>
-                    </div>
-                  </td>
+                  <ProfileColumn user={streak.user} />
                   <td>{streak.data}</td>
                 </tr>
               ))
