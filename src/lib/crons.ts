@@ -57,19 +57,6 @@ export async function download() {
                 webkitRelativePath: ''
               });
 
-              console.log('Uploading to Supabase...');
-              const { error: updateError } = await supabase.storage.from('daily_song').update('daily_song.mp3', mp3File);
-              if (updateError) {
-                console.log(updateError);
-                throw new Error('Error uploading file to Supabase');
-              }
-
-              const { data, error: urlError } = await supabase.storage.from('daily_song').createSignedUrl('daily_song.mp3', 172800); // expires in 48 hours
-              if (urlError) {
-                console.log(urlError);
-                throw new Error('Error getting signed url from Supabase');
-              }
-
               // get current daily song and ensure it exists
               const previousDailySong = await prisma.dailySong.findUnique({
                 where: {
@@ -77,6 +64,25 @@ export async function download() {
                 }
               });
               if (!previousDailySong || previousDailySong.heardleDay === null || previousDailySong.heardleDay === undefined) throw new Error("Couldn't find previous daily song or its day number");
+
+              // delete previous daily song from storage
+              const { error: deleteError } = await supabase.storage.from('daily_song').remove([`daily_song_${previousDailySong.heardleDay}.mp3`]);
+              if (deleteError) {
+                console.log(deleteError);
+              }
+
+              console.log('Uploading to Supabase...');
+              const { error: uploadError } = await supabase.storage.from('daily_song').upload(`daily_song_${previousDailySong.heardleDay + 1}.mp3`, mp3File);
+              if (uploadError) {
+                console.log(uploadError);
+                throw new Error('Error uploading file to Supabase');
+              }
+
+              const { data, error: urlError } = await supabase.storage.from('daily_song').createSignedUrl(`daily_song_${previousDailySong.heardleDay + 1}.mp3`, 172800); // expires in 48 hours
+              if (urlError) {
+                console.log(urlError);
+                throw new Error('Error getting signed url from Supabase');
+              }
 
               await prisma.dailySong.upsert({
                 where: {
