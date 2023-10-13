@@ -2,3 +2,5 @@ node_modules/
 dist/
 *.env*
 public/daily_song.m4a
+daily_song.m4a
+daily_song.mp3
