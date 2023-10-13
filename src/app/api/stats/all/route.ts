@@ -3,7 +3,7 @@ import { GuessedSong, User } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 interface TodayStat {
-  data: string;
+  data: string[];
   user: User;
 }
 
@@ -35,26 +35,14 @@ export interface LeaderboardStats {
   maxStreaks: MaxStrkStat[];
 }
 
-function statusSquares(guesses: GuessedSong[]): string {
-  function getStatusSquare(status: string) {
-    switch (status) {
-      case 'CORRECT':
-        return '🟩';
-      case 'ALBUM':
-        return '🟧';
-      case 'WRONG':
-        return '🟥';
-      default:
-        return '⬜';
-    }
+function guessStatuses(songs: GuessedSong[]): string[] {
+  const statuses = [];
+
+  for (const song of songs) {
+    statuses.push(song.correctStatus);
   }
 
-  let squares: string[] = [];
-  guesses?.forEach((guess) => {
-    squares.push(getStatusSquare(guess.correctStatus));
-  });
-
-  return squares.join('');
+  return statuses;
 }
 
 export const dynamic = 'force-dynamic';
@@ -92,7 +80,7 @@ export async function GET() {
       // daily stats
       if (userGuesses.songs.length === 6 || userGuesses.songs.at(-1)?.correctStatus === 'CORRECT') {
         leaderboard.today.push({
-          data: statusSquares(userGuesses.songs),
+          data: guessStatuses(userGuesses.songs),
           user: userGuesses.user
         });
       }

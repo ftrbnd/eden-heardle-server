@@ -56,17 +56,39 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
     refetchIntervalInBackground: true
   });
 
+  const statusSquares = (guessStatuses: string[]): string => {
+    function getStatusSquare(status: string) {
+      switch (status) {
+        case 'CORRECT':
+          return '🟩';
+        case 'ALBUM':
+          return '🟧';
+        case 'WRONG':
+          return '🟥';
+        default:
+          return '⬜';
+      }
+    }
+
+    let squares: string[] = [];
+    guessStatuses?.forEach((status) => {
+      squares.push(getStatusSquare(status));
+    });
+
+    return squares.join('');
+  };
+
   const showSpecificStat = () => {
     switch (activeTab) {
       case 'TODAY':
         return (
           <tbody>
             {leaderboard?.today.length ? (
-              leaderboard.today.map((userDaily, index) => (
+              leaderboard.today.map((guesses, index) => (
                 <tr key={index}>
                   <th>{index + 1}</th>
-                  <ProfileColumn user={userDaily.user} />
-                  <td>{userDaily.data}</td>
+                  <ProfileColumn user={guesses.user} />
+                  <td className="p-0">{statusSquares(guesses.data)}</td>
                 </tr>
               ))
             ) : (
