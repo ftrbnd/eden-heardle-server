@@ -28,12 +28,7 @@ function ProfileColumn({ user }: { user: User }) {
 
   return (
     <td>
-      <div
-        onClick={showProfileModal}
-        onMouseOver={prefetchUserStats}
-        className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200 tooltip tooltip-right"
-        data-tip="View Profile"
-      >
+      <div onClick={showProfileModal} onMouseOver={prefetchUserStats} className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200">
         <div className="avatar p-2">
           <div className="mask mask-squircle w-8 h-8">
             <Image src={user.image || '/default.png'} alt={`${user.name}'s Avatar`} height={48} width={48} />
@@ -88,7 +83,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 <tr key={index}>
                   <th>{index + 1}</th>
                   <ProfileColumn user={guesses.user} />
-                  <td className="p-0">{statusSquares(guesses.data)}</td>
+                  <td className="p-0 text-right">{statusSquares(guesses.data)}</td>
                 </tr>
               ))
             ) : (
@@ -106,7 +101,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 <tr key={index}>
                   <th>{index + 1}</th>
                   <ProfileColumn user={winPct.user} />
-                  <td>{winPct.data}</td>
+                  <td className="text-right">{winPct.data}</td>
                 </tr>
               ))
             ) : (
@@ -124,7 +119,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 <tr key={index}>
                   <th>{index + 1}</th>
                   <ProfileColumn user={accuracy.user} />
-                  <td>{accuracy.data}</td>
+                  <td className="text-right">{accuracy.data}</td>
                 </tr>
               ))
             ) : (
@@ -142,7 +137,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 <tr key={index}>
                   <th>{index + 1}</th>
                   <ProfileColumn user={streak.user} />
-                  <td>{streak.data}</td>
+                  <td className="text-right">{streak.data}</td>
                 </tr>
               ))
             ) : (
@@ -160,7 +155,7 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
                 <tr key={index}>
                   <th>{index + 1}</th>
                   <ProfileColumn user={streak.user} />
-                  <td>{streak.data}</td>
+                  <td className="text-right">{streak.data}</td>
                 </tr>
               ))
             ) : (
@@ -233,7 +228,7 @@ export default function LeaderboardModal() {
 
   return (
     <dialog id="leaderboard_modal" className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box min-w-min max-h-80 sm:max-h-max">
+      <div className="modal-box h-2/5 sm:h-3/5">
         <h3 className="font-bold text-lg">Leaderboard</h3>
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         <StatTable activeTab={activeTab} />
