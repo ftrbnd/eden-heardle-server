@@ -138,7 +138,7 @@ export default function StatsModal() {
     if (showSuccess) return;
 
     setShowSuccess(true);
-    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares()}`);
+    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares().replace(/\s/g, '')}`);
 
     setTimeout(() => {
       setShowSuccess(false);
