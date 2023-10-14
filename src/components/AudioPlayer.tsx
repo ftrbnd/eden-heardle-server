@@ -33,10 +33,10 @@ export default function AudioPlayer() {
   useEffect(() => {
     const handleTimeUpdate = () => {
       let currentSecond = 0;
-      if (audioRef.current && dailySong?.startTime) {
-        currentSecond = audioRef.current.currentTime - dailySong.startTime;
+      if (audioRef.current) {
+        currentSecond = audioRef.current.currentTime;
 
-        setSecond(audioRef.current.currentTime - dailySong.startTime);
+        setSecond(audioRef.current.currentTime);
       }
 
       if (session && guesses?.length !== undefined) {
@@ -64,17 +64,17 @@ export default function AudioPlayer() {
   });
 
   const pauseSong = () => {
-    if (audioRef.current && dailySong?.startTime) {
+    if (audioRef.current) {
       audioRef.current.pause();
       setIcon(faPlay);
 
-      audioRef.current.currentTime = dailySong.startTime;
+      audioRef.current.currentTime = 0;
     }
   };
 
   const playSong = () => {
-    if (audioRef.current && dailySong?.startTime) {
-      audioRef.current.currentTime = dailySong?.startTime;
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
 
       audioRef.current.play();
       setIcon(faPause);
