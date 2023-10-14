@@ -36,6 +36,10 @@ export default function AudioPlayer() {
       if (audioRef.current) {
         currentSecond = audioRef.current.currentTime;
 
+        if (currentSecond >= 6) {
+          pauseSong();
+        }
+
         setSecond(audioRef.current.currentTime);
       }
 
