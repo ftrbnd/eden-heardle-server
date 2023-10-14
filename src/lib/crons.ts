@@ -44,6 +44,8 @@ export async function download() {
           // Convert .m4a to .mp3
           ffmpeg('daily_song.m4a')
             .format('mp3')
+            .setStartTime(randomStartTime)
+            .setDuration(6)
             .on('end', async () => {
               console.log('File conversion complete!');
 
