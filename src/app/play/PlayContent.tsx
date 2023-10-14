@@ -77,8 +77,8 @@ function Countdown({ song, guessedSong }: CountdownProps) {
         <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
       </figure>
       <div className="card-body items-center">
-        <h2 className="card-title text-center">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
-        <p>{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
+        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
+        <p className="text-md">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
         <div className="card-actions justify-center">
           <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
             <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
