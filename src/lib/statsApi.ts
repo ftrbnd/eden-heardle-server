@@ -1,7 +1,7 @@
 import { LeaderboardStats } from '@/app/api/stats/all/route';
 import { Statistics } from '@prisma/client';
 
-const statsUrlEndpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/stats`;
+const statsUrlEndpoint = '/api/stats';
 
 export const getStats = async () => {
   try {

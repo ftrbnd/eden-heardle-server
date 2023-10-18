@@ -1,6 +1,6 @@
 import { DailySong, GuessedSong, Song } from '@prisma/client';
 
-const songsUrlEndpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/songs`;
+const songsUrlEndpoint = '/api/songs';
 
 export const getSongs = async () => {
   try {
