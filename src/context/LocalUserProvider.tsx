@@ -88,8 +88,6 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
     if (user !== initialUser) {
       localStorage.setItem('eden_heardle_user', JSON.stringify(user));
     }
-
-    console.log('Local user: ', user);
   }, [user]);
 
   useEffect(() => {
