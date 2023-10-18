@@ -89,8 +89,25 @@ export default function AudioPlayer() {
     icon === faPlay ? playSong() : pauseSong();
   };
 
+  const getGuessesCount = (): number => {
+    if (session && guesses?.length !== undefined) {
+      return guesses.length;
+    } else if (localUser.user?.guesses.length !== undefined) {
+      return localUser.user.guesses.length;
+    }
+    return 0;
+  };
+
   return (
     <div className="flex flex-col items-center gap-2 w-full">
+      <ul className="steps w-full md:w-3/5 xl:w-2/5">
+        <li className={getGuessesCount() >= 1 ? 'step step-primary' : 'step step-neutral'} />
+        <li className={getGuessesCount() >= 2 ? 'step step-primary' : 'step step-neutral'} />
+        <li className={getGuessesCount() >= 3 ? 'step step-primary' : 'step step-neutral'} />
+        <li className={getGuessesCount() >= 4 ? 'step step-primary' : 'step step-neutral'} />
+        <li className={getGuessesCount() >= 5 ? 'step step-primary' : 'step step-neutral'} />
+        <li className={getGuessesCount() >= 6 ? 'step step-primary' : 'step step-neutral'} />
+      </ul>
       <progress className="progress progress-primary w-full md:w-3/5 xl:w-2/5" value={second} max="6"></progress>
 
       <div className="flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5">
