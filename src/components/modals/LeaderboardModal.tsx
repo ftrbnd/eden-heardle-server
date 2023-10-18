@@ -8,6 +8,8 @@ import { useState } from 'react';
 import SignInButton from '../buttons/SignInButton';
 import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
 
@@ -34,8 +36,13 @@ function ProfileColumn({ user }: { user: User }) {
             <Image src={user.image || '/default.png'} alt={`${user.name}'s Avatar`} height={48} width={48} />
           </div>
         </div>
-        <div>
+        <div className="flex gap-2 justify-center items-center">
           <div className="font-bold">{user.name}</div>
+          {user.earlySupporter && (
+            <div className="tooltip" data-tip="Early Supporter">
+              <FontAwesomeIcon className="w-3 h-3 text-accent" icon={faGem} />
+            </div>
+          )}
         </div>
       </div>
       <ProfileModal user={user} />
