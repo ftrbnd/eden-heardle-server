@@ -1,5 +1,7 @@
 'use client';
 
+import { getDailySong } from '@/lib/songsApi';
+import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 
 interface LocalGuessedSong {
@@ -61,15 +63,25 @@ const useLocalUser = (): LocalUserState => {
 export const LocalUserProvider = (props: PropsWithChildren) => {
   const [user, setUser] = useState<LocalUser>(initialUser);
 
-  useEffect(() => {
-    const localUser = localStorage.getItem('eden_heardle_user');
+  const { data: dailySong } = useQuery({
+    queryKey: ['daily'],
+    queryFn: getDailySong,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
+  });
 
-    if (localUser) {
-      setUser(JSON.parse(localUser));
-    } else {
-      localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
-      setUser(initialUser);
-    }
+  useEffect(() => {
+    reset();
+    // TODO: reset all users and uncomment below code on next deployment
+
+    // const localUser = localStorage.getItem('eden_heardle_user');
+
+    // if (localUser) {
+    //   setUser(JSON.parse(localUser));
+    // } else {
+    //   localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
+    //   setUser(initialUser);
+    // }
   }, []);
 
   useEffect(() => {
@@ -77,52 +89,55 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
       localStorage.setItem('eden_heardle_user', JSON.stringify(user));
     }
 
-    const lastLoggedIn = localStorage.getItem('eden_heardle_last_logged_in');
-    const today = new Date();
+    console.log('Local user: ', user);
+  }, [user]);
 
-    if (lastLoggedIn) {
-      // check streaks
-      const lastDay = new Date(JSON.parse(lastLoggedIn));
+  useEffect(() => {
+    if (dailySong) {
+      const lastLoggedIn = localStorage.getItem('eden_heardle_last_logged_in');
+      const today = dailySong.heardleDay!;
 
-      const timeDifference = today.getTime() - lastDay.getTime();
-      const dayDifference = timeDifference / (1000 * 60 * 60 * 24);
+      if (lastLoggedIn !== null && lastLoggedIn !== undefined) {
+        // check streaks and reset guesses
+        const lastDay = parseInt(lastLoggedIn);
+        if (lastDay < today) {
+          if (localStorage.getItem('eden_heardle_user')) {
+            const oldUser: LocalUser = JSON.parse(localStorage.getItem('eden_heardle_user')!);
 
-      if (dayDifference >= 1) {
-        if (localStorage.getItem('eden_heardle_user')) {
-          // reset guesses and current streak
-          const oldUser: LocalUser = JSON.parse(localStorage.getItem('eden_heardle_user')!);
+            const completedLastHeardle = oldUser.guesses.at(-1)?.correctStatus === 'CORRECT';
 
-          const oldStats = { ...oldUser.statistics };
-          const newStats: LocalStatistics = {
-            gamesPlayed: oldStats.gamesPlayed,
-            gamesWon: oldStats.gamesWon,
-            currentStreak: 0,
-            maxStreak: oldStats.maxStreak,
-            accuracy: oldStats.accuracy
-          };
+            const oldStats = { ...oldUser.statistics };
+            const newStats: LocalStatistics = {
+              gamesPlayed: oldStats.gamesPlayed,
+              gamesWon: oldStats.gamesWon,
+              currentStreak: completedLastHeardle ? oldStats.currentStreak : 0,
+              maxStreak: oldStats.maxStreak,
+              accuracy: oldStats.accuracy
+            };
 
-          setUser((prevUser) => ({
-            name: prevUser.name,
-            guesses: [],
-            statistics: newStats
-          }));
-
-          localStorage.setItem(
-            'eden_heardle_user',
-            JSON.stringify({
-              name: user.name,
+            setUser((prevUser) => ({
+              name: prevUser.name,
               guesses: [],
               statistics: newStats
-            })
-          );
-        }
+            }));
 
+            localStorage.setItem(
+              'eden_heardle_user',
+              JSON.stringify({
+                name: oldUser.name,
+                guesses: [],
+                statistics: newStats
+              })
+            );
+          }
+
+          localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(today));
+        }
+      } else {
         localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(today));
       }
-    } else {
-      localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(today));
     }
-  }, [user]);
+  }, [dailySong]);
 
   const updateGuesses = (guess: LocalGuessedSong) => {
     /**
@@ -187,11 +202,11 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
   };
 
   // FOR DEV ONLY:
-  // const reset = () => {
-  //   localStorage.setItem('eden_heardle_last_logged_in', JSON.stringify(new Date()));
-  //   localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
-  //   setUser(initialUser);
-  // };
+  const reset = () => {
+    localStorage.setItem('eden_heardle_last_logged_in', '0');
+    localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
+    setUser(initialUser);
+  };
 
   // const resetGuesses = () => {
   //   setUser((prevUser) => ({
