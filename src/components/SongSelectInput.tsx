@@ -96,12 +96,12 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
       if (guesses) {
         if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
           const modal = document.getElementById('stats_modal') as HTMLDialogElement;
-          modal.showModal();
+          if (!modal.open) modal.showModal();
         }
       } else {
         if (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') {
           const modal = document.getElementById('stats_modal') as HTMLDialogElement;
-          modal.showModal();
+          if (!modal.open) modal.showModal();
         }
       }
     }

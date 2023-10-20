@@ -38,7 +38,7 @@ export default function Navbar({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (openRules === 'true') {
       const modal = document.getElementById('rules_modal') as HTMLDialogElement;
-      modal.showModal();
+      if (!modal.open) modal.showModal();
     }
   }, [openRules]);
 

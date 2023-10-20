@@ -18,7 +18,7 @@ function ProfileColumn({ user }: { user: User }) {
 
   const showProfileModal = () => {
     const modal = document.getElementById(`profile_${user.id}_modal`) as HTMLDialogElement;
-    modal.showModal();
+    if (!modal.open) modal.showModal();
   };
 
   const prefetchUserStats = async () => {
