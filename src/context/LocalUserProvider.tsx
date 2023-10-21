@@ -71,17 +71,14 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
   });
 
   useEffect(() => {
-    reset();
-    // TODO: reset all users and uncomment below code on next deployment
+    const localUser = localStorage.getItem('eden_heardle_user');
 
-    // const localUser = localStorage.getItem('eden_heardle_user');
-
-    // if (localUser) {
-    //   setUser(JSON.parse(localUser));
-    // } else {
-    //   localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
-    //   setUser(initialUser);
-    // }
+    if (localUser) {
+      setUser(JSON.parse(localUser));
+    } else {
+      localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
+      setUser(initialUser);
+    }
   }, []);
 
   useEffect(() => {
@@ -200,11 +197,11 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
   };
 
   // FOR DEV ONLY:
-  const reset = () => {
-    localStorage.setItem('eden_heardle_last_logged_in', '0');
-    localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
-    setUser(initialUser);
-  };
+  // const reset = () => {
+  //   localStorage.setItem('eden_heardle_last_logged_in', '0');
+  //   localStorage.setItem('eden_heardle_user', JSON.stringify(initialUser));
+  //   setUser(initialUser);
+  // };
 
   // const resetGuesses = () => {
   //   setUser((prevUser) => ({
