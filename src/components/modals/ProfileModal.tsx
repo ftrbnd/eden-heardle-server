@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Statistics, User } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
+import { useEffect, useRef, MouseEvent } from 'react';
 
 function Stats({ userStats }: { userStats: Statistics }) {
   return (
@@ -55,14 +56,29 @@ function Stats({ userStats }: { userStats: Statistics }) {
   );
 }
 
-export default function ProfileModal({ user }: { user: User }) {
+export default function ProfileModal({ user, showProfile, setShowProfile }: { user: User; showProfile: boolean; setShowProfile: (show: boolean) => void }) {
+  const modalRef = useRef<HTMLDialogElement | null>(null);
+
   const { data: stats, isLoading } = useQuery({
     queryKey: ['stats', user.id],
     queryFn: () => getUserStats(user.id)
   });
 
+  useEffect(() => {
+    if (showProfile) {
+      modalRef.current?.showModal();
+    } else {
+      modalRef.current?.close();
+    }
+  }, [showProfile, user.id]);
+
+  const closeModal = (e: MouseEvent) => {
+    e.preventDefault();
+    setShowProfile(false);
+  };
+
   return (
-    <dialog id={`profile_${user.id}_modal`} className="modal modal-bottom sm:modal-middle">
+    <dialog ref={modalRef} id={`profile_${user.id}_modal`} className="modal modal-bottom sm:modal-middle">
       <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <div className="grid grid-cols-2">
           <div className="flex justify-start items-center gap-2">
@@ -83,7 +99,7 @@ export default function ProfileModal({ user }: { user: User }) {
       </div>
 
       <form method="dialog" className="modal-backdrop">
-        <button>Close</button>
+        <button onClick={(e) => closeModal(e)}>Close</button>
       </form>
     </dialog>
   );

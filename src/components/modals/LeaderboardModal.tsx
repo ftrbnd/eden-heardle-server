@@ -4,7 +4,7 @@ import { getLeaderboard } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SignInButton from '../buttons/SignInButton';
 import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
@@ -14,14 +14,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
 
 function ProfileColumn({ user }: { user: User }) {
-  const showProfileModal = () => {
-    const modal = document.getElementById(`profile_${user.id}_modal`) as HTMLDialogElement;
-    if (!modal.open) modal.showModal();
-  };
+  const [showProfile, setShowProfile] = useState(false);
 
   return (
     <td>
-      <div onClick={showProfileModal} className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200">
+      <div onClick={() => setShowProfile(true)} className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200">
         <div className="avatar p-2">
           <div className="mask mask-squircle w-8 h-8">
             <Image src={user.image || '/default.png'} alt={`${user.name}'s Avatar`} height={48} width={48} />
@@ -36,7 +33,7 @@ function ProfileColumn({ user }: { user: User }) {
           )}
         </div>
       </div>
-      <ProfileModal user={user} />
+      {showProfile && <ProfileModal user={user} showProfile={showProfile} setShowProfile={setShowProfile} />}
     </td>
   );
 }
