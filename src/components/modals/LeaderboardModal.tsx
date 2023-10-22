@@ -4,7 +4,7 @@ import { getLeaderboard } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SignInButton from '../buttons/SignInButton';
 import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
