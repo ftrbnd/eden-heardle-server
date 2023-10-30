@@ -85,8 +85,8 @@ export async function GET() {
         });
       }
 
-      // win percentages and accuracies
-      if (userStat.gamesPlayed > 0) {
+      // win percentages and accuracies (minimum of 2 games played)
+      if (userStat.gamesPlayed >= 2) {
         leaderboard.winPercentages.push({
           data: Math.round(((userStat?.gamesWon ?? 0) / (userStat?.gamesPlayed || 1)) * 100),
           user: userGuesses.user
@@ -98,8 +98,8 @@ export async function GET() {
         });
       }
 
-      // current streaks
-      if (userStat.currentStreak > 0) {
+      // current streaks (streaks start at 2)
+      if (userStat.currentStreak >= 2) {
         leaderboard.currentStreaks.push({
           data: userStat.currentStreak,
           user: userGuesses.user
@@ -107,7 +107,7 @@ export async function GET() {
       }
 
       // max streaks
-      if (userStat.maxStreak > 0) {
+      if (userStat.maxStreak >= 2) {
         leaderboard.maxStreaks.push({
           data: userStat.maxStreak,
           user: userGuesses.user
