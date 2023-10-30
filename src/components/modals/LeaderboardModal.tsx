@@ -1,7 +1,7 @@
 'use client';
 
-import { getLeaderboard } from '@/lib/statsApi';
-import { useQuery } from '@tanstack/react-query';
+import { getLeaderboard, getUserStats } from '@/lib/statsApi';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -16,9 +16,18 @@ type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
 function ProfileColumn({ user }: { user: User }) {
   const [showProfile, setShowProfile] = useState(false);
 
+  const queryClient = useQueryClient();
+
+  const prefetchUserStats = async () => {
+    await queryClient.prefetchQuery({
+      queryKey: ['stats', user.id],
+      queryFn: () => getUserStats(user.id)
+    });
+  };
+
   return (
     <td>
-      <div onClick={() => setShowProfile(true)} className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200">
+      <div onMouseOver={prefetchUserStats} onClick={() => setShowProfile(true)} className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200">
         <div className="avatar p-2">
           <div className="mask mask-squircle w-8 h-8">
             <Image src={user.image || '/default.png'} alt={`${user.name}'s Avatar`} height={48} width={48} />

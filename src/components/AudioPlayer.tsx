@@ -44,11 +44,11 @@ export default function AudioPlayer() {
       }
 
       if (session && guesses?.length !== undefined) {
-        if (currentSecond >= guesses.length + 1) {
+        if (currentSecond >= guesses.length + 1 && !finishedGame()) {
           pauseSong();
         }
       } else {
-        if (localUser.user?.guesses.length !== undefined) {
+        if (localUser.user?.guesses.length !== undefined && !finishedGame()) {
           if (currentSecond >= localUser.user.guesses.length + 1) {
             pauseSong();
           }
@@ -89,11 +89,11 @@ export default function AudioPlayer() {
     icon === faPlay ? playSong() : pauseSong();
   };
 
-  const getGuessesCount = (): number => {
+  const finishedGame = () => {
     if (session && guesses?.length !== undefined) {
-      return guesses.length;
+      return guesses.at(-1)?.correctStatus === 'CORRECT' || guesses.length === 6;
     } else if (localUser.user?.guesses.length !== undefined) {
-      return localUser.user.guesses.length;
+      return localUser.user.guesses.at(-1)?.correctStatus === 'CORRECT' || localUser.user.guesses.length === 6;
     }
     return 0;
   };
