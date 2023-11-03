@@ -123,7 +123,8 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
         album: selectedSong.album,
         cover: selectedSong.cover,
         correctStatus: getCorrectStatus(selectedSong),
-        guessListId: createId()
+        guessListId: createId(),
+        duration: selectedSong.duration
       });
     } else {
       localUser.updateGuesses({
