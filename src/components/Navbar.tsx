@@ -61,6 +61,11 @@ export default function Navbar({ children }: { children: ReactNode }) {
             <li>
               <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
             </li>
+            {session && (
+              <li>
+                <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
+              </li>
+            )}
           </ul>
         </div>
         <Link href={'/'} className="btn btn-ghost normal-case text-xl">
@@ -78,6 +83,11 @@ export default function Navbar({ children }: { children: ReactNode }) {
           <li>
             <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
           </li>
+          {session && (
+            <li>
+              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
+            </li>
+          )}
         </ul>
       </div>
 

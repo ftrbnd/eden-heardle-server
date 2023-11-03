@@ -1,5 +1,4 @@
 import GuessCard from '@/components/GuessCard';
-import OpenModalButton from '@/components/modals/OpenModalButton';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';

@@ -2,6 +2,7 @@ import PlayContent from './PlayContent';
 import RulesModal from '@/components/modals/RulesModal';
 import SettingsModal from '@/components/modals/SettingsModal';
 import LeaderboardModal from '@/components/modals/LeaderboardModal';
+import CustomHeardleModal from '@/components/modals/CustomHeardleModal';
 
 export default function Play() {
   return (
@@ -10,6 +11,7 @@ export default function Play() {
       <LeaderboardModal />
       <RulesModal />
       <SettingsModal />
+      <CustomHeardleModal />
     </PlayContent>
   );
 }
