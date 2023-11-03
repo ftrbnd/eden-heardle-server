@@ -10,7 +10,7 @@ import { useSearchParams } from 'next/navigation';
 import ThemeButton from './buttons/ThemeButton';
 import StatsModal from './modals/StatsModal';
 
-function ProfileDropdown({ session }: { session: Session | null }) {
+export function ProfileDropdown({ session }: { session: Session | null }) {
   return (
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
