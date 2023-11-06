@@ -63,7 +63,9 @@ export default function Navbar({ children }: { children: ReactNode }) {
             </li>
             {session && (
               <li>
-                <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
+                <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
+                  <span className="badge badge-sm badge-success">NEW</span>
+                </OpenModalButton>
               </li>
             )}
           </ul>
@@ -85,7 +87,9 @@ export default function Navbar({ children }: { children: ReactNode }) {
           </li>
           {session && (
             <li>
-              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
+              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
+                <span className="badge badge-sm badge-success">NEW</span>
+              </OpenModalButton>
             </li>
           )}
         </ul>
