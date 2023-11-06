@@ -1,6 +1,6 @@
 'use client';
 
-import { createCustomHeardle } from '@/lib/customHeardleApi';
+import { checkUserCustomHeardle, createCustomHeardle } from '@/lib/customHeardleApi';
 import { getSongs } from '@/lib/songsApi';
 import { faCloudArrowUp, faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -86,8 +86,13 @@ export default function CustomHeardleModal() {
   const [error, setError] = useState<string>('');
 
   const { data: session } = useSession();
-
   const router = useRouter();
+
+  const { data: userCustomHeardle } = useQuery({
+    queryFn: () => checkUserCustomHeardle(session?.user.id ?? 'fakeid'),
+    queryKey: ['userCustomHeardle', session?.user.id],
+    enabled: !!session?.user.id
+  });
 
   const handleSelection = (song: Song) => {
     setSelectedSong(song);
@@ -119,40 +124,58 @@ export default function CustomHeardleModal() {
         <h3 className="font-bold text-lg">
           Create a Custom Heardle! <span className="badge badge-lg badge-success">NEW</span>
         </h3>
-        <div className="flex flex-col gap-2">
-          <SelectSong onSongSelect={handleSelection} />
-          <SelectedSongCard selectedSong={selectedSong} />
+        {userCustomHeardle ? (
           <div>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text font-semibold">Set song range</span>
-                {startTime === (selectedSong?.duration ?? 0) - 6 && <span className="label-text-alt">{'Song must be 6 seconds'}</span>}
-              </label>
-              <input
-                type="range"
-                className="range"
-                min={0}
-                max={(selectedSong?.duration ?? 0) - 6}
-                step="1"
-                value={startTime}
-                onChange={(e) => setStartTime(parseInt(e.target.value))}
-                disabled={!selectedSong}
-              />
-
-              <div className="flex justify-between items-center">
-                <p>
-                  Range: {formatTime(startTime)} - {formatTime(startTime + 6)}
-                </p>
-                <p>{formatTime(selectedSong?.duration ?? 0)}</p>
+            <h4>You already have a custom Heardle!</h4>
+            <div className="card card-side bg-base-100 shadow-xl w-full">
+              <figure>
+                <Image src={userCustomHeardle?.cover ?? '/default_song.png'} alt="Cover of selected song" height={50} width={50} />
+              </figure>
+              <div className="flex items-center w-full px-4">
+                <Link href={`http://localhost:3000/play/${userCustomHeardle.id}`} className="card-title text-left link link-primary w-full">
+                  {userCustomHeardle?.name}
+                  <FontAwesomeIcon icon={faUpRightFromSquare} className="h-3 w-3" />
+                </Link>
               </div>
             </div>
+            <p>Delete?</p>
           </div>
-          <p className="text-xs text-center text-error">{error}</p>
-          <button className="btn btn-primary self-end" disabled={!selectedSong} onClick={sendRequest}>
-            Generate
-            <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />
-          </button>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <SelectSong onSongSelect={handleSelection} />
+            <SelectedSongCard selectedSong={selectedSong} />
+            <div>
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text font-semibold">Set song range</span>
+                  {startTime === (selectedSong?.duration ?? 0) - 6 && <span className="label-text-alt">{'Song must be 6 seconds'}</span>}
+                </label>
+                <input
+                  type="range"
+                  className="range"
+                  min={0}
+                  max={(selectedSong?.duration ?? 0) - 6}
+                  step="1"
+                  value={startTime}
+                  onChange={(e) => setStartTime(parseInt(e.target.value))}
+                  disabled={!selectedSong}
+                />
+
+                <div className="flex justify-between items-center">
+                  <p>
+                    Range: {formatTime(startTime)} - {formatTime(startTime + 6)}
+                  </p>
+                  <p>{formatTime(selectedSong?.duration ?? 0)}</p>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-center text-error">{error}</p>
+            <button className="btn btn-primary self-end" disabled={!selectedSong} onClick={sendRequest}>
+              Generate
+              <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />
+            </button>
+          </div>
+        )}
       </div>
 
       <form method="dialog" className="modal-backdrop">

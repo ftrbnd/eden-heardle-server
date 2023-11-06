@@ -27,7 +27,19 @@ export const createCustomHeardle = async (song: Song, startTime: number, userId:
 
 export const getCustomHeardle = async (heardleId: string) => {
   try {
-    const response = await fetch(`/api/customHeardle/${heardleId}`);
+    const response = await fetch(`/api/customHeardles/${heardleId}`);
+    if (!response.ok) throw new Error('Failed to create custom Heardle');
+
+    const { song }: { song: CustomHeardle } = await response.json();
+    return song;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const checkUserCustomHeardle = async (id: string) => {
+  try {
+    const response = await fetch(`/api/customHeardles/user/${id}`);
     if (!response.ok) throw new Error('Failed to create custom Heardle');
 
     const { song }: { song: CustomHeardle } = await response.json();
