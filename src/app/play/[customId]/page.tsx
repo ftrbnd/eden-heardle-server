@@ -3,6 +3,8 @@
 import { ProfileDropdown } from '@/components/Navbar';
 import ThemeButton from '@/components/buttons/ThemeButton';
 import OpenModalButton from '@/components/modals/OpenModalButton';
+import { getCustomHeardle } from '@/lib/customHeardleApi';
+import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -53,10 +55,15 @@ function CustomHeardlePageNavbar() {
 }
 
 export default function CustomHeardlePage({ params }: { params: { customId: string } }) {
+  const { data: song } = useQuery({
+    queryKey: ['customHeardle', params.customId],
+    queryFn: () => getCustomHeardle(params.customId)
+  });
+
   return (
-    <div className="flex flex-col items-center h-full justify-between">
+    <div className="flex flex-col items-center h-full">
       <CustomHeardlePageNavbar />
-      <p>Custom heardle: {params.customId}</p>
+      <p>Custom heardle: {song?.name ?? 'NOT FOUND'}</p>
     </div>
   );
 }

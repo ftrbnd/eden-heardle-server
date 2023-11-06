@@ -46,6 +46,7 @@ model User {
   statistics     Statistics?
   guesses        Guesses?
   earlySupporter Boolean?    @default(false)
+  customHeardle CustomHeardle?
 }
 
 model VerificationToken {
@@ -105,5 +106,17 @@ model Song {
   album    String?
   cover    String
   link     String
+  duration Int?
+}
+
+model CustomHeardle {
+  id String @id @default(cuid())
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String        @unique // relation scalar field (used in the `@relation` attribute above)
+  name     String
+  album    String?
+  cover    String
+  link     String
+  startTime  Int
   duration Int?
 }
