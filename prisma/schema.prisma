@@ -34,13 +34,14 @@ model Session {
 }
 
 model User {
-  id             String      @id @default(cuid())
+  id             String         @id @default(cuid())
   name           String?
-  email          String?     @unique
+  email          String?        @unique
   emailVerified  DateTime?
   image          String?
-  earlySupporter Boolean?    @default(false)
+  earlySupporter Boolean?       @default(false)
   accounts       Account[]
+  CustomHeardle  CustomHeardle?
   guesses        Guesses?
   sessions       Session[]
   statistics     Statistics?
@@ -79,6 +80,7 @@ model GuessedSong {
   cover         String
   correctStatus String
   guessListId   String
+  duration      Int?
   guessList     Guesses @relation(fields: [guessListId], references: [id], onDelete: Cascade)
 }
 
@@ -91,12 +93,26 @@ model DailySong {
   startTime  Int?
   heardleDay Int?
   nextReset  DateTime?
+  duration   Int?
 }
 
 model Song {
-  id    String  @id @default(cuid())
-  name  String
-  album String?
-  cover String
-  link  String
+  id       String  @id @default(cuid())
+  name     String
+  album    String?
+  cover    String
+  link     String
+  duration Int?
+}
+
+model CustomHeardle {
+  id        String  @id
+  userId    String  @unique
+  name      String
+  album     String?
+  cover     String
+  link      String
+  startTime Int
+  duration  Int?
+  User      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
