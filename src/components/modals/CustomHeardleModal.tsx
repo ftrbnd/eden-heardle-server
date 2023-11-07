@@ -1,16 +1,16 @@
 'use client';
 
-import { checkUserCustomHeardle, createCustomHeardle } from '@/lib/customHeardleApi';
+import { checkUserCustomHeardle, createCustomHeardle, deleteCustomHeardle } from '@/lib/customHeardleApi';
 import { getSongs } from '@/lib/songsApi';
-import { faCloudArrowUp, faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCloudArrowUp, faLink, faTrash, faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Song } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { createId } from '@paralleldrive/cuid2';
 
 interface SelectProps {
@@ -83,10 +83,13 @@ const formatTime = (seconds: number) => {
 export default function CustomHeardleModal() {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [startTime, setStartTime] = useState<number>(0);
+
   const [error, setError] = useState<string>('');
+  const [copied, setCopied] = useState<boolean>(false);
 
   const { data: session } = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data: userCustomHeardle } = useQuery({
     queryFn: () => checkUserCustomHeardle(session?.user.id ?? 'fakeid'),
@@ -94,12 +97,23 @@ export default function CustomHeardleModal() {
     enabled: !!session?.user.id
   });
 
+  const deleteHeardleMutation = useMutation({
+    mutationFn: () => deleteCustomHeardle(userCustomHeardle?.id ?? 'fakeid'),
+    onSettled: (_data, err: any) => {
+      if (err) {
+        return setError(err.message);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
+    }
+  });
+
   const handleSelection = (song: Song) => {
     setSelectedSong(song);
     setStartTime(0);
   };
 
-  const sendRequest = async () => {
+  const sendCreateRequest = async () => {
     if (!selectedSong) {
       return setError('Please select a song');
     }
@@ -109,8 +123,7 @@ export default function CustomHeardleModal() {
 
     try {
       const customHeardleId = createId();
-      const response = await createCustomHeardle(selectedSong, startTime, session.user.id, customHeardleId);
-      console.log('CREATE resposne: ', response);
+      await createCustomHeardle(selectedSong, startTime, session.user.id, customHeardleId);
 
       router.push(`/play/${customHeardleId}`);
     } catch (err) {
@@ -118,27 +131,52 @@ export default function CustomHeardleModal() {
     }
   };
 
+  const sendDeleteRequest = async () => {
+    if (!userCustomHeardle) {
+      return setError('No custom Heardle found');
+    }
+    if (!session?.user.id) {
+      return setError('Please sign in to delete this Custom Heardle');
+    }
+
+    await deleteHeardleMutation.mutateAsync();
+  };
+
+  const copyToClipboard = async (e: MouseEvent) => {
+    e.preventDefault();
+    if (copied) return;
+
+    setCopied(true);
+    await navigator.clipboard.writeText(`https://eden-heardle.io/play/${userCustomHeardle?.id}`);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 3000);
+  };
+
   return (
     <dialog id="custom_heardle_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box h-2/5 sm:h-min">
         <h3 className="font-bold text-lg">
-          Create a Custom Heardle! <span className="badge badge-lg badge-success">NEW</span>
+          Custom Heardle <span className="badge badge-lg badge-success">NEW</span>
         </h3>
         {userCustomHeardle ? (
-          <div>
-            <h4>You already have a custom Heardle!</h4>
-            <div className="card card-side bg-base-100 shadow-xl w-full">
-              <figure>
-                <Image src={userCustomHeardle?.cover ?? '/default_song.png'} alt="Cover of selected song" height={50} width={50} />
-              </figure>
-              <div className="flex items-center w-full px-4">
-                <Link href={`http://localhost:3000/play/${userCustomHeardle.id}`} className="card-title text-left link link-primary w-full">
-                  {userCustomHeardle?.name}
-                  <FontAwesomeIcon icon={faUpRightFromSquare} className="h-3 w-3" />
-                </Link>
+          <div className="card sm:card-side bg-base-200 shadow-xl">
+            <figure>
+              <Image src={userCustomHeardle.cover} alt="Album" width={500} height={500} />
+            </figure>
+            <div className="card-body">
+              <h2 className="card-title">{`${userCustomHeardle.name} (${formatTime(userCustomHeardle.startTime)} - ${formatTime(userCustomHeardle.startTime + 6)})`}</h2>
+              <p className="text-sm">Delete this Heardle to create a new one.</p>
+              <div className="card-actions justify-end">
+                <button onClick={sendDeleteRequest} className="btn btn-error" disabled={deleteHeardleMutation.isLoading}>
+                  <FontAwesomeIcon icon={faTrash} className="h-6 w-6" />
+                </button>
+                <button onClick={(e) => copyToClipboard(e)} className={`btn ${copied ? 'btn-success' : 'btn-primary'}`}>
+                  <FontAwesomeIcon icon={copied ? faCheck : faLink} className="h-6 w-6" />
+                </button>
               </div>
             </div>
-            <p>Delete?</p>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -170,7 +208,7 @@ export default function CustomHeardleModal() {
               </div>
             </div>
             <p className="text-xs text-center text-error">{error}</p>
-            <button className="btn btn-primary self-end" disabled={!selectedSong} onClick={sendRequest}>
+            <button className="btn btn-primary self-end" disabled={!selectedSong} onClick={sendCreateRequest}>
               Generate
               <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />
             </button>
