@@ -1,7 +1,6 @@
 import { CustomHeardle, Song } from '@prisma/client';
 
-const customHeardleApi = 'http://localhost:3001/api/customHeardle';
-// TODO: replace this with production api endpoint
+const customHeardleApi = process.env.NEXT_PUBLIC_EXPRESS_URL!;
 
 export const createCustomHeardle = async (song: Song, startTime: number, userId: string, customId: string) => {
   try {
@@ -12,7 +11,7 @@ export const createCustomHeardle = async (song: Song, startTime: number, userId:
       body: JSON.stringify({ song, startTime, userId, customId }),
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3000' // TODO: replace with production url
+        'Access-Control-Allow-Origin': 'https://eden-heardle.io'
       },
       mode: 'cors'
     });
@@ -34,7 +33,7 @@ export const deleteCustomHeardle = async (heardleId: string) => {
       body: JSON.stringify({ heardleId }),
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3000' // TODO: replace with production url
+        'Access-Control-Allow-Origin': 'https://eden-heardle.io'
       },
       mode: 'cors'
     });
