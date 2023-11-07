@@ -45,6 +45,7 @@ export default function LoadingPlayPage() {
           <GuessCard name="" album="" cover="/default_song.png" />
           <GuessCard name="" album="" cover="/default_song.png" />
         </div>
+        <div></div>
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         {/* SongSelectInput is omitted from loading page */}
