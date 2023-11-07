@@ -10,10 +10,18 @@ dotenv.config();
 
 const app = express();
 
+const whitelist = process.env.WHITELISTED_DOMAINS ? process.env.WHITELISTED_DOMAINS.split(',') : [];
+
 app.use(express.json());
 app.use(
   cors({
-    origin: 'http://localhost:3000'
+    origin: function (origin, callback) {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
   })
 );
 

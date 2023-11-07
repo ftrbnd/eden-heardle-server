@@ -4,8 +4,16 @@ import cors, { CorsOptions } from 'cors';
 
 export const apiRouter = Router();
 
+const whitelist = process.env.WHITELISTED_DOMAINS ? process.env.WHITELISTED_DOMAINS.split(',') : [];
+
 const corsOptions: CorsOptions = {
-  origin: 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['POST', 'DELETE'],
   preflightContinue: true,
   allowedHeaders: ['Content-Type', 'Access-Control-Allow-Origin']
