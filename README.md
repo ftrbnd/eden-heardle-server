@@ -98,7 +98,7 @@ This server has 2 responsibilities:
    npm install
    ```
 3. Generate your Prisma client
-  ```sh
+   ```sh
    npx prisma generate
    ```
 5. Start the local dev server
