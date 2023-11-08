@@ -2,21 +2,17 @@ import RulesModal from '@/components/modals/RulesModal';
 import SettingsModal from '@/components/modals/SettingsModal';
 import CustomHeardlePageContent from './CustomHeardlePageContent';
 import CustomHeardleModal from '@/components/modals/CustomHeardleModal';
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import prisma from '@/lib/db';
 
-type Props = {
-  params: { id: string };
-};
+interface CustomPageProps {
+  params: { customId: string };
+}
 
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
-  // read route params
-  const id = params.id;
-
-  // fetch data
+export async function generateMetadata({ params }: CustomPageProps): Promise<Metadata> {
   const customHeardle = await prisma.customHeardle.findUnique({
     where: {
-      id
+      id: params.customId
     },
     include: {
       user: true
@@ -33,7 +29,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
   };
 }
 
-export default function CustomHeardlePage({ params }: { params: { customId: string } }) {
+export default function CustomHeardlePage({ params }: CustomPageProps) {
   return (
     // https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#supported-pattern-passing-server-components-to-client-components-as-props
     <CustomHeardlePageContent params={params}>
