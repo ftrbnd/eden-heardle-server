@@ -9,15 +9,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import { createId } from '@paralleldrive/cuid2';
+import { Session } from 'next-auth';
+import SignInButton from '../buttons/SignInButton';
 
 interface SelectProps {
   onSongSelect: (song: Song) => void;
+  session: Session | null;
 }
 
-function SelectSong({ onSongSelect }: SelectProps) {
+function SelectSong({ onSongSelect, session }: SelectProps) {
   const { data: songs, isLoading: songsLoading } = useQuery({
     queryKey: ['songs'],
     queryFn: getSongs
@@ -35,10 +37,10 @@ function SelectSong({ onSongSelect }: SelectProps) {
       <label className="label">
         <span className="label-text font-semibold">Choose a song</span>
       </label>
-      <select className="select select-primary w-full place-self-center" defaultValue={'Choose a Song'} disabled={songsLoading} onChange={handleSelection}>
+      <select className="select select-primary w-full place-self-center" defaultValue={'Choose a Song'} disabled={songsLoading || !session} onChange={handleSelection}>
         <option disabled>Choose a song</option>
         {songs?.map((song) => (
-          <option key={song.id} value={song.name}>
+          <option key={song.id} value={song.name} disabled={!session}>
             {song.name}
           </option>
         ))}
@@ -88,13 +90,45 @@ export default function CustomHeardleModal() {
   const [copied, setCopied] = useState<boolean>(false);
 
   const { data: session } = useSession();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: userCustomHeardle } = useQuery({
     queryFn: () => checkUserCustomHeardle(session?.user.id ?? 'fakeid'),
     queryKey: ['userCustomHeardle', session?.user.id],
     enabled: !!session?.user.id
+  });
+
+  const createHeardleMutation = useMutation({
+    mutationFn: (generatedId: string) => createCustomHeardle(selectedSong!, startTime, session?.user.id!, generatedId),
+    onMutate: async (generatedId) => {
+      const createdHeardle = {
+        id: generatedId,
+        user: session?.user,
+        name: selectedSong?.name,
+        album: selectedSong?.album,
+        cover: selectedSong?.cover,
+        link: selectedSong?.link,
+        startTime: startTime,
+        userId: session?.user.id
+      };
+
+      await queryClient.cancelQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
+
+      const prevHeardle = queryClient.getQueryData(['userCustomHeardle', session?.user.id]);
+
+      queryClient.setQueryData(['userCustomHeardle', session?.user.id], createdHeardle);
+
+      return { prevHeardle, createdHeardle };
+    },
+    onSettled: (_data, err: any, variables, context) => {
+      if (err) {
+        queryClient.setQueryData(['userCustomHeardle', session?.user.id], context?.prevHeardle);
+        return setError(err.message);
+      }
+      // NOTE: data only contains a message, not the created custom heardle
+
+      setSelectedSong(null);
+    }
   });
 
   const deleteHeardleMutation = useMutation({
@@ -104,6 +138,7 @@ export default function CustomHeardleModal() {
         return setError(err.message);
       }
 
+      setSelectedSong(null);
       queryClient.invalidateQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
     }
   });
@@ -121,14 +156,8 @@ export default function CustomHeardleModal() {
       return setError('Please sign in to create a Custom Heardle');
     }
 
-    try {
-      const customHeardleId = createId();
-      await createCustomHeardle(selectedSong, startTime, session.user.id, customHeardleId);
-
-      router.push(`/play/${customHeardleId}`);
-    } catch (err) {
-      console.error(err);
-    }
+    const customHeardleId = createId();
+    await createHeardleMutation.mutateAsync(customHeardleId);
   };
 
   const sendDeleteRequest = async () => {
@@ -161,16 +190,17 @@ export default function CustomHeardleModal() {
           Custom Heardle <span className="badge badge-lg badge-success">NEW</span>
         </h3>
         {userCustomHeardle ? (
-          <div className="card sm:card-side bg-base-200 shadow-xl">
+          <div className="card sm:card-side bg-base-200 shadow-xl mt-4">
             <figure>
               <Image src={userCustomHeardle.cover} alt="Album" width={500} height={500} />
             </figure>
             <div className="card-body">
-              <h2 className="card-title">{`${userCustomHeardle.name} (${formatTime(userCustomHeardle.startTime)} - ${formatTime(userCustomHeardle.startTime + 6)})`}</h2>
+              <h2 className="card-title">Your Custom Heardle</h2>
+              <h3 className="font-semibold">{`${userCustomHeardle.name} (${formatTime(userCustomHeardle.startTime)} - ${formatTime(userCustomHeardle.startTime + 6)})`}</h3>
               <p className="text-sm">Delete this Heardle to create a new one.</p>
               <div className="card-actions justify-end">
                 <button onClick={sendDeleteRequest} className="btn btn-error" disabled={deleteHeardleMutation.isLoading}>
-                  <FontAwesomeIcon icon={faTrash} className="h-6 w-6" />
+                  {deleteHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faTrash} className="h-6 w-6" />}
                 </button>
                 <button onClick={(e) => copyToClipboard(e)} className={`btn ${copied ? 'btn-success' : 'btn-primary'}`}>
                   <FontAwesomeIcon icon={copied ? faCheck : faLink} className="h-6 w-6" />
@@ -180,7 +210,7 @@ export default function CustomHeardleModal() {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <SelectSong onSongSelect={handleSelection} />
+            <SelectSong onSongSelect={handleSelection} session={session} />
             <SelectedSongCard selectedSong={selectedSong} />
             <div>
               <div className="form-control w-full">
@@ -208,10 +238,14 @@ export default function CustomHeardleModal() {
               </div>
             </div>
             <p className="text-xs text-center text-error">{error}</p>
-            <button className="btn btn-primary self-end" disabled={!selectedSong} onClick={sendCreateRequest}>
-              Generate
-              <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />
-            </button>
+            <p className="text-xs text-center text-error">{!session && 'Sign in to create your own!'}</p>
+            <div className="self-end flex gap-2 items-center">
+              <button onClick={sendCreateRequest} className="btn btn-primary" disabled={!selectedSong || createHeardleMutation.isLoading}>
+                {createHeardleMutation.isLoading ? 'Generating...' : 'Generate'}
+                {createHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />}
+              </button>
+              {!session && <SignInButton />}
+            </div>
           </div>
         )}
       </div>

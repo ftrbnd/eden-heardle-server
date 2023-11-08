@@ -18,6 +18,11 @@ import { Session } from 'next-auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
+interface NavbarProps {
+  children: ReactNode;
+  creator?: User;
+}
+
 interface ResultCardProps {
   song: CustomHeardle;
   guessedSong: boolean;
@@ -31,7 +36,7 @@ interface PageProps {
   children: ReactNode;
 }
 
-function CustomHeardlePageNavbar({ children }: { children: ReactNode }) {
+function CustomHeardlePageNavbar({ children, creator }: NavbarProps) {
   const { data: session } = useSession();
 
   return (
@@ -47,16 +52,26 @@ function CustomHeardlePageNavbar({ children }: { children: ReactNode }) {
             <li>
               <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
             </li>
+            <li>
+              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
+                <span className="badge badge-sm badge-success">NEW</span>
+              </OpenModalButton>
+            </li>
           </ul>
         </div>
         <Link href={'/'} className="btn btn-ghost normal-case text-xl">
-          EDEN Heardle
+          {creator && `${creator.name}'s `}EDEN Heardle
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
             <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
+          </li>
+          <li>
+            <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
+              <span className="badge badge-sm badge-success">NEW</span>
+            </OpenModalButton>
           </li>
         </ul>
       </div>
@@ -125,6 +140,7 @@ function CustomResultCard({ song, guessedSong, creator, session, guesses }: Resu
         <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
         <p className="text-md">This custom Heardle was created by {creator?.name}</p>
         {!session && <p className="text-sm">Sign in to create your own!</p>}
+        <kbd className="kbd">{statusSquares()}</kbd>
         <div className="card-actions">
           <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
             {copied ? 'Copied!' : 'Share'}
@@ -141,7 +157,11 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
 
   const { data: session } = useSession();
 
-  const { data: song, isLoading: songLoading } = useQuery({
+  const {
+    data: song,
+    isLoading: songLoading,
+    isSuccess: songSuccess
+  } = useQuery({
     queryKey: ['customHeardle', params.customId],
     queryFn: () => getCustomHeardle(params.customId)
   });
@@ -154,7 +174,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
 
   return (
     <div className="flex flex-col items-center h-full">
-      <CustomHeardlePageNavbar>{children}</CustomHeardlePageNavbar>
+      <CustomHeardlePageNavbar creator={user!}>{children}</CustomHeardlePageNavbar>
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
           {customGuesses.map((song, index) => (
@@ -162,8 +182,8 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
           ))}
           {customGuesses.length === 0 && (
             <div className="row-span-full text-center">
-              <h1 className="text-5xl font-bold">Hello there</h1>
-              <p className="py-6">Press play and choose a song to get started!</p>
+              <h1 className={`text-5xl font-bold ${!songSuccess && 'text-error'}`}>{songSuccess ? 'Hello there' : 'Song Not Found'}</h1>
+              <p className="py-6">{songSuccess ? 'Press play and choose a song to get started!' : 'If you just created this custom Heardle, try again in a few seconds.'}</p>
             </div>
           )}
         </div>
@@ -175,8 +195,8 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
         )}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput customSong={song} guessedSongs={customGuesses} setGuessedSongs={setCustomGuesses} />
-        <AudioPlayer guessedSongs={customGuesses} customSong={song} songLoading={songLoading} />
+        <SongSelectInput customSong={song} songSuccess={songSuccess} guessedSongs={customGuesses} setGuessedSongs={setCustomGuesses} />
+        <AudioPlayer guessedSongs={customGuesses} customSong={song} songLoading={songLoading} songSuccess={songSuccess} />
       </div>
     </div>
   );

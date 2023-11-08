@@ -8,11 +8,12 @@ import { createId } from '@paralleldrive/cuid2';
 
 interface CustomHeardleInputProps {
   customSong?: CustomHeardle;
+  songSuccess: boolean;
   guessedSongs: GuessedSong[];
   setGuessedSongs: Dispatch<SetStateAction<GuessedSong[]>>;
 }
 
-export default function SongSelectInput({ customSong, guessedSongs, setGuessedSongs }: CustomHeardleInputProps) {
+export default function SongSelectInput({ customSong, songSuccess, guessedSongs, setGuessedSongs }: CustomHeardleInputProps) {
   const { data: songs, isLoading: songsLoading } = useQuery({
     queryKey: ['songs'],
     queryFn: getSongs
@@ -49,7 +50,7 @@ export default function SongSelectInput({ customSong, guessedSongs, setGuessedSo
     <select className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
       <option disabled>Choose a song!</option>
       {songs?.map((song) => (
-        <option key={song.id} value={song.name} disabled={disableOption(song)}>
+        <option key={song.id} value={song.name} disabled={disableOption(song) || !songSuccess}>
           {song.name}
         </option>
       ))}

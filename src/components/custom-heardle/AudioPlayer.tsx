@@ -8,10 +8,11 @@ import { useEffect, useRef, useState } from 'react';
 interface CustomHeardleAudioProps {
   customSong?: CustomHeardle;
   songLoading: boolean;
+  songSuccess: boolean;
   guessedSongs: GuessedSong[];
 }
 
-export default function AudioPlayer({ customSong, songLoading, guessedSongs }: CustomHeardleAudioProps) {
+export default function AudioPlayer({ customSong, songLoading, songSuccess, guessedSongs }: CustomHeardleAudioProps) {
   const [second, setSecond] = useState(0);
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -82,7 +83,7 @@ export default function AudioPlayer({ customSong, songLoading, guessedSongs }: C
             <span className="loading loading-ring loading-md"></span>
           </button>
         ) : (
-          <button className="btn btn-ghost" onClick={togglePlayer}>
+          <button className={`btn btn-ghost ${!songSuccess && 'btn-disabled'}`} onClick={togglePlayer}>
             <FontAwesomeIcon icon={icon} className="w-6 h-6" />
           </button>
         )}

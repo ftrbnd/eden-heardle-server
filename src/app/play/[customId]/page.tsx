@@ -1,6 +1,7 @@
 import RulesModal from '@/components/modals/RulesModal';
 import SettingsModal from '@/components/modals/SettingsModal';
 import CustomHeardlePageContent from './CustomHeardlePageContent';
+import CustomHeardleModal from '@/components/modals/CustomHeardleModal';
 
 export default function CustomHeardlePage({ params }: { params: { customId: string } }) {
   return (
@@ -8,6 +9,7 @@ export default function CustomHeardlePage({ params }: { params: { customId: stri
     <CustomHeardlePageContent params={params}>
       <RulesModal />
       <SettingsModal />
+      <CustomHeardleModal />
     </CustomHeardlePageContent>
   );
 }

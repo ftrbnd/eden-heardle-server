@@ -46,7 +46,7 @@ export default function Navbar({ children }: { children: ReactNode }) {
     <div className="navbar bg-base-200">
       <div className="navbar-start">
         <div className="dropdown">
-          <label tabIndex={0} className="btn btn-ghost lg:hidden">
+          <label tabIndex={0} className="btn btn-ghost grid grid-cols-2 gap-2 px-0 lg:px-4 lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
             </svg>
@@ -62,16 +62,14 @@ export default function Navbar({ children }: { children: ReactNode }) {
             <li>
               <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
             </li>
-            {session && (
-              <li>
-                <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
-                  <span className="badge badge-sm badge-success">NEW</span>
-                </OpenModalButton>
-              </li>
-            )}
+            <li>
+              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
+                <span className="badge badge-sm badge-success">NEW</span>
+              </OpenModalButton>
+            </li>
           </ul>
         </div>
-        <Link href={'/'} className="btn btn-ghost normal-case text-xl">
+        <Link href={'/'} className="btn btn-ghost normal-case text-xl px-0 lg:px-4">
           EDEN Heardle
         </Link>
       </div>
@@ -86,13 +84,11 @@ export default function Navbar({ children }: { children: ReactNode }) {
           <li>
             <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
           </li>
-          {session && (
-            <li>
-              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
-                <span className="badge badge-sm badge-success">NEW</span>
-              </OpenModalButton>
-            </li>
-          )}
+          <li>
+            <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
+              <span className="badge badge-sm badge-success">NEW</span>
+            </OpenModalButton>
+          </li>
         </ul>
       </div>
 
