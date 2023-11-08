@@ -11,7 +11,7 @@ export const createCustomHeardle = async (song: Song, startTime: number, userId:
       body: JSON.stringify({ song, startTime, userId, customId }),
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://eden-heardle.io'
+        'Access-Control-Allow-Origin': 'https://www.eden-heardle.io'
       },
       mode: 'cors'
     });
@@ -33,7 +33,7 @@ export const deleteCustomHeardle = async (heardleId: string) => {
       body: JSON.stringify({ heardleId }),
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://eden-heardle.io'
+        'Access-Control-Allow-Origin': 'https://www.eden-heardle.io'
       },
       mode: 'cors'
     });
