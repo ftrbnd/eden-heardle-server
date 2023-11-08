@@ -105,7 +105,11 @@ Just like the original Wordle, get 6 chances to guess the ~~word~~ song!
    ```sh
    npm install
    ```
-3. Start the local dev server
+3. Generate your Prisma client
+   ```sh
+   npx prisma generate
+   ```
+5. Start the local dev server
    ```sh
    npm run dev
    ```
