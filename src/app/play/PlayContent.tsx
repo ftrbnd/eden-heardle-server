@@ -5,13 +5,16 @@ import AudioPlayer from '../../components/AudioPlayer';
 import { useQuery } from '@tanstack/react-query';
 import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import Navbar from '@/components/Navbar';
-import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import { CSSProperties, Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GuessCard from '@/components/GuessCard';
 import SongSelectInput from '@/components/SongSelectInput';
 import useLocalUser from '@/context/LocalUserProvider';
 import { DailySong } from '@prisma/client';
 import Image from 'next/image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import OpenModalButton from '@/components/modals/OpenModalButton';
 interface CountdownProps {
   song: DailySong;
   guessedSong: boolean;
@@ -106,10 +109,24 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   );
 }
 
+function AnnouncementBanner({ setShowBanner }: { setShowBanner: Dispatch<SetStateAction<boolean>> }) {
+  return (
+    <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
+      <div className="btn btn-ghost">
+        <OpenModalButton modalId="custom_heardle_modal" modalTitle="NEW: Create your own custom Heardle!" />
+      </div>
+      <button className="btn btn-ghost" onClick={() => setShowBanner(false)}>
+        <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 export default function PlayContent({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
   const localUser = useLocalUser();
+  const [showBanner, setShowBanner] = useState(true);
 
   const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
@@ -133,6 +150,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   if (sessionStatus === 'loading') {
     return (
       <div className="flex flex-col items-center h-full justify-between">
+        {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />}
         <Navbar>{children}</Navbar>
         <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
@@ -151,6 +169,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   } else if (sessionStatus === 'authenticated') {
     return (
       <div className="flex flex-col items-center h-full justify-between">
+        {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />}
         <Navbar>{children}</Navbar>
         <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
@@ -174,6 +193,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   } else if (sessionStatus === 'unauthenticated') {
     return (
       <div className="flex flex-col items-center h-full justify-between">
+        {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />}
         <Navbar>{children}</Navbar>
         <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
           <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
