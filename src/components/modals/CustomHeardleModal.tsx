@@ -57,7 +57,7 @@ function SelectedSongCard({ selectedSong }: CardProps) {
   return (
     <div className="card card-side bg-base-100 shadow-xl w-full">
       <figure>
-        <Image src={selectedSong?.cover ?? '/default_song.png'} alt="Cover of selected song" height={50} width={50} />
+        <Image src={selectedSong?.cover ?? '/default_song.png'} alt="Cover of selected song" height={500} width={500} />
       </figure>
       <div className="flex items-center w-full px-4">
         {selectedSong ? (
@@ -197,13 +197,16 @@ export default function CustomHeardleModal() {
             <div className="card-body">
               <h2 className="card-title">Your Custom Heardle</h2>
               <h3 className="font-semibold">{`${userCustomHeardle.name} (${formatTime(userCustomHeardle.startTime)} - ${formatTime(userCustomHeardle.startTime + 6)})`}</h3>
-              <p className="text-sm">Delete this Heardle to create a new one.</p>
-              <div className="card-actions justify-end">
-                <button onClick={sendDeleteRequest} className="btn btn-error" disabled={deleteHeardleMutation.isLoading}>
-                  {deleteHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faTrash} className="h-6 w-6" />}
-                </button>
-                <button onClick={(e) => copyToClipboard(e)} className={`btn ${copied ? 'btn-success' : 'btn-primary'}`}>
-                  <FontAwesomeIcon icon={copied ? faCheck : faLink} className="h-6 w-6" />
+              <div className="card-actions justify-center sm:justify-end">
+                <div className="tooltip sm:tooltip-left" data-tip="Delete this Heardle to create a new one">
+                  <button onClick={sendDeleteRequest} className="btn btn-sm btn-error" disabled={deleteHeardleMutation.isLoading}>
+                    Delete
+                    {deleteHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faTrash} />}
+                  </button>
+                </div>
+                <button onClick={(e) => copyToClipboard(e)} className={`btn btn-sm ${copied ? 'btn-success' : 'btn-primary'}`}>
+                  Share
+                  <FontAwesomeIcon icon={copied ? faCheck : faLink} />
                 </button>
               </div>
             </div>
