@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: CustomPageProps): Promise<Met
   }
 
   return {
-    title: `${customHeardle?.user.name}'s custom EDEN Heardle`
+    title: `${customHeardle?.user.name}'s Custom EDEN Heardle`
   };
 }
 
