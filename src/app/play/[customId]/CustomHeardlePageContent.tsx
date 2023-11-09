@@ -59,7 +59,7 @@ function CustomHeardlePageNavbar({ children, creator }: NavbarProps) {
             </li>
           </ul>
         </div>
-        <Link href={'/'} className="btn btn-ghost normal-case text-xl">
+        <Link href={'/'} className="btn btn-ghost normal-case px-0 md:px-4 text-xs sm:text-sm md:text-xl">
           {creator && `${creator.name}'s `}EDEN Heardle
         </Link>
       </div>

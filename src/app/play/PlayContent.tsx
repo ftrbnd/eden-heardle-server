@@ -112,10 +112,10 @@ function Countdown({ song, guessedSong }: CountdownProps) {
 function AnnouncementBanner({ setShowBanner }: { setShowBanner: Dispatch<SetStateAction<boolean>> }) {
   return (
     <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
-      <div className="btn btn-ghost">
+      <div className="btn btn-ghost px-1 sm:px-2">
         <OpenModalButton modalId="custom_heardle_modal" modalTitle="NEW: Create your own custom Heardle!" />
       </div>
-      <button className="btn btn-ghost" onClick={() => setShowBanner(false)}>
+      <button className="btn btn-ghost px-1 sm:px-2" onClick={() => setShowBanner(false)}>
         <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
       </button>
     </div>
