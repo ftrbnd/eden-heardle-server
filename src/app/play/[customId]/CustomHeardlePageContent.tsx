@@ -17,6 +17,7 @@ import { getUser } from '@/lib/usersApi';
 import { Session } from 'next-auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
 
 interface NavbarProps {
   children: ReactNode;
@@ -132,7 +133,12 @@ function CustomResultCard({ song, guessedSong, creator, session, guesses }: Resu
   };
 
   return (
-    <div className="self-end w-4/5 md:w-3/5 xl:w-2/5 card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4">
+    <motion.div
+      className="self-end w-4/5 md:w-3/5 xl:w-2/5 card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 2 }}
+    >
       <figure>
         <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
       </figure>
@@ -148,7 +154,7 @@ function CustomResultCard({ song, guessedSong, creator, session, guesses }: Resu
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
