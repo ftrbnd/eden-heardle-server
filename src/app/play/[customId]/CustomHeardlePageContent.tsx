@@ -1,6 +1,6 @@
 'use client';
 
-import GuessCard from '@/components/GuessCard';
+import { GuessCard } from '@/components/GuessCard';
 import { ProfileDropdown } from '@/components/Navbar';
 import ThemeButton from '@/components/buttons/ThemeButton';
 import AudioPlayer from '@/components/custom-heardle/AudioPlayer';
@@ -178,7 +178,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
           {customGuesses.map((song, index) => (
-            <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} />
+            <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
           ))}
           {customGuesses.length === 0 && (
             <div className="row-span-full text-center">
