@@ -11,6 +11,10 @@ export const options: NextAuthOptions = {
       clientSecret: process.env.DISCORD_CLIENT_SECRET!
     })
   ],
+  pages: {
+    signIn: '/',
+    error: '/'
+  },
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
