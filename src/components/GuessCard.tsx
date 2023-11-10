@@ -1,15 +1,19 @@
+'use client';
+
 import { faCheck, faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 interface IProps {
   name: string;
   album: string;
   cover: string;
   correctStatus?: 'CORRECT' | 'ALBUM' | 'WRONG' | string;
+  showAnimation: boolean;
 }
 
-export default function GuessCard({ name, album, cover, correctStatus }: IProps) {
+export function GuessCard({ name, album, cover, correctStatus, showAnimation }: IProps) {
   const getIcon = () => {
     switch (correctStatus) {
       case 'CORRECT':
@@ -35,7 +39,7 @@ export default function GuessCard({ name, album, cover, correctStatus }: IProps)
   };
 
   return (
-    <div className="card card-side bg-base-100 shadow-xl w-full">
+    <motion.div className="card card-side bg-base-200 shadow-xl w-full" initial={showAnimation && { y: '100vh' }} animate={showAnimation && { y: 0 }}>
       <figure>
         <Image src={cover} alt={name} height={50} width={50} />
       </figure>
@@ -47,6 +51,6 @@ export default function GuessCard({ name, album, cover, correctStatus }: IProps)
           {getIcon()}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

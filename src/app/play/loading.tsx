@@ -1,4 +1,4 @@
-import GuessCard from '@/components/GuessCard';
+import { GuessCard } from '@/components/GuessCard';
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
@@ -38,12 +38,12 @@ export default function LoadingPlayPage() {
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         {/* 6 GuessCards */}
         <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-          <GuessCard name="Getting data..." album="" cover="/default_song.png" />
-          <GuessCard name="" album="" cover="/default_song.png" />
-          <GuessCard name="" album="" cover="/default_song.png" />
-          <GuessCard name="" album="" cover="/default_song.png" />
-          <GuessCard name="" album="" cover="/default_song.png" />
-          <GuessCard name="" album="" cover="/default_song.png" />
+          <GuessCard name="Getting data..." album="" cover="/default_song.png" showAnimation={false} />
+          <GuessCard name="" album="" cover="/default_song.png" showAnimation={false} />
+          <GuessCard name="" album="" cover="/default_song.png" showAnimation={false} />
+          <GuessCard name="" album="" cover="/default_song.png" showAnimation={false} />
+          <GuessCard name="" album="" cover="/default_song.png" showAnimation={false} />
+          <GuessCard name="" album="" cover="/default_song.png" showAnimation={false} />
         </div>
         <div></div>
       </div>

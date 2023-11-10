@@ -1,5 +1,5 @@
 import { Song } from '@prisma/client';
-import GuessCard from '../GuessCard';
+import { GuessCard } from '../GuessCard';
 import Link from 'next/link';
 import prisma from '@/lib/db';
 
@@ -56,8 +56,8 @@ export default async function RulesModal() {
             </h3>
           </div>
           <div className="grid grid-rows-2 gap-2 py-2">
-            <GuessCard key={songs[1].id} name={songs[1].name} album={songs[1].album || ''} cover={songs[1].cover} correctStatus={getCorrectStatus(songs[1])} />
-            <GuessCard key={songs[2].id} name={songs[2].name} album={songs[2].album || ''} cover={songs[2].cover} correctStatus={getCorrectStatus(songs[2])} />
+            <GuessCard key={songs[1].id} name={songs[1].name} album={songs[1].album || ''} cover={songs[1].cover} correctStatus={getCorrectStatus(songs[1])} showAnimation={false} />
+            <GuessCard key={songs[2].id} name={songs[2].name} album={songs[2].album || ''} cover={songs[2].cover} correctStatus={getCorrectStatus(songs[2])} showAnimation={false} />
           </div>
           <p className="text-md pt-2">
             A new puzzle is released daily at midnight (Eastern Time). If you {"haven't"} already, you can join our{' '}
