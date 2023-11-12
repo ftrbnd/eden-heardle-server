@@ -137,13 +137,13 @@ function CustomResultCard({ song, guessedSong, creator, session, guesses }: Resu
       className="self-end w-4/5 md:w-3/5 xl:w-2/5 card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 2 }}
+      transition={{ duration: 3 }}
     >
       <figure>
         <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
       </figure>
       <div className="card-body items-center">
-        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
+        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? 'Great job on the puzzle!' : `The song was ${song?.name}`}</h2>
         <p className="text-md">This custom Heardle was created by {creator?.name}</p>
         {!session && <p className="text-sm">Sign in to create your own!</p>}
         <kbd className="kbd">{statusSquares()}</kbd>

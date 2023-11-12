@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import ThemeButton from './buttons/ThemeButton';
 import StatsModal from './modals/StatsModal';
+import { motion } from 'framer-motion';
 
 export function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -23,7 +24,17 @@ export function ProfileDropdown({ session }: { session: Session | null }) {
           <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
         </li>
         <li onClick={() => signOut()}>
-          <a>Sign Out</a>
+          <motion.a
+            whileHover={{
+              scale: 1.1,
+              transition: {
+                duration: 0.2
+              }
+            }}
+            whileTap={{ scale: 0.9 }}
+          >
+            Sign Out
+          </motion.a>
         </li>
       </ul>
     </div>

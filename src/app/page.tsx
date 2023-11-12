@@ -1,10 +1,10 @@
-import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { options } from './api/auth/[...nextauth]/options';
 import prisma from '@/lib/db';
 import SignInButton from '@/components/buttons/SignInButton';
 import RulesButton from '@/components/buttons/RulesButton';
 import Image from 'next/image';
+import { PlayButton } from '@/components/buttons/PlayButton';
 
 async function getUserDetails() {
   const session = await getServerSession(options);
@@ -81,9 +81,7 @@ export default async function Home() {
           <div className="flex justify-center gap-2">
             {!user && <RulesButton />}
             {!user && <SignInButton />}
-            <Link href="/play">
-              <button className="btn btn-primary">Play</button>
-            </Link>
+            <PlayButton />
           </div>
           <div className="flex flex-col py-6">
             <h4 className="text-sm font-semibold">

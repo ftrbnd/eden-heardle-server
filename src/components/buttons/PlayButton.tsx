@@ -3,18 +3,11 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-export default function RulesButton() {
+export function PlayButton() {
   return (
-    <Link
-      href={{
-        pathname: '/play',
-        query: {
-          rules: 'true'
-        }
-      }}
-    >
+    <Link href="/play">
       <motion.button
-        className="btn btn-secondary btn-outline"
+        className="btn btn-primary"
         whileHover={{
           scale: 1.1,
           transition: {
@@ -23,7 +16,7 @@ export default function RulesButton() {
         }}
         whileTap={{ scale: 0.9 }}
       >
-        How To Play
+        Play
       </motion.button>
     </Link>
   );
