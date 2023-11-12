@@ -13,6 +13,7 @@ import { ChangeEvent, MouseEvent, useState } from 'react';
 import { createId } from '@paralleldrive/cuid2';
 import { Session } from 'next-auth';
 import SignInButton from '../buttons/SignInButton';
+import { motion } from 'framer-motion';
 
 interface SelectProps {
   onSongSelect: (song: Song) => void;
@@ -199,15 +200,36 @@ export default function CustomHeardleModal() {
               <h3 className="font-semibold">{`${userCustomHeardle.name} (${formatTime(userCustomHeardle.startTime)} - ${formatTime(userCustomHeardle.startTime + 6)})`}</h3>
               <div className="card-actions justify-center sm:justify-end">
                 <div className="tooltip sm:tooltip-left" data-tip="Delete this Heardle to create a new one">
-                  <button onClick={sendDeleteRequest} className="btn btn-sm btn-error" disabled={deleteHeardleMutation.isLoading}>
+                  <motion.button
+                    onClick={sendDeleteRequest}
+                    className="btn btn-sm btn-error"
+                    disabled={deleteHeardleMutation.isLoading}
+                    whileHover={{
+                      scale: 1.1,
+                      transition: {
+                        duration: 0.2
+                      }
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     Delete
                     {deleteHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faTrash} />}
-                  </button>
+                  </motion.button>
                 </div>
-                <button onClick={(e) => copyToClipboard(e)} className={`btn btn-sm ${copied ? 'btn-success' : 'btn-primary'}`}>
+                <motion.button
+                  onClick={(e) => copyToClipboard(e)}
+                  className={`btn btn-sm ${copied ? 'btn-success' : 'btn-primary'}`}
+                  whileHover={{
+                    scale: 1.1,
+                    transition: {
+                      duration: 0.2
+                    }
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                >
                   Share
                   <FontAwesomeIcon icon={copied ? faCheck : faLink} />
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
@@ -243,10 +265,21 @@ export default function CustomHeardleModal() {
             <p className="text-xs text-center text-error">{error}</p>
             <p className="text-xs text-center text-error">{!session && 'Sign in to create your own!'}</p>
             <div className="self-end flex gap-2 items-center">
-              <button onClick={sendCreateRequest} className="btn btn-primary" disabled={!selectedSong || createHeardleMutation.isLoading}>
+              <motion.button
+                onClick={sendCreateRequest}
+                className="btn btn-primary"
+                disabled={!selectedSong || createHeardleMutation.isLoading}
+                whileHover={{
+                  scale: 1.1,
+                  transition: {
+                    duration: 0.2
+                  }
+                }}
+                whileTap={{ scale: 0.9 }}
+              >
                 {createHeardleMutation.isLoading ? 'Generating...' : 'Generate'}
                 {createHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />}
-              </button>
+              </motion.button>
               {!session && <SignInButton />}
             </div>
           </div>

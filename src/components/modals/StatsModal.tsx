@@ -9,6 +9,7 @@ import { MouseEvent, useState } from 'react';
 import { faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useLocalUser from '@/context/LocalUserProvider';
+import { motion } from 'framer-motion';
 
 function Stats() {
   const { data: session } = useSession();
@@ -167,10 +168,20 @@ export default function StatsModal() {
           {!session && <SignInButton />}
           {((session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT')) ||
             (!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'))) && (
-            <button className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
+            <motion.button
+              className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`}
+              onClick={(e) => copyToClipboard(e)}
+              whileHover={{
+                scale: 1.1,
+                transition: {
+                  duration: 0.2
+                }
+              }}
+              whileTap={{ scale: 0.9 }}
+            >
               {showSuccess ? 'Copied!' : 'Share'}
               <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
-            </button>
+            </motion.button>
           )}
         </div>
       </div>
