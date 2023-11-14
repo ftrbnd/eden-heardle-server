@@ -115,24 +115,24 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   );
 }
 
-function AnnouncementBanner({ setShowBanner }: { setShowBanner: Dispatch<SetStateAction<boolean>> }) {
-  return (
-    <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
-      <div className="btn btn-ghost px-1 sm:px-2">
-        <OpenModalButton modalId="custom_heardle_modal" modalTitle="NEW: Create your own custom Heardle!" />
-      </div>
-      <button className="btn btn-ghost px-1 sm:px-2" onClick={() => setShowBanner(false)}>
-        <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
-      </button>
-    </div>
-  );
-}
+// function AnnouncementBanner({ setShowBanner }: { setShowBanner: Dispatch<SetStateAction<boolean>> }) {
+//   return (
+//     <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
+//       <div className="btn btn-ghost px-1 sm:px-2">
+//         <OpenModalButton modalId="custom_heardle_modal" modalTitle="NEW: Create your own custom Heardle!" />
+//       </div>
+//       <button className="btn btn-ghost px-1 sm:px-2" onClick={() => setShowBanner(false)}>
+//         <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
+//       </button>
+//     </div>
+//   );
+// }
 
 export default function PlayContent({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
   const localUser = useLocalUser();
-  const [showBanner, setShowBanner] = useState(true);
+  // const [showBanner, setShowBanner] = useState(true);
 
   const { data: guesses, isFetched: guessesFetched } = useQuery({
     queryKey: ['guesses'],
@@ -156,7 +156,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   if (sessionStatus === 'loading') {
     return (
       <div className="flex flex-col items-center h-full justify-between">
-        {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />}
+        {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
         <Navbar>{children}</Navbar>
         <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
           <AnimatePresence>
@@ -177,7 +177,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   } else if (sessionStatus === 'authenticated') {
     return (
       <div className="flex flex-col items-center h-full justify-between">
-        {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />}
+        {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
         <Navbar>{children}</Navbar>
         <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
           <AnimatePresence>
@@ -204,7 +204,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   } else if (sessionStatus === 'unauthenticated') {
     return (
       <div className="flex flex-col items-center h-full justify-between">
-        {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />}
+        {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
         <Navbar>{children}</Navbar>
         <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
           <AnimatePresence>

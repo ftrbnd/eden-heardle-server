@@ -54,9 +54,7 @@ function CustomHeardlePageNavbar({ children, creator }: NavbarProps) {
               <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
             </li>
             <li>
-              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle">
-                <span className="badge badge-sm badge-success">NEW</span>
-              </OpenModalButton>
+              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
             </li>
           </ul>
         </div>
