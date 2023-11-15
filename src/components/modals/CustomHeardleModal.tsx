@@ -41,8 +41,8 @@ function SelectSong({ onSongSelect, session }: SelectProps) {
       <select
         className="select select-primary w-full place-self-center"
         defaultValue={'Choose a Song'}
-        // disabled={songsLoading || !session}
-        disabled
+        disabled={songsLoading || !session}
+        // disabled
         onChange={handleSelection}
       >
         <option disabled>Choose a song</option>
@@ -50,8 +50,8 @@ function SelectSong({ onSongSelect, session }: SelectProps) {
           <option
             key={song.id}
             value={song.name}
-            // disabled={!session}
-            disabled
+            disabled={!session}
+            // disabled
           >
             {song.name}
           </option>
@@ -200,7 +200,7 @@ export default function CustomHeardleModal() {
       <div className="modal-box h-2/5 sm:h-min">
         <h3 className="font-bold text-lg">
           {'Custom Heardle '}
-          <span className="badge badge-md badge-warning">Temporarily disabled</span>
+          {/* <span className="badge badge-md badge-warning">{'Temporarily disabled'}</span> */}
         </h3>
         {userCustomHeardle ? (
           <div className="card sm:card-side bg-base-200 shadow-xl mt-4">
@@ -215,8 +215,8 @@ export default function CustomHeardleModal() {
                   <motion.button
                     onClick={sendDeleteRequest}
                     className="btn btn-sm btn-error"
-                    // disabled={deleteHeardleMutation.isLoading}
-                    disabled
+                    disabled={deleteHeardleMutation.isLoading}
+                    // disabled
                     whileHover={{
                       scale: 1.1,
                       transition: {
@@ -264,8 +264,8 @@ export default function CustomHeardleModal() {
                   step="1"
                   value={startTime}
                   onChange={(e) => setStartTime(parseInt(e.target.value))}
-                  // disabled={!selectedSong}
-                  disabled
+                  disabled={!selectedSong}
+                  // disabled
                 />
 
                 <div className="flex justify-between items-center">
@@ -282,8 +282,8 @@ export default function CustomHeardleModal() {
               <motion.button
                 onClick={sendCreateRequest}
                 className="btn btn-primary"
-                // disabled={!selectedSong || createHeardleMutation.isLoading}
-                disabled
+                disabled={!selectedSong || createHeardleMutation.isLoading}
+                // disabled
                 whileHover={{
                   scale: 1.1,
                   transition: {
