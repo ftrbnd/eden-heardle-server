@@ -112,6 +112,8 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
       return song.name === dailySong?.name ? 'CORRECT' : song?.album === dailySong?.album ? 'ALBUM' : 'WRONG';
     }
 
+    if (event.target.className === 'default_selection') return;
+
     // find song object that was selected
     const selectedSong = songs?.find((song) => song.name === event.target.value);
     if (!selectedSong) return;
@@ -147,7 +149,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
 
   return (
     <select className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
-      <option disabled>Choose a song!</option>
+      <option className="default_selection">Choose a song!</option>
       {songs?.map((song) => (
         <option key={song.id} value={song.name} disabled={disableOption(song)}>
           {song.name}
