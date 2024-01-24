@@ -9,8 +9,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChangeEvent, MouseEvent, useState } from 'react';
-import { createId } from '@paralleldrive/cuid2';
+import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import { Session } from 'next-auth';
 import SignInButton from '../buttons/SignInButton';
 import { motion } from 'framer-motion';
@@ -100,6 +99,7 @@ export default function CustomHeardleModal() {
 
   const [error, setError] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
+  const link = useRef<string>('');
 
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -111,46 +111,27 @@ export default function CustomHeardleModal() {
   });
 
   const createHeardleMutation = useMutation({
-    mutationFn: (generatedId: string) => createCustomHeardle(selectedSong!, startTime, session?.user.id!, generatedId),
-    onMutate: async (generatedId) => {
-      const createdHeardle = {
-        id: generatedId,
-        user: session?.user,
-        name: selectedSong?.name,
-        album: selectedSong?.album,
-        cover: selectedSong?.cover,
-        link: selectedSong?.link,
-        startTime: startTime,
-        userId: session?.user.id
-      };
-
-      await queryClient.cancelQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
-
-      const prevHeardle = queryClient.getQueryData(['userCustomHeardle', session?.user.id]);
-
-      queryClient.setQueryData(['userCustomHeardle', session?.user.id], createdHeardle);
-
-      return { prevHeardle, createdHeardle };
+    mutationFn: () => createCustomHeardle(selectedSong!, startTime, session?.user.id!),
+    onError: (error: any) => {
+      setError(error.message);
     },
-    onSettled: (_data, err: any, variables, context) => {
-      if (err) {
-        queryClient.setQueryData(['userCustomHeardle', session?.user.id], context?.prevHeardle);
-        return setError(err.message);
-      }
-      // NOTE: data only contains a message, not the created custom heardle
-
+    onSuccess: (data) => {
+      link.current = data ?? 'https://eden-heardle.io/play';
       setSelectedSong(null);
+
+      queryClient.invalidateQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
     }
   });
 
   const deleteHeardleMutation = useMutation({
-    mutationFn: () => deleteCustomHeardle(userCustomHeardle?.id ?? 'fakeid'),
-    onSettled: (_data, err: any) => {
-      if (err) {
-        return setError(err.message);
-      }
-
+    mutationFn: () => deleteCustomHeardle(userCustomHeardle?.id ?? 'fakeheardleid', session?.user.id ?? 'fakeuserid'),
+    onError: (error: any) => {
+      setError(error.message);
+    },
+    onSuccess: () => {
+      link.current = '';
       setSelectedSong(null);
+
       queryClient.invalidateQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
     }
   });
@@ -168,8 +149,7 @@ export default function CustomHeardleModal() {
       return setError('Please sign in to create a Custom Heardle');
     }
 
-    const customHeardleId = createId();
-    await createHeardleMutation.mutateAsync(customHeardleId);
+    await createHeardleMutation.mutateAsync();
   };
 
   const sendDeleteRequest = async () => {
@@ -188,7 +168,7 @@ export default function CustomHeardleModal() {
     if (copied) return;
 
     setCopied(true);
-    await navigator.clipboard.writeText(`https://eden-heardle.io/play/${userCustomHeardle?.id}`);
+    await navigator.clipboard.writeText(link.current);
 
     setTimeout(() => {
       setCopied(false);
