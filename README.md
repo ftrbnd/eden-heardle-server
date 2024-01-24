@@ -18,7 +18,7 @@
 <h3 align="center">EDEN Heardle Cronjobs</h3>
 
   <p align="center">
-    An Express server that runs cronjobs for EDEN Heardle
+    An Express server that handles creating Custom and Daily Heardles for EDEN Heardle
     <br />
     <a href="https://github.com/ftrbnd/eden-heardle">EDEN Heardle</a>
     ·
@@ -59,8 +59,8 @@
 ## About The Project
 
 This server has 2 responsibilities:
-* Choose a new random song every day at 4am UTC
-* Receive POST and DELETE requests from [EDEN Heardle](https://eden-heardle-cronjobs.io) when users interact with the Custom Heardle modal
+* Choose a new random song every day at 4am UTC with a daily cron job
+* Handle POST and DELETE api requests from [EDEN Heardle](https://eden-heardle-cronjobs.io) when users interact with the Custom Heardle modal
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
