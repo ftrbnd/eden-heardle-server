@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.8.1",
     "@supabase/supabase-js": "^2.39.3",
     "@types/fluent-ffmpeg": "^2.1.22",

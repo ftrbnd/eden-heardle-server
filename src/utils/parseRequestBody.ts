@@ -3,7 +3,6 @@ import { Song } from '@prisma/client';
 interface GetRequest {
   song: Song;
   startTime: number;
-  customId: string;
   userId: string;
 }
 
@@ -56,11 +55,10 @@ function parseGetRequest(body: unknown): GetRequest {
     throw new Error('Incorrect or missing data');
   }
 
-  if ('song' in body && 'startTime' in body && 'userId' in body && 'customId' in body) {
+  if ('song' in body && 'startTime' in body && 'userId' in body) {
     const request: GetRequest = {
       song: parseSong(body.song),
       startTime: parseNumber(body.startTime),
-      customId: parseString(body.customId),
       userId: parseString(body.userId)
     };
 

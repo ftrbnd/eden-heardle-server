@@ -6,12 +6,15 @@ import ytdl from 'ytdl-core';
 import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
 import { logger, Heardle } from './logger';
+import { createId } from '@paralleldrive/cuid2';
 
 type Mp3File = Blob & {
   name: string;
   lastModified: number;
   webkitRelativePath: string;
 };
+
+const CLIENT_LINK = 'https://eden-heardle.io';
 
 async function ytdlDownload(song: Song, startTime: number, fileName: string, heardleType: Heardle) {
   return new Promise((resolve, reject) => {
@@ -73,8 +76,10 @@ async function getMp3File(fileName: string, heardleType: Heardle): Promise<Mp3Fi
   });
 }
 
-async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number, heardleType: Heardle, customId?: string, userId?: string) {
-  if (customId && userId) {
+async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number, heardleType: Heardle, userId?: string): Promise<string> {
+  if (userId) {
+    const customId = createId();
+
     // upload custom heardle song to separate supabase storage folder
     const userAlreadyHasCustomHeardle = await prisma.customHeardle.findUnique({
       where: {
@@ -101,7 +106,7 @@ async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number,
 
     logger(heardleType, 'Creating Custom Heardle object...');
 
-    await prisma.customHeardle.create({
+    const customHeardle = await prisma.customHeardle.create({
       data: {
         id: customId,
         userId,
@@ -115,6 +120,8 @@ async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number,
     });
 
     logger(heardleType, `Saved audio url to Custom Heardle #${customId} in Supabase Database`);
+
+    return `${CLIENT_LINK}/play/${customHeardle.id}`;
   } else {
     // get current daily song and ensure it exists
     const previousDailySong = await prisma.dailySong.findUnique({
@@ -178,12 +185,14 @@ async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number,
     });
 
     logger(heardleType, 'Saved audio url to Custom Heardle object in Supabase Database');
+
+    return CLIENT_LINK;
   }
 }
 
-export async function downloadMp3(song: Song, startTime: number, customId?: string, userId?: string) {
-  const fileName = customId ? 'custom_song' : 'daily_song';
-  const heardleType = customId ? Heardle.Custom : Heardle.Daily;
+export async function downloadMp3(song: Song, startTime: number, userId?: string) {
+  const fileName = userId ? 'custom_song' : 'daily_song';
+  const heardleType = userId ? Heardle.Custom : Heardle.Daily;
 
   try {
     await ytdlDownload(song, startTime, fileName, heardleType);
@@ -191,7 +200,9 @@ export async function downloadMp3(song: Song, startTime: number, customId?: stri
     const mp3Filename = await m4aToMp3(`${fileName}.m4a`, startTime, heardleType);
     const mp3File = await getMp3File(mp3Filename, heardleType);
 
-    await uploadToDatabase(mp3File, song, startTime, heardleType, customId, userId);
+    const heardleAudioLink = await uploadToDatabase(mp3File, song, startTime, heardleType, userId);
+
+    return heardleAudioLink;
   } catch (err: unknown) {
     logger(heardleType, err);
     throw new Error(`${heardleType} Failed to download "${song.name}.mp3"`);

@@ -6,14 +6,14 @@ import { parseDeleteRequest, parseGetRequest } from '../utils/parseRequestBody';
 
 const createCustomHeardle = async (req: Request, res: Response) => {
   try {
-    const { song, startTime, customId, userId } = parseGetRequest(req.body);
+    const { song, startTime, userId } = parseGetRequest(req.body);
 
     logger(Heardle.Custom, `POST request from User #${userId}`);
 
-    await downloadMp3(song, startTime, customId, userId);
+    const link = await downloadMp3(song, startTime, userId);
 
     logger(Heardle.Custom, 'Successfully created Custom Heardle');
-    res.json({ message: 'Successfully created Custom Heardle' });
+    res.json({ message: 'Successfully created Custom Heardle', link });
   } catch (error: unknown) {
     logger(Heardle.Custom, error);
     res.status(400).json({ message: 'Failed to create Custom Heardle' });
