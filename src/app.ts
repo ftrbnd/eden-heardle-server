@@ -1,21 +1,20 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { CronJob } from 'cron';
-import { setDailySong } from './lib/crons';
-import { apiRouter } from './routes/api';
-import { indexRouter } from './routes';
+import { customHeardleRouter } from './routes/customHeardle';
 import cors from 'cors';
+import { whitelist } from './utils/corsOptions';
+import { registerDailyCronJob } from './lib/cron';
 
 dotenv.config();
 
-const app = express();
+registerDailyCronJob();
 
-const whitelist = process.env.WHITELISTED_DOMAINS ? process.env.WHITELISTED_DOMAINS.split(',') : [];
+const app = express();
 
 app.use(express.json());
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
@@ -25,11 +24,8 @@ app.use(
   })
 );
 
-app.use('/', indexRouter);
-app.use('/api', apiRouter);
-app.use((_req, res) => res.status(404).json({ message: 'Route does not exist' }));
-
-const job = new CronJob(`${process.env.CRON_UTC_MINUTE} ${process.env.CRON_UTC_HOUR} * * *`, setDailySong, null, true, 'utc');
+app.use('/api/customHeardle', customHeardleRouter);
+app.use((_req, res) => res.status(404).send({ error: 'Unknown endpoint' }));
 
 app.listen(process.env.PORT || 3001, () => {
   console.log(`Server ready at port ${process.env.PORT || 3001} `);
