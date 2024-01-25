@@ -200,9 +200,9 @@ export async function downloadMp3(song: Song, startTime: number, userId?: string
     const mp3Filename = await m4aToMp3(`${fileName}.m4a`, startTime, heardleType);
     const mp3File = await getMp3File(mp3Filename, heardleType);
 
-    const heardleAudioLink = await uploadToDatabase(mp3File, song, startTime, heardleType, userId);
+    const shareableLink = await uploadToDatabase(mp3File, song, startTime, heardleType, userId);
 
-    return heardleAudioLink;
+    return shareableLink;
   } catch (err: unknown) {
     logger(heardleType, err);
     throw new Error(`${heardleType} Failed to download "${song.name}.mp3"`);
