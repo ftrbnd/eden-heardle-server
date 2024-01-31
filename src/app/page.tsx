@@ -5,6 +5,7 @@ import SignInButton from '@/components/buttons/SignInButton';
 import RulesButton from '@/components/buttons/RulesButton';
 import Image from 'next/image';
 import { PlayButton } from '@/components/buttons/PlayButton';
+import EdenLogo from '@/components/EdenLogo';
 
 async function getUserDetails() {
   const session = await getServerSession(options);
@@ -73,7 +74,7 @@ export default async function Home() {
       <div className="hero-content text-center">
         <div className="max-w-md">
           <div className="flex gap-2 justify-center items-center h-3/5">
-            <Image src={'/icon.png'} alt="EDEN logo" height={50} width={50} />
+            <EdenLogo height={50} width={50} />
             <h1 className="text-4xl md:text-5xl font-bold">EDEN Heardle</h1>
           </div>
           {user && <h2 className="text-2xl md:text-3xl font-semibold">Hello {user?.name}!</h2>}

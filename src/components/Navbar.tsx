@@ -78,7 +78,7 @@ export default function Navbar({ children }: { children: ReactNode }) {
             </li>
           </ul>
         </div>
-        <Link href={'/'} className="btn btn-ghost normal-case text-xl px-0 lg:px-4">
+        <Link href={'/'} className="btn btn-ghost normal-case text-xl px-2 lg:px-4">
           EDEN Heardle
         </Link>
       </div>

@@ -6,10 +6,11 @@ import { motion } from 'framer-motion';
 interface IProps {
   modalId: string;
   modalTitle: string;
+  className?: string;
   children?: ReactNode;
 }
 
-export default function OpenModalButton({ modalId, modalTitle, children }: IProps) {
+export default function OpenModalButton({ modalId, modalTitle, className, children }: IProps) {
   const openModal = () => {
     const modal = document.getElementById(modalId) as HTMLDialogElement;
     if (!modal.open) modal.showModal();
@@ -25,6 +26,7 @@ export default function OpenModalButton({ modalId, modalTitle, children }: IProp
         }
       }}
       whileTap={{ scale: 0.9 }}
+      className={className}
     >
       {modalTitle}
       {children}

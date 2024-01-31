@@ -13,6 +13,8 @@ import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import OpenModalButton from '@/components/modals/OpenModalButton';
+import EdenLogo from '@/components/EdenLogo';
 interface CountdownProps {
   song: DailySong;
   guessedSong: boolean;
@@ -107,6 +109,7 @@ function Countdown({ song, guessedSong }: CountdownProps) {
             </div>
           </div>
         </div>
+        <OpenModalButton modalId="stats_modal" modalTitle="View Statistics" className="btn btn-outline " />
       </div>
     </motion.div>
   );
@@ -120,8 +123,11 @@ function WelcomeCard({ heardleDay }: WelcomeProps) {
   return (
     <div className="card w-full bg-base-200 shadow-xl">
       <div className="card-body">
-        <h1 className="text-xl font-bold text-center">Day #{heardleDay ?? 0}</h1>
-        <p className="text-center">Press play and choose a song to get started!</p>
+        <div className="flex justify-center items-center gap-4">
+          <EdenLogo height={50} width={50} />
+          <h1 className="text-3xl lg:text-5xl font-bold text-center">Day #{heardleDay ?? 0}</h1>
+        </div>
+        <p className="lg:text-lg text-center">Press play and choose a song to get started!</p>
       </div>
     </div>
   );
