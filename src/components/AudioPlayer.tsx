@@ -1,12 +1,9 @@
 'use client';
 
-import useLocalUser from '@/context/LocalUserProvider';
+import useDailySong from '@/hooks/useDailySong';
 import useGuesses from '@/hooks/useGuesses';
-import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AudioPlayer() {
@@ -14,15 +11,8 @@ export default function AudioPlayer() {
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { data: session } = useSession();
   const { guesses } = useGuesses();
-
-  const { data: dailySong, isLoading: dailyLoading } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
+  const { dailySong, dailySongLoading } = useDailySong();
 
   useEffect(() => {
     const handleTimeUpdate = () => {
@@ -85,7 +75,7 @@ export default function AudioPlayer() {
 
       <div className="flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5">
         <kbd className="kbd">00:{String(Math.floor(second)).padStart(2, '0')}</kbd>
-        {dailyLoading ? (
+        {dailySongLoading ? (
           <button className="btn btn-ghost btn-disabled">
             <span className="loading loading-ring loading-md"></span>
           </button>

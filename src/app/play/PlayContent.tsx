@@ -1,10 +1,8 @@
 'use client';
 
 import AudioPlayer from '../../components/AudioPlayer';
-import { useQuery } from '@tanstack/react-query';
-import { getDailySong } from '@/lib/songsApi';
 import Navbar from '@/components/Navbar';
-import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import { CSSProperties, Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GuessCard } from '@/components/GuessCard';
 import SongSelectInput from '@/components/SongSelectInput';
@@ -12,13 +10,12 @@ import { DailySong } from '@prisma/client';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
+import useDailySong from '@/hooks/useDailySong';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 interface CountdownProps {
   song: DailySong;
   guessedSong: boolean;
-}
-
-interface WelcomeProps {
-  heardleDay?: number | null | undefined;
 }
 
 interface CSSPropertiesWithVars extends CSSProperties {
@@ -115,6 +112,10 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   );
 }
 
+interface WelcomeProps {
+  heardleDay?: number | null | undefined;
+}
+
 function WelcomeCard({ heardleDay }: WelcomeProps) {
   return (
     <div className="card w-full bg-base-200 shadow-xl">
@@ -126,32 +127,28 @@ function WelcomeCard({ heardleDay }: WelcomeProps) {
   );
 }
 
-// function AnnouncementBanner({ setShowBanner }: { setShowBanner: Dispatch<SetStateAction<boolean>> }) {
-//   return (
-//     <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
-//       <div className="btn btn-ghost px-1 sm:px-2">
-//         <OpenModalButton modalId="custom_heardle_modal" modalTitle="NEW: Create your own custom Heardle!" />
-//       </div>
-//       <button className="btn btn-ghost px-1 sm:px-2" onClick={() => setShowBanner(false)}>
-//         <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
-//       </button>
-//     </div>
-//   );
-// }
+interface AnnouncementProps {
+  setShowBanner: Dispatch<SetStateAction<boolean>>;
+  announcement: string;
+}
+
+function AnnouncementBanner({ setShowBanner, announcement }: AnnouncementProps) {
+  return (
+    <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
+      <div className="btn btn-ghost px-1 sm:px-2">{announcement}</div>
+      <button className="btn btn-ghost px-1 sm:px-2" onClick={() => setShowBanner(false)}>
+        <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
 
 export default function PlayContent({ children }: { children: ReactNode }) {
-  // const [showBanner, setShowBanner] = useState(true);
+  const [showBanner, setShowBanner] = useState(false);
 
   const { guesses, loadingGuessType } = useGuesses();
-  console.log('guesses:', guesses);
-
+  const { dailySong } = useDailySong();
   const router = useRouter();
-  const { data: dailySong } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
 
   // used to get rid of url created for showing rules modal
   useEffect(() => {
@@ -160,7 +157,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex flex-col items-center h-full justify-between">
-      {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
+      {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} announcement="announcement" />}
       <Navbar>{children}</Navbar>
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <AnimatePresence>

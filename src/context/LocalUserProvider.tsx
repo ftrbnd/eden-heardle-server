@@ -1,7 +1,6 @@
 'use client';
 
-import { getDailySong } from '@/lib/songsApi';
-import { useQuery } from '@tanstack/react-query';
+import useDailySong from '@/hooks/useDailySong';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 
 export interface LocalGuessedSong {
@@ -63,12 +62,7 @@ const useLocalUser = (): LocalUserState => {
 export const LocalUserProvider = (props: PropsWithChildren) => {
   const [user, setUser] = useState<LocalUser>(initialUser);
 
-  const { data: dailySong } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
+  const { dailySong } = useDailySong();
 
   useEffect(() => {
     const localUser = localStorage.getItem('eden_heardle_user');

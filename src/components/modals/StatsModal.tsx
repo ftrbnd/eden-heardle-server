@@ -4,13 +4,13 @@ import SignInButton from '../buttons/SignInButton';
 import { useSession } from 'next-auth/react';
 import { getStats } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
-import { getDailySong } from '@/lib/songsApi';
 import { MouseEvent, useState } from 'react';
 import { faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useLocalUser from '@/context/LocalUserProvider';
 import { motion } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
+import useDailySong from '@/hooks/useDailySong';
 
 function Stats() {
   const { data: session } = useSession();
@@ -90,12 +90,7 @@ export default function StatsModal() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { guesses, guessType } = useGuesses();
-  const { data: dailySong } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
+  const { dailySong } = useDailySong();
 
   const statusSquares = (): string => {
     function getStatusSquare(status: string) {

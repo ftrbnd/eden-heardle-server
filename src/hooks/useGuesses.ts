@@ -12,7 +12,7 @@ const useGuesses = () => {
   const localUser = useLocalUser();
   const queryClient = useQueryClient();
 
-  const { data: sessionGuesses, isFetched } = useQuery({
+  const { data: sessionGuesses } = useQuery({
     queryKey: ['guesses'],
     queryFn: getGuessedSongs,
     enabled: session !== null,
