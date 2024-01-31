@@ -20,7 +20,7 @@ export const createCustomHeardle = async (song: Song, startTime: number, userId:
     const { link }: { link: string } = await response.json();
     return link;
   } catch (err) {
-    console.error(err);
+    throw new Error('Failed to create Custom Heardle');
   }
 };
 
@@ -42,7 +42,7 @@ export const deleteCustomHeardle = async (heardleId: string, userId: string) => 
     const data = await response.json();
     return data;
   } catch (err) {
-    console.error(err);
+    throw new Error('Failed to delete Custom Heardle');
   }
 };
 
@@ -54,7 +54,7 @@ export const getCustomHeardle = async (heardleId: string) => {
     const { song }: { song: CustomHeardle } = await response.json();
     return song;
   } catch (err) {
-    console.error(err);
+    throw new Error(`Failed to get Custom Heardle #${heardleId}`);
   }
 };
 
@@ -66,6 +66,6 @@ export const checkUserCustomHeardle = async (userId: string) => {
     const { song }: { song: CustomHeardle } = await response.json();
     return song;
   } catch (err) {
-    console.error(err);
+    throw new Error('Failed to check if user has a Custom Heardle');
   }
 };
