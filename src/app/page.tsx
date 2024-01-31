@@ -79,8 +79,12 @@ export default async function Home() {
           {user && <h2 className="text-2xl md:text-3xl font-semibold">Hello {user?.name}!</h2>}
           <p className="py-6">{getConditionalDescription()}</p>
           <div className="flex justify-center gap-2">
-            {!user && <RulesButton />}
-            {!user && <SignInButton />}
+            {!user && (
+              <>
+                <RulesButton />
+                <SignInButton />
+              </>
+            )}
             <PlayButton />
           </div>
           <div className="flex flex-col py-6">

@@ -1,6 +1,7 @@
 'use client';
 
 import useLocalUser from '@/context/LocalUserProvider';
+import useGuesses from '@/hooks/useGuesses';
 import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,14 +15,7 @@ export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const { data: session } = useSession();
-  const { data: guesses } = useQuery({
-    queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-  const localUser = useLocalUser();
+  const { guesses } = useGuesses();
 
   const { data: dailySong, isLoading: dailyLoading } = useQuery({
     queryKey: ['daily'],
@@ -43,16 +37,8 @@ export default function AudioPlayer() {
         setSecond(audioRef.current.currentTime);
       }
 
-      if (session && guesses?.length !== undefined) {
-        if (currentSecond >= guesses.length + 1 && !finishedGame()) {
-          pauseSong();
-        }
-      } else {
-        if (localUser.user?.guesses.length !== undefined && !finishedGame()) {
-          if (currentSecond >= localUser.user.guesses.length + 1) {
-            pauseSong();
-          }
-        }
+      if (guesses && currentSecond >= guesses?.length + 1 && !finishedGame()) {
+        pauseSong();
       }
     };
 
@@ -90,12 +76,7 @@ export default function AudioPlayer() {
   };
 
   const finishedGame = () => {
-    if (session && guesses?.length !== undefined) {
-      return guesses.at(-1)?.correctStatus === 'CORRECT' || guesses.length === 6;
-    } else if (localUser.user?.guesses.length !== undefined) {
-      return localUser.user.guesses.at(-1)?.correctStatus === 'CORRECT' || localUser.user.guesses.length === 6;
-    }
-    return 0;
+    return guesses?.at(-1)?.correctStatus === 'CORRECT' || guesses?.length === 6;
   };
 
   return (

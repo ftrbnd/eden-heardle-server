@@ -4,7 +4,7 @@ import { getDailySong } from '@/lib/songsApi';
 import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 
-interface LocalGuessedSong {
+export interface LocalGuessedSong {
   name: string;
   album?: string;
   cover: string;

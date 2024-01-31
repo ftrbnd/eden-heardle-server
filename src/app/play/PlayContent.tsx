@@ -1,24 +1,24 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
 import AudioPlayer from '../../components/AudioPlayer';
 import { useQuery } from '@tanstack/react-query';
-import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
+import { getDailySong } from '@/lib/songsApi';
 import Navbar from '@/components/Navbar';
-import { CSSProperties, Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GuessCard } from '@/components/GuessCard';
 import SongSelectInput from '@/components/SongSelectInput';
-import useLocalUser from '@/context/LocalUserProvider';
 import { DailySong } from '@prisma/client';
 import Image from 'next/image';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClose } from '@fortawesome/free-solid-svg-icons';
-import OpenModalButton from '@/components/modals/OpenModalButton';
 import { motion, AnimatePresence } from 'framer-motion';
+import useGuesses from '@/hooks/useGuesses';
 interface CountdownProps {
   song: DailySong;
   guessedSong: boolean;
+}
+
+interface WelcomeProps {
+  heardleDay?: number | null | undefined;
 }
 
 interface CSSPropertiesWithVars extends CSSProperties {
@@ -115,6 +115,17 @@ function Countdown({ song, guessedSong }: CountdownProps) {
   );
 }
 
+function WelcomeCard({ heardleDay }: WelcomeProps) {
+  return (
+    <div className="card w-full bg-base-200 shadow-xl">
+      <div className="card-body">
+        <h1 className="text-xl font-bold text-center">Day #{heardleDay ?? 0}</h1>
+        <p className="text-center">Press play and choose a song to get started!</p>
+      </div>
+    </div>
+  );
+}
+
 // function AnnouncementBanner({ setShowBanner }: { setShowBanner: Dispatch<SetStateAction<boolean>> }) {
 //   return (
 //     <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
@@ -129,19 +140,12 @@ function Countdown({ song, guessedSong }: CountdownProps) {
 // }
 
 export default function PlayContent({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const { data: session, status: sessionStatus } = useSession();
-  const localUser = useLocalUser();
   // const [showBanner, setShowBanner] = useState(true);
 
-  const { data: guesses, isFetched: guessesFetched } = useQuery({
-    queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
+  const { guesses, loadingGuessType } = useGuesses();
+  console.log('guesses:', guesses);
 
+  const router = useRouter();
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
     queryFn: getDailySong,
@@ -149,89 +153,37 @@ export default function PlayContent({ children }: { children: ReactNode }) {
     refetchIntervalInBackground: true
   });
 
+  // used to get rid of url created for showing rules modal
   useEffect(() => {
     router.replace('/play');
   }, [router]);
 
-  if (sessionStatus === 'loading') {
-    return (
-      <div className="flex flex-col items-center h-full justify-between">
-        {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
-        <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto gap-1 px-4 w-full h-full pt-4">
-          <AnimatePresence>
-            <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-              {[1, 2, 3, 4, 5, 6].map((num) => (
-                <GuessCard key={num} name="" album="" cover="/default_song.png" showAnimation={false} />
-              ))}
-            </div>
-          </AnimatePresence>
-          <div></div>
-        </div>
-        <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-          <SongSelectInput dailySong={dailySong} />
-          <AudioPlayer />
-        </div>
-      </div>
-    );
-  } else if (sessionStatus === 'authenticated') {
-    return (
-      <div className="flex flex-col items-center h-full justify-between">
-        {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
-        <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
-          <AnimatePresence>
-            <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-              {guessesFetched &&
-                guesses?.map((song) => <GuessCard key={song.id} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />)}
-              {guesses?.length === 0 && (
-                <div className="row-span-full text-center">
-                  <h1 className="text-5xl font-bold">Hello there</h1>
-                  <p className="py-6">Press play and choose a song to get started!</p>
-                </div>
-              )}
-            </div>
-          </AnimatePresence>
+  return (
+    <div className="flex flex-col items-center h-full justify-between">
+      {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
+      <Navbar>{children}</Navbar>
+      <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
+        <AnimatePresence>
+          <div className={`grid ${guesses?.length === 0 ? 'grid-rows-1' : 'grid-rows-6'} w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center`}>
+            {loadingGuessType ? (
+              [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" showAnimation={false} />)
+            ) : (
+              <>
+                {guesses?.map((song, index) => (
+                  <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
+                ))}
+                {guesses?.length === 0 && <WelcomeCard heardleDay={dailySong?.heardleDay} />}
+              </>
+            )}
+          </div>
+        </AnimatePresence>
 
-          {guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? <Countdown song={dailySong!} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} /> : <div></div>}
-        </div>
-        <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-          <SongSelectInput dailySong={dailySong} />
-          <AudioPlayer />
-        </div>
+        {guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? <Countdown song={dailySong!} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} /> : <div></div>}
       </div>
-    );
-  } else if (sessionStatus === 'unauthenticated') {
-    return (
-      <div className="flex flex-col items-center h-full justify-between">
-        {/* {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} />} */}
-        <Navbar>{children}</Navbar>
-        <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
-          <AnimatePresence>
-            <div className="grid grid-rows-6 w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center">
-              {localUser.user?.guesses.map((song, index) => (
-                <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
-              ))}
-              {localUser.user?.guesses.length === 0 && (
-                <div className="row-span-full text-center">
-                  <h1 className="text-5xl font-bold">Hello there</h1>
-                  <p className="py-6">Press play and choose a song to get started!</p>
-                </div>
-              )}
-            </div>
-          </AnimatePresence>
-
-          {localUser.user?.guesses.length === 6 || localUser.user?.guesses.at(-1)?.correctStatus === 'CORRECT' ? (
-            <Countdown song={dailySong!} guessedSong={localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'} />
-          ) : (
-            <div></div>
-          )}
-        </div>
-        <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-          <SongSelectInput dailySong={dailySong} />
-          <AudioPlayer />
-        </div>
+      <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
+        <SongSelectInput dailySong={dailySong} />
+        <AudioPlayer />
       </div>
-    );
-  }
+    </div>
+  );
 }

@@ -3,7 +3,7 @@ import { GuessCard } from '../GuessCard';
 import Link from 'next/link';
 import prisma from '@/lib/db';
 
-async function getTwoRandomSongs() {
+async function getThreeRandomSongs() {
   try {
     const songsCount = await prisma.song.count();
     const skip = Math.floor(Math.random() * songsCount);
@@ -18,13 +18,13 @@ async function getTwoRandomSongs() {
 
     return songs;
   } catch (err) {
-    console.log('Failed to get two random songs for example: ', err);
+    console.log('Failed to get three random songs for example: ', err);
     return [];
   }
 }
 
 export default async function RulesModal() {
-  const songs = await getTwoRandomSongs();
+  const songs = await getThreeRandomSongs();
 
   const getCorrectStatus = (song: Song) => {
     if (song?.name === songs[0]?.name) {
@@ -60,7 +60,7 @@ export default async function RulesModal() {
             <GuessCard key={songs[2]?.id} name={songs[2]?.name} album={songs[2]?.album || ''} cover={songs[2]?.cover} correctStatus={getCorrectStatus(songs[2])} showAnimation={false} />
           </div>
           <p className="text-md pt-2">
-            A new puzzle is released daily at midnight (Eastern Time). If you {"haven't"} already, you can join our{' '}
+            A new puzzle is released daily at <span className="font-bold">midnight (Eastern Time).</span> If you {"haven't"} already, you can join our{' '}
             <Link className="link" href={'https://discord.gg/futurebound'} target="_blank">
               Discord server
             </Link>{' '}

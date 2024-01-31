@@ -4,12 +4,13 @@ import SignInButton from '../buttons/SignInButton';
 import { useSession } from 'next-auth/react';
 import { getStats } from '@/lib/statsApi';
 import { useQuery } from '@tanstack/react-query';
-import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
+import { getDailySong } from '@/lib/songsApi';
 import { MouseEvent, useState } from 'react';
 import { faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useLocalUser from '@/context/LocalUserProvider';
 import { motion } from 'framer-motion';
+import useGuesses from '@/hooks/useGuesses';
 
 function Stats() {
   const { data: session } = useSession();
@@ -88,17 +89,7 @@ function Stats() {
 export default function StatsModal() {
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { data: session } = useSession();
-  const localUser = useLocalUser();
-
-  const { data: guesses } = useQuery({
-    queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-
+  const { guesses, guessType } = useGuesses();
   const { data: dailySong } = useQuery({
     queryKey: ['daily'],
     queryFn: getDailySong,
@@ -121,15 +112,10 @@ export default function StatsModal() {
     }
 
     let squares: string[] = [];
-    if (session) {
-      guesses?.forEach((guess) => {
-        squares.push(getStatusSquare(guess.correctStatus));
-      });
-    } else {
-      localUser.user?.guesses.forEach((guess) => {
-        squares.push(getStatusSquare(guess.correctStatus));
-      });
-    }
+
+    guesses?.forEach((guess) => {
+      squares.push(getStatusSquare(guess.correctStatus));
+    });
 
     return squares.join(' ');
   };
@@ -152,22 +138,15 @@ export default function StatsModal() {
         <h3 className="font-bold text-lg">Statistics</h3>
         <Stats />
 
-        {session
-          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <div className="flex justify-center pb-4">
-                <kbd className="kbd">{statusSquares()}</kbd>
-              </div>
-            )
-          : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <div className="flex justify-center pb-4">
-                <kbd className="kbd">{statusSquares()}</kbd>
-              </div>
-            )}
+        {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          <div className="flex justify-center pb-4">
+            <kbd className="kbd">{statusSquares()}</kbd>
+          </div>
+        )}
 
         <div className="flex justify-end gap-2">
-          {!session && <SignInButton />}
-          {((session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT')) ||
-            (!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'))) && (
+          {guessType === 'local' && <SignInButton />}
+          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
             <motion.button
               className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`}
               onClick={(e) => copyToClipboard(e)}
