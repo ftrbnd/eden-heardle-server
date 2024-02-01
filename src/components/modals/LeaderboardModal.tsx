@@ -10,8 +10,7 @@ import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-type Tab = 'TODAY' | 'WIN_PCT' | 'ACC' | 'CUR_STRK' | 'MAX_STRK';
+import { LeaderboardStat } from '@/utils/types';
 
 function ProfileColumn({ user }: { user: User }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -47,14 +46,7 @@ function ProfileColumn({ user }: { user: User }) {
   );
 }
 
-function StatTable({ activeTab }: { activeTab: Tab }) {
-  const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
-    queryKey: ['leaderboard'],
-    queryFn: getLeaderboard,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-
+const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; stat?: LeaderboardStat[]; isLoading: boolean }) => {
   const statusSquares = (guessStatuses: string[]): string => {
     function getStatusSquare(status: string) {
       switch (status) {
@@ -77,165 +69,125 @@ function StatTable({ activeTab }: { activeTab: Tab }) {
     return squares.join('');
   };
 
-  const showSpecificStat = () => {
+  const getEmptyTableNotice = () => {
+    switch (type) {
+      case 'Today':
+        return "No one has completed today's Heardle yet!";
+      case 'WinPct':
+        return 'No one has won a game yet!';
+      case 'Accuracy':
+        return 'No one has completed a game yet!';
+      case 'CurStrk':
+        return 'There are no active streaks.';
+      case 'MaxStrk':
+        return 'No max streaks available yet.';
+    }
+  };
+
+  if (isLoading)
+    return (
+      <table>
+        <tbody>
+          <tr>
+            <th>0</th>
+            <td className="p-0 text-center h-14">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    );
+
+  if (!stat)
+    return (
+      <table>
+        <tbody>
+          <tr>
+            <th>0</th>
+            <td className="p-0 text-center h-14">Statistics unavailable.</td>
+          </tr>
+        </tbody>
+      </table>
+    );
+
+  return (
+    <table className="w-full">
+      <tbody className="w-full flex flex-col gap-2">
+        {stat.length > 0 ? (
+          stat.map((stat, index) => (
+            <tr key={`${stat.type}-${index}`} className="grid grid-flow-col items-center w-full">
+              <th>{index + 1}</th>
+              <ProfileColumn user={stat.user} />
+              <td className="text-right"> {stat.type === 'Today' ? statusSquares(stat.data) : stat.data}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className="p-0 text-center h-14">{getEmptyTableNotice()}</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+};
+
+function Tabs() {
+  const [activeTab, setActiveTab] = useState<LeaderboardStat['type']>('Today');
+
+  const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: getLeaderboard,
+    refetchInterval: 30000, // 30 seconds,
+    refetchIntervalInBackground: true
+  });
+
+  const getActiveStat = () => {
     switch (activeTab) {
-      case 'TODAY':
-        return (
-          <tbody>
-            {leaderboard?.today.length ? (
-              leaderboard.today.map((guesses, index) => (
-                <tr key={index}>
-                  <th>{index + 1}</th>
-                  <ProfileColumn user={guesses.user} />
-                  <td className="p-0 text-right">{statusSquares(guesses.data)}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td>{"No one has completed today's Heardle yet!"}</td>
-              </tr>
-            )}
-          </tbody>
-        );
-      case 'WIN_PCT':
-        return (
-          <tbody>
-            {leaderboard?.winPercentages.length ? (
-              leaderboard.winPercentages.map((winPct, index) => (
-                <tr key={index}>
-                  <th>{index + 1}</th>
-                  <ProfileColumn user={winPct.user} />
-                  <td className="text-right">{winPct.data}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td>{'No one has won a game yet!'}</td>
-              </tr>
-            )}
-          </tbody>
-        );
-      case 'ACC':
-        return (
-          <tbody>
-            {leaderboard?.accuracies.length ? (
-              leaderboard.accuracies.map((accuracy, index) => (
-                <tr key={index}>
-                  <th>{index + 1}</th>
-                  <ProfileColumn user={accuracy.user} />
-                  <td className="text-right">{accuracy.data}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td>{'No one has completed a game yet!'}</td>
-              </tr>
-            )}
-          </tbody>
-        );
-      case 'CUR_STRK':
-        return (
-          <tbody>
-            {leaderboard?.currentStreaks.length ? (
-              leaderboard.currentStreaks.map((streak, index) => (
-                <tr key={index}>
-                  <th>{index + 1}</th>
-                  <ProfileColumn user={streak.user} />
-                  <td className="text-right">{streak.data}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td>{'There are no active streaks.'}</td>
-              </tr>
-            )}
-          </tbody>
-        );
-      case 'MAX_STRK':
-        return (
-          <tbody>
-            {leaderboard?.maxStreaks.length ? (
-              leaderboard.maxStreaks.map((streak, index) => (
-                <tr key={index}>
-                  <th>{index + 1}</th>
-                  <ProfileColumn user={streak.user} />
-                  <td className="text-right">{streak.data}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td>{'No max streaks available yet.'}</td>
-              </tr>
-            )}
-          </tbody>
-        );
-      default:
-        return <tbody></tbody>;
+      case 'Today':
+        return leaderboard?.today;
+      case 'WinPct':
+        return leaderboard?.winPercentages;
+      case 'Accuracy':
+        return leaderboard?.accuracies;
+      case 'CurStrk':
+        return leaderboard?.currentStreaks;
+      case 'MaxStrk':
+        return leaderboard?.maxStreaks;
     }
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="table">
-        {leaderboardLoading ? (
-          <tbody>
-            <tr>
-              <th>0</th>
-              <td>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle w-12 h-12">
-                      <Image src={'/default.png'} alt={`Default Avatar`} height={48} width={48} />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-bold">Getting users...</div>
-                  </div>
-                </div>
-              </td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        ) : (
-          showSpecificStat()
-        )}
-      </table>
-    </div>
-  );
-}
-
-function Tabs({ activeTab, setActiveTab }: { activeTab: Tab; setActiveTab: (tab: Tab) => void }) {
-  return (
-    <div className="tabs flex justify-center">
-      <a onClick={() => setActiveTab('TODAY')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'TODAY' && 'tab-active'}`}>
-        Today
-      </a>
-      <a onClick={() => setActiveTab('WIN_PCT')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'WIN_PCT' && 'tab-active'}`}>
-        Win Percentage
-      </a>
-      <a onClick={() => setActiveTab('ACC')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'ACC' && 'tab-active'}`}>
-        Accuracy
-      </a>
-      <a onClick={() => setActiveTab('CUR_STRK')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'CUR_STRK' && 'tab-active'}`}>
-        Current Streaks
-      </a>
-      <a onClick={() => setActiveTab('MAX_STRK')} className={`tab tab-xs sm:tab-md tab-bordered ${activeTab === 'MAX_STRK' && 'tab-active'}`}>
-        Max Streaks
-      </a>
+    <div className="flex flex-col gap-2">
+      <div className="max-sm:carousel rounded-box w-full">
+        <div role="tablist" className="tabs tabs-boxed max-sm:carousel-item">
+          <p role="tab" className={`tab h-12 text-xs ${activeTab === 'Today' && 'tab-active'}`} onClick={() => setActiveTab('Today')}>
+            Today
+          </p>
+          <p role="tab" className={`tab h-12 text-xs ${activeTab === 'WinPct' && 'tab-active'}`} onClick={() => setActiveTab('WinPct')}>
+            Win Percentage
+          </p>
+          <p role="tab" className={`tab h-12 text-xs ${activeTab === 'Accuracy' && 'tab-active'}`} onClick={() => setActiveTab('Accuracy')}>
+            Accuracy
+          </p>
+          <p role="tab" className={`tab h-12 text-xs ${activeTab === 'CurStrk' && 'tab-active'}`} onClick={() => setActiveTab('CurStrk')}>
+            Current Streaks
+          </p>
+          <p role="tab" className={`tab h-12 text-xs ${activeTab === 'MaxStrk' && 'tab-active'}`} onClick={() => setActiveTab('MaxStrk')}>
+            Max Streaks
+          </p>
+        </div>
+      </div>
+      <StatTable stat={getActiveStat()} isLoading={leaderboardLoading} type={activeTab} />
     </div>
   );
 }
 
 export default function LeaderboardModal() {
-  const [activeTab, setActiveTab] = useState<Tab>('TODAY');
   const { data: session } = useSession();
 
   return (
     <dialog id="leaderboard_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box h-2/5 sm:h-3/5">
         <h3 className="font-bold text-lg">Leaderboard</h3>
-        <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        <StatTable activeTab={activeTab} />
+        <Tabs />
         {!session && (
           <>
             <div className="divider mb-0"></div>

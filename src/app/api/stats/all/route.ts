@@ -1,31 +1,7 @@
 import prisma from '@/lib/db';
-import { GuessedSong, User } from '@prisma/client';
+import { TodayStat, WinPctStat, AccuracyStat, CurStrkStat, MaxStrkStat } from '@/utils/types';
+import { GuessedSong } from '@prisma/client';
 import { NextResponse } from 'next/server';
-
-interface TodayStat {
-  data: string[];
-  user: User;
-}
-
-interface WinPctStat {
-  data: number;
-  user: User;
-}
-
-interface AccuracyStat {
-  data: number;
-  user: User;
-}
-
-interface CurStrkStat {
-  data: number;
-  user: User;
-}
-
-interface MaxStrkStat {
-  data: number;
-  user: User;
-}
 
 export interface LeaderboardStats {
   today: TodayStat[];
@@ -81,7 +57,8 @@ export async function GET() {
       if (userGuesses.songs.length === 6 || userGuesses.songs.at(-1)?.correctStatus === 'CORRECT') {
         leaderboard.today.push({
           data: guessStatuses(userGuesses.songs),
-          user: userGuesses.user
+          user: userGuesses.user,
+          type: 'Today'
         });
       }
 
@@ -89,12 +66,14 @@ export async function GET() {
       if (userStat.gamesPlayed >= 2) {
         leaderboard.winPercentages.push({
           data: Math.round(((userStat?.gamesWon ?? 0) / (userStat?.gamesPlayed || 1)) * 100),
-          user: userGuesses.user
+          user: userGuesses.user,
+          type: 'WinPct'
         });
 
         leaderboard.accuracies.push({
           data: Math.round(((userStat.accuracy ?? 0) / (userStat.gamesPlayed * 6)) * 100),
-          user: userGuesses.user
+          user: userGuesses.user,
+          type: 'Accuracy'
         });
       }
 
@@ -102,7 +81,8 @@ export async function GET() {
       if (userStat.currentStreak >= 2) {
         leaderboard.currentStreaks.push({
           data: userStat.currentStreak,
-          user: userGuesses.user
+          user: userGuesses.user,
+          type: 'CurStrk'
         });
       }
 
@@ -110,7 +90,8 @@ export async function GET() {
       if (userStat.maxStreak >= 2) {
         leaderboard.maxStreaks.push({
           data: userStat.maxStreak,
-          user: userGuesses.user
+          user: userGuesses.user,
+          type: 'MaxStrk'
         });
       }
     }

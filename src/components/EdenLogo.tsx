@@ -11,5 +11,5 @@ interface LogoProps {
 export default function EdenLogo({ height, width }: LogoProps) {
   const { theme } = useTheme();
 
-  return <Image className="self-center" src={`${theme === 'dark' ? '/icon.png' : '/icon-black.png'}`} alt="EDEN logo" height={height} width={width} />;
+  return <Image className="self-center" src={`${theme === 'dark' ? '/icon-white.png' : '/icon-black.png'}`} alt="EDEN logo" height={height} width={width} />;
 }

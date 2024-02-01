@@ -7,7 +7,7 @@ const config: Config = {
     themes: [
       {
         light: {
-          ...require('daisyui/src/theming/themes')['[data-theme=bumblebee]'],
+          ...require('daisyui/src/theming/themes')['bumblebee'],
           neutral: '#36393e',
           'base-100': '#e7e5e4'
         }
