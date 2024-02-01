@@ -140,7 +140,7 @@ function CustomResultCard({ song, guessedSong, creator, session, guesses }: Resu
       </figure>
       <div className="card-body items-center">
         <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? 'Great job on the puzzle!' : `The song was ${song?.name}`}</h2>
-        <p className="text-md">This custom Heardle was created by {creator?.name}</p>
+        <p className="text-md">This Custom Heardle was created by {creator?.name}</p>
         {!session && <p className="text-sm">Sign in to create your own!</p>}
         <kbd className="kbd">{statusSquares()}</kbd>
         <div className="card-actions">

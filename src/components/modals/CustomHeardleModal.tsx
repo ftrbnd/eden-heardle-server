@@ -99,10 +99,10 @@ export default function CustomHeardleModal() {
 
   const [error, setError] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
-  const link = useRef<string>('');
 
   const { data: session } = useSession();
   const customHeardle = useCustomHeardle();
+  const link = useRef<string>(`https://eden-heardle.io/play/${customHeardle.data?.id}`);
 
   const handleSelection = (song: Song) => {
     setSelectedSong(song);
@@ -174,9 +174,9 @@ export default function CustomHeardleModal() {
               <Image src={customHeardle.data.cover} alt="Album" width={500} height={500} />
             </figure>
             <div className="card-body">
-              <h2 className="card-title">Your Custom Heardle</h2>
-              <h3 className="font-semibold">{`${customHeardle.data.name} (${formatTime(customHeardle.data.startTime)} - ${formatTime(customHeardle.data.startTime + 6)})`}</h3>
-              <div className="card-actions justify-center sm:justify-end">
+              <h2 className="card-title">{customHeardle.data.name}</h2>
+              <h3 className="font-semibold">{`${formatTime(customHeardle.data.startTime)} - ${formatTime(customHeardle.data.startTime + 6)}`}</h3>
+              <div className="card-actions justify-around md:justify-end">
                 <div className="tooltip sm:tooltip-left" data-tip="Delete this Heardle to create a new one">
                   <motion.button
                     onClick={sendDeleteRequest}
@@ -206,7 +206,7 @@ export default function CustomHeardleModal() {
                   }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  Share
+                  {copied ? 'Copied!' : 'Share'}
                   <FontAwesomeIcon icon={copied ? faCheck : faLink} />
                 </motion.button>
               </div>
