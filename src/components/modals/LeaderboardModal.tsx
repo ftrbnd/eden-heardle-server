@@ -49,6 +49,9 @@ function ProfileColumn({ user }: { user: User }) {
 
 const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; stat?: LeaderboardStat[]; isLoading: boolean }) => {
   const getEmptyTableNotice = () => {
+    if (!stat) return 'Statistics unavailable.';
+    if (isLoading) return 'Loading...';
+
     switch (type) {
       case 'Today':
         return "No one has completed today's Heardle yet!";
@@ -63,34 +66,10 @@ const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; s
     }
   };
 
-  if (isLoading)
-    return (
-      <table>
-        <tbody>
-          <tr>
-            <th>0</th>
-            <td className="p-0 text-center h-14">Loading...</td>
-          </tr>
-        </tbody>
-      </table>
-    );
-
-  if (!stat)
-    return (
-      <table>
-        <tbody>
-          <tr>
-            <th>0</th>
-            <td className="p-0 text-center h-14">Statistics unavailable.</td>
-          </tr>
-        </tbody>
-      </table>
-    );
-
   return (
     <table className="w-full">
       <tbody className="w-full flex flex-col gap-2">
-        {stat.length > 0 ? (
+        {stat && stat.length > 0 ? (
           stat.map((stat, index) => (
             <tr key={`${stat.type}-${index}`} className="grid grid-flow-col items-center w-full">
               <th>{index + 1}</th>

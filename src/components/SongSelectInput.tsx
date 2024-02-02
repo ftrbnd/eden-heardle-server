@@ -1,18 +1,14 @@
 'use client';
 
 import useGuesses from '@/hooks/useGuesses';
-import { getSongs } from '@/lib/songsApi';
+import useSongs from '@/hooks/useSongs';
 import { Song, DailySong } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, ChangeEvent } from 'react';
 
 export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }) {
   const { guesses, submitGuess } = useGuesses();
 
-  const { data: songs, isLoading: songsLoading } = useQuery({
-    queryKey: ['songs'],
-    queryFn: getSongs
-  });
+  const { songs, songsLoading } = useSongs();
 
   useEffect(() => {
     if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {

@@ -1,18 +1,17 @@
 'use client';
 
-import { getSongs } from '@/lib/songsApi';
 import { faCheck, faCloudArrowUp, faLink, faTrash, faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Song } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { Session } from 'next-auth';
 import SignInButton from '../buttons/SignInButton';
 import { motion } from 'framer-motion';
 import useCustomHeardle from '@/hooks/useCustomHeardle';
+import useSongs from '@/hooks/useSongs';
 
 interface SelectProps {
   onSongSelect: (song: Song) => void;
@@ -20,10 +19,7 @@ interface SelectProps {
 }
 
 function SelectSong({ onSongSelect, session }: SelectProps) {
-  const { data: songs, isLoading: songsLoading } = useQuery({
-    queryKey: ['songs'],
-    queryFn: getSongs
-  });
+  const { songs, songsLoading } = useSongs();
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     const song = songs?.find((song) => song.name === event.target.value);

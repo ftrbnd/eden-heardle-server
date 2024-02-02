@@ -1,65 +1,16 @@
 import { getUserStats } from '@/lib/statsApi';
-import { faCalendarDays, faPercent, faBullseye, faArrowTrendUp, faTrophy, faGem } from '@fortawesome/free-solid-svg-icons';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Statistics, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useEffect, useRef, MouseEvent } from 'react';
-
-function Stats({ userStats }: { userStats: Statistics }) {
-  return (
-    <div className="grid grid-rows-3 sm:grid-cols-2 gap-2 py-4">
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faCalendarDays} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Games Played</div>
-        <div className="stat-value text-left">{userStats.gamesPlayed}</div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faPercent} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Win Percentage</div>
-        <div className="tooltip" data-tip={`${userStats.gamesWon} games won`}>
-          <div className="stat-value text-left">{Math.round(((userStats?.gamesWon ?? 0) / (userStats?.gamesPlayed || 1)) * 100)}</div>
-        </div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faBullseye} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Accuracy</div>
-        <div className="tooltip" data-tip={`${(userStats.gamesPlayed ?? 0) * 6 - (userStats.accuracy ?? 0)} incorrect guesses overall`}>
-          <div className="stat-value text-left">{Math.round(((userStats.accuracy ?? 0) / ((userStats.gamesPlayed || 1) * 6)) * 100)}</div>
-        </div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faArrowTrendUp} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Current Streak</div>
-        <div className="stat-value text-left">{userStats.currentStreak ?? 0}</div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faTrophy} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Max Streak</div>
-        <div className="stat-value text-left">{userStats.currentStreak ?? 0}</div>
-      </div>
-    </div>
-  );
-}
+import StatsGrid from '../StatsGrid';
 
 export default function ProfileModal({ user, showProfile, setShowProfile }: { user: User; showProfile: boolean; setShowProfile: (show: boolean) => void }) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
-  const { data: stats, isLoading } = useQuery({
+  const { data: userStats, isLoading } = useQuery({
     queryKey: ['stats', user.id],
     queryFn: () => getUserStats(user.id)
   });
@@ -95,7 +46,7 @@ export default function ProfileModal({ user, showProfile, setShowProfile }: { us
             </div>
           </div>
         </div>
-        {!isLoading && stats && <Stats userStats={stats} />}
+        {!isLoading && userStats && <StatsGrid stats={userStats} />}
       </div>
 
       <form method="dialog" className="modal-backdrop">
