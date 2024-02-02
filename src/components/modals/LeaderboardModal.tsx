@@ -26,7 +26,7 @@ function ProfileColumn({ user }: { user: User }) {
   };
 
   return (
-    <td>
+    <td className="flex-1">
       <div onMouseOver={prefetchUserStats} onClick={() => setShowProfile(true)} className="flex items-center space-x-3 rounded hover:cursor-pointer hover:bg-base-200">
         <div className="avatar p-2">
           <div className="mask mask-squircle w-8 h-8">
@@ -49,8 +49,8 @@ function ProfileColumn({ user }: { user: User }) {
 
 const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; stat?: LeaderboardStat[]; isLoading: boolean }) => {
   const getEmptyTableNotice = () => {
-    if (!stat) return 'Statistics unavailable.';
     if (isLoading) return 'Loading...';
+    if (!stat) return 'Statistics unavailable.';
 
     switch (type) {
       case 'Today':
@@ -68,11 +68,11 @@ const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; s
 
   return (
     <table className="w-full">
-      <tbody className="w-full flex flex-col gap-2">
+      <tbody className="w-full flex flex-col gap-2 md:gap-4 items-center">
         {stat && stat.length > 0 ? (
           stat.map((stat, index) => (
-            <tr key={`${stat.type}-${index}`} className="grid grid-flow-col items-center w-full">
-              <th>{index + 1}</th>
+            <tr key={`${stat.type}-${index}`} className="flex items-center w-full bg-base-200 rounded-box px-2 shadow-md">
+              <th className="w-8">{index + 1}</th>
               <ProfileColumn user={stat.user} />
               <td className="text-right"> {stat.type === 'Today' ? statusSquares(stat.data) : stat.data}</td>
             </tr>
@@ -115,7 +115,7 @@ function Tabs() {
   return (
     <div className="flex flex-col gap-2">
       <div className="max-sm:carousel rounded-box w-full">
-        <div role="tablist" className="tabs tabs-boxed max-sm:carousel-item">
+        <div role="tablist" className="tabs tabs-boxed max-sm:carousel-item bg-base-300">
           <p role="tab" className={`tab h-12 text-xs ${activeTab === 'Today' && 'tab-active'}`} onClick={() => setActiveTab('Today')}>
             Today
           </p>
@@ -153,12 +153,10 @@ export default function LeaderboardModal() {
               <p>Your stats are not stored in the cloud without an account!</p>
             </div>
             <div className="divider mt-0"></div>
+            <div className="flex flex-col items-end">
+              <SignInButton />
+            </div>
           </>
-        )}
-        {!session && (
-          <div className="flex flex-col items-end">
-            <SignInButton />
-          </div>
         )}
       </div>
 
