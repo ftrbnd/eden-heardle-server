@@ -27,6 +27,4 @@ app.use(
 app.use('/api/customHeardle', customHeardleRouter);
 app.use((_req, res) => res.status(404).send({ error: 'Unknown endpoint' }));
 
-app.listen(process.env.PORT || 3001, () => {
-  console.log(`Server ready at port ${process.env.PORT || 3001} `);
-});
+export default app;

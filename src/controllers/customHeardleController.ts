@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { downloadMp3 } from '../utils/downloadMp3';
 import { Heardle, logger } from '../utils/logger';
-import { parseDeleteRequest, parseGetRequest } from '../utils/parseRequestBody';
+import { parseDeleteRequest, parsePostRequest } from '../utils/parseRequestBody';
 
 const createCustomHeardle = async (req: Request, res: Response) => {
   try {
-    const { song, startTime, userId } = parseGetRequest(req.body);
+    const { song, startTime, userId } = parsePostRequest(req.body);
 
     logger(Heardle.Custom, `POST request from User #${userId}`);
 
@@ -14,9 +14,9 @@ const createCustomHeardle = async (req: Request, res: Response) => {
 
     logger(Heardle.Custom, 'Successfully created Custom Heardle');
     res.json({ message: 'Successfully created Custom Heardle', link });
-  } catch (error: unknown) {
+  } catch (error: any) {
     logger(Heardle.Custom, error);
-    res.status(400).json({ message: 'Failed to create Custom Heardle' });
+    res.status(400).json({ message: 'Failed to create Custom Heardle', error: error.message });
   }
 };
 
@@ -32,9 +32,9 @@ const deleteCustomHeardle = async (req: Request, res: Response) => {
 
     logger(Heardle.Custom, 'Successfully deleted Custom Heardle');
     res.json({ message: 'Successfully deleted Custom Heardle' });
-  } catch (error) {
+  } catch (error: any) {
     logger(Heardle.Custom, error);
-    res.status(400).json({ message: 'Failed to delete Custom Heardle' });
+    res.status(400).json({ message: 'Failed to delete Custom Heardle', error: error.message });
   }
 };
 

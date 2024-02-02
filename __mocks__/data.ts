@@ -1,4 +1,23 @@
-import { User, GuessedSong, Guesses, Statistics, DailySong } from '@prisma/client';
+import { User, GuessedSong, Guesses, Statistics, DailySong, Song } from '@prisma/client';
+
+export const mockSongs: Song[] = [
+  {
+    id: '1',
+    name: 'End Credits',
+    album: 'End Credits',
+    cover: 'https://i1.sndcdn.com/artworks-000125721149-whx70j-t500x500.jpg',
+    duration: 241,
+    link: 'https://youtu.be/0pVABElms84'
+  },
+  {
+    id: '2',
+    name: 'Gravity',
+    album: 'End Credits',
+    cover: 'https://i1.sndcdn.com/artworks-000123341011-uyahoc-t500x500.jpg',
+    duration: 231,
+    link: 'https://youtu.be/f1eMI0d-1Hs'
+  }
+];
 
 export const mockUser: User = {
   name: 'giosalad',
