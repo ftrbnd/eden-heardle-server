@@ -6,13 +6,6 @@ const config: Config = {
   daisyui: {
     themes: [
       {
-        light: {
-          ...require('daisyui/src/theming/themes')['bumblebee'],
-          neutral: '#36393e',
-          'base-100': '#e7e5e4'
-        }
-      },
-      {
         dark: {
           primary: '#f9d72f',
 
@@ -31,6 +24,13 @@ const config: Config = {
           warning: '#fbbd23',
 
           error: '#f87272'
+        }
+      },
+      {
+        light: {
+          ...require('daisyui/src/theming/themes')['bumblebee'],
+          neutral: '#36393e',
+          'base-100': '#e7e5e4'
         }
       }
     ]
