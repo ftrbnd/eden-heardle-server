@@ -1,87 +1,44 @@
 'use client';
 
 import SignInButton from '../buttons/SignInButton';
-import { useSession } from 'next-auth/react';
-import { getStats } from '@/lib/statsApi';
-import { useQuery } from '@tanstack/react-query';
 import { MouseEvent, useState } from 'react';
-import { faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import useLocalUser from '@/context/LocalUserProvider';
 import { motion } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
+import useStatistics from '@/hooks/useStatistics';
+import statusSquares from '@/utils/statusSquares';
+
+const StatBox = ({ stat, title, icon, tooltip }: { stat: any; title: string; icon: IconDefinition; tooltip?: string }) => {
+  return (
+    <div className="stat shadow bg-base-200 rounded-box">
+      <div className="stat-figure text-secondary">
+        <FontAwesomeIcon icon={icon} className="w-8 h-8" />
+      </div>
+      <div className="stat-title">{title}</div>
+      <div className="tooltip" data-tip={tooltip}>
+        <div className="stat-value text-left">{stat}</div>
+      </div>
+    </div>
+  );
+};
 
 function Stats() {
-  const { data: session } = useSession();
-  const localUser = useLocalUser();
-
-  const { data: stats } = useQuery({
-    queryKey: ['stats'],
-    queryFn: getStats,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
+  const { stats } = useStatistics();
 
   return (
     <div className="grid grid-rows-3 sm:grid-cols-2 gap-2 py-4">
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faCalendarDays} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Games Played</div>
-        <div className="stat-value text-left">{session ? stats?.gamesPlayed ?? 0 : localUser.user?.statistics.gamesPlayed}</div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faPercent} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Win Percentage</div>
-        <div className="tooltip" data-tip={`${session ? stats?.gamesWon : localUser.user?.statistics.gamesWon} games won`}>
-          <div className="stat-value text-left">
-            {session
-              ? Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)
-              : Math.round(((localUser.user?.statistics?.gamesWon ?? 0) / (localUser.user?.statistics?.gamesPlayed || 1)) * 100)}
-          </div>
-        </div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faBullseye} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Accuracy</div>
-        <div
-          className="tooltip"
-          data-tip={`${
-            session ? (stats?.gamesPlayed ?? 0) * 6 - (stats?.accuracy ?? 0) : (localUser.user?.statistics.gamesPlayed ?? 0) * 6 - (localUser.user?.statistics.accuracy ?? 0)
-          } incorrect guesses overall`}
-        >
-          <div className="stat-value text-left">
-            {session
-              ? Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)
-              : Math.round(((localUser.user?.statistics.accuracy ?? 0) / ((localUser.user?.statistics.gamesPlayed || 1) * 6)) * 100)}
-          </div>
-        </div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faArrowTrendUp} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Current Streak</div>
-        <div className="stat-value text-left">{session ? stats?.currentStreak ?? 0 : localUser.user?.statistics.currentStreak}</div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faTrophy} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Max Streak</div>
-        <div className="stat-value text-left">{session ? stats?.maxStreak ?? 0 : localUser.user?.statistics.maxStreak}</div>
-      </div>
+      <StatBox stat={stats?.gamesPlayed ?? 0} title={'Games Played'} icon={faCalendarDays} />
+      <StatBox stat={Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)} title={'Win Percentage'} icon={faPercent} tooltip={`${stats?.gamesWon ?? 0} games won`} />
+      <StatBox
+        stat={Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)}
+        title={'Accuracy'}
+        icon={faBullseye}
+        tooltip={`${(stats?.gamesPlayed ?? 0) * 6 - (stats?.accuracy ?? 0)} incorrect guesses overall`}
+      />
+      <StatBox stat={stats?.currentStreak ?? 0} title={'Current Streak'} icon={faArrowTrendUp} />
+      <StatBox stat={stats?.maxStreak ?? 0} title={'Max Streak'} icon={faTrophy} />
     </div>
   );
 }
@@ -92,35 +49,12 @@ export default function StatsModal() {
   const { guesses, guessType } = useGuesses();
   const { dailySong } = useDailySong();
 
-  const statusSquares = (): string => {
-    function getStatusSquare(status: string) {
-      switch (status) {
-        case 'CORRECT':
-          return '🟩';
-        case 'ALBUM':
-          return '🟧';
-        case 'WRONG':
-          return '🟥';
-        default:
-          return '⬜';
-      }
-    }
-
-    let squares: string[] = [];
-
-    guesses?.forEach((guess) => {
-      squares.push(getStatusSquare(guess.correctStatus));
-    });
-
-    return squares.join(' ');
-  };
-
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
-    if (showSuccess) return;
+    if (showSuccess || !guesses) return;
 
     setShowSuccess(true);
-    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares().replace(/\s/g, '')}`);
+    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares(guesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
 
     setTimeout(() => {
       setShowSuccess(false);
@@ -135,7 +69,7 @@ export default function StatsModal() {
 
         {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
           <div className="flex justify-center pb-4">
-            <kbd className="kbd">{statusSquares()}</kbd>
+            <kbd className="kbd">{statusSquares(guesses.map((g) => g.correctStatus))}</kbd>
           </div>
         )}
 

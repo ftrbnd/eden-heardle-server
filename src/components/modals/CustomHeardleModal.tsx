@@ -102,7 +102,6 @@ export default function CustomHeardleModal() {
 
   const { data: session } = useSession();
   const customHeardle = useCustomHeardle();
-  const link = useRef<string>(`https://eden-heardle.io/play/${customHeardle.data?.id}`);
 
   const handleSelection = (song: Song) => {
     setSelectedSong(song);
@@ -119,8 +118,8 @@ export default function CustomHeardleModal() {
 
     try {
       const newLink = await customHeardle.create(selectedSong, startTime);
+      await navigator.clipboard.writeText(newLink);
 
-      link.current = newLink ?? 'https://eden-heardle.io/play';
       setSelectedSong(null);
       setError('');
     } catch (error: any) {
@@ -139,7 +138,6 @@ export default function CustomHeardleModal() {
     try {
       await customHeardle.remove();
 
-      link.current = '';
       setSelectedSong(null);
       setError('');
     } catch (error: any) {
@@ -151,10 +149,11 @@ export default function CustomHeardleModal() {
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
-    if (copied) return;
+    if (copied || !customHeardle.data) return;
 
     setCopied(true);
-    await navigator.clipboard.writeText(link.current);
+
+    await navigator.clipboard.writeText(`https://eden-heardle.io/play/${customHeardle.data?.id}`);
 
     setTimeout(() => {
       setCopied(false);

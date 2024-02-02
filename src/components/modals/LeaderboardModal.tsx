@@ -11,6 +11,7 @@ import ProfileModal from './ProfileModal';
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LeaderboardStat } from '@/utils/types';
+import statusSquares from '@/utils/statusSquares';
 
 function ProfileColumn({ user }: { user: User }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -47,28 +48,6 @@ function ProfileColumn({ user }: { user: User }) {
 }
 
 const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; stat?: LeaderboardStat[]; isLoading: boolean }) => {
-  const statusSquares = (guessStatuses: string[]): string => {
-    function getStatusSquare(status: string) {
-      switch (status) {
-        case 'CORRECT':
-          return '🟩';
-        case 'ALBUM':
-          return '🟧';
-        case 'WRONG':
-          return '🟥';
-        default:
-          return '⬜';
-      }
-    }
-
-    let squares: string[] = [];
-    guessStatuses?.forEach((status) => {
-      squares.push(getStatusSquare(status));
-    });
-
-    return squares.join('');
-  };
-
   const getEmptyTableNotice = () => {
     switch (type) {
       case 'Today':

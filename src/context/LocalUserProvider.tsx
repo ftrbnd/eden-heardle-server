@@ -1,34 +1,8 @@
 'use client';
 
 import useDailySong from '@/hooks/useDailySong';
+import { LocalUser, LocalGuessedSong, LocalStatistics } from '@/utils/types';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
-
-export interface LocalGuessedSong {
-  name: string;
-  album?: string;
-  cover: string;
-  correctStatus: 'CORRECT' | 'ALBUM' | 'WRONG';
-}
-
-interface LocalStatistics {
-  gamesPlayed: number;
-  gamesWon: number;
-  currentStreak: number;
-  maxStreak: number;
-  accuracy: number;
-}
-
-interface LocalUser {
-  guesses: LocalGuessedSong[];
-  statistics: LocalStatistics;
-  name?: 'anon';
-}
-
-interface LoggedInDate {
-  month: number;
-  date: number;
-  year: number;
-}
 
 const initialUser: LocalUser = {
   statistics: {

@@ -1,6 +1,31 @@
-import { User } from '@prisma/client';
+import { Statistics, User } from '@prisma/client';
+
+export interface LocalGuessedSong {
+  name: string;
+  album?: string;
+  cover: string;
+  correctStatus: 'CORRECT' | 'ALBUM' | 'WRONG';
+}
+
+export interface LocalStatistics {
+  gamesPlayed: number;
+  gamesWon: number;
+  currentStreak: number;
+  maxStreak: number;
+  accuracy: number;
+}
+
+export interface LocalUser {
+  guesses: LocalGuessedSong[];
+  statistics: LocalStatistics;
+  name?: 'anon';
+}
+
+/////////////////////////////////////////////////////////
 
 export type GuessType = 'session' | 'local';
+
+/////////////////////////////////////////////////////////
 
 export interface TodayStat {
   data: string[];
