@@ -30,6 +30,15 @@ export const mockUser: User = {
 
 export const mockGuesses: GuessedSong[] = [
   {
+    id: '2',
+    guessListId: 'mock-guesslist',
+    name: 'Gravity',
+    album: 'End Credits',
+    correctStatus: 'WRONG',
+    cover: 'https://i1.sndcdn.com/artworks-000123341011-uyahoc-t500x500.jpg',
+    duration: 231
+  },
+  {
     id: '1',
     guessListId: 'mock-guesslist',
     name: 'End Credits',
@@ -40,10 +49,37 @@ export const mockGuesses: GuessedSong[] = [
   }
 ];
 
+export const mockGuessesWrong: GuessedSong[] = [
+  {
+    id: '1',
+    guessListId: 'mock-guesslist-wrong',
+    name: 'End Credits',
+    album: 'End Credits',
+    correctStatus: 'CORRECT',
+    cover: 'https://i1.sndcdn.com/artworks-000125721149-whx70j-t500x500.jpg',
+    duration: 241
+  },
+  {
+    id: '2',
+    guessListId: 'mock-guesslist-wrong',
+    name: 'Gravity',
+    album: 'End Credits',
+    correctStatus: 'WRONG',
+    cover: 'https://i1.sndcdn.com/artworks-000123341011-uyahoc-t500x500.jpg',
+    duration: 231
+  }
+];
+
 export const mockGuessList: Guesses & { songs: GuessedSong[] } = {
   id: 'mock-guesslist',
   userId: '0209',
   songs: mockGuesses
+};
+
+export const mockGuessListWrong: Guesses & { songs: GuessedSong[] } = {
+  id: 'mock-guesslist-wrong',
+  userId: '0209',
+  songs: mockGuessesWrong
 };
 
 export const mockStatistics: Statistics = {

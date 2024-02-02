@@ -2,7 +2,7 @@ import { DailySong, Statistics, User } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { Heardle, logger } from './logger';
 
-async function userGuessedCorrectly(user: User): Promise<boolean> {
+export async function userGuessedCorrectly(user: User): Promise<boolean> {
   const dailyGuesses = await prisma.guesses.findUnique({
     where: {
       userId: user.id
@@ -43,7 +43,7 @@ async function updateUserStreak(user: User, guessedCorrectly: boolean) {
   }
 }
 
-async function updateAllStreaks() {
+export async function updateAllStreaks() {
   const users = await prisma.user.findMany();
   for (const user of users) {
     const guessedCorrectly = await userGuessedCorrectly(user);
@@ -56,7 +56,7 @@ export async function resetGuesses() {
   return await prisma.guessedSong.deleteMany({});
 }
 
-async function getNextDailySong() {
+export async function getNextDailySong() {
   const nextDailySong = await prisma.dailySong.findUnique({
     where: {
       id: '1'

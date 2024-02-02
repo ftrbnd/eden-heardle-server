@@ -122,7 +122,7 @@ describe(`Test ${API_ENDPOINT}`, () => {
 
       it('expects an error if not given an object', () => {
         expect(() => {
-          parsePostRequest('not-an-object');
+          parseDeleteRequest('not-an-object');
         }).toThrow(/incorrect or missing data/i);
       });
     });
