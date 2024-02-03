@@ -47,9 +47,18 @@ function ProfileColumn({ user }: { user: User }) {
   );
 }
 
+const LoadingTableRow = () => {
+  return (
+    <tr className="flex gap-4 items-center h-12 w-full p-2 rounded-box shadow-md bg-base-200">
+      <th className="skeleton w-8 h-8"></th>
+      <td className="skeleton flex-1 h-8"></td>
+      <td className="skeleton w-16 h-8 text-right"></td>
+    </tr>
+  );
+};
+
 const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; stat?: LeaderboardStat[]; isLoading: boolean }) => {
   const getEmptyTableNotice = () => {
-    if (isLoading) return 'Loading...';
     if (!stat) return 'Statistics unavailable.';
 
     switch (type) {
@@ -65,6 +74,19 @@ const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; s
         return 'No max streaks available yet.';
     }
   };
+
+  if (isLoading)
+    return (
+      <table className="w-full">
+        <tbody className="w-full flex flex-col gap-4 md:gap-4 items-center">
+          <LoadingTableRow />
+          <LoadingTableRow />
+          <LoadingTableRow />
+          <LoadingTableRow />
+          <LoadingTableRow />
+        </tbody>
+      </table>
+    );
 
   return (
     <table className="w-full">
