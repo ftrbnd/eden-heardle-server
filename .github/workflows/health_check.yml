@@ -7,13 +7,10 @@ on:
 jobs:
   health_check:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [18.x]
     steps:
       - name: Check the Custom Heardle endpoint
         uses: jtalk/url-health-check-action@v3
         with:
-          url: https://morning-river-19063-7d37ae89ad45.herokuapp.com/api/customHeardle
+          url: ${{ secrets.API_HEALTHCHECK_ENDPOINT }}
           max-attempts: 3 # Optional, defaults to 1
           retry-delay: 5s # Optional, only applicable to max-attempts > 1
