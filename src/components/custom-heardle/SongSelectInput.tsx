@@ -1,10 +1,9 @@
 'use client';
 
-import { getSongs } from '@/lib/songsApi';
 import { GuessedSong, Song, CustomHeardle } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import { createId } from '@paralleldrive/cuid2';
+import useSongs from '@/hooks/useSongs';
 
 interface CustomHeardleInputProps {
   customSong?: CustomHeardle;
@@ -14,10 +13,7 @@ interface CustomHeardleInputProps {
 }
 
 export default function SongSelectInput({ customSong, songSuccess, guessedSongs, setGuessedSongs }: CustomHeardleInputProps) {
-  const { data: songs, isLoading: songsLoading } = useQuery({
-    queryKey: ['songs'],
-    queryFn: getSongs
-  });
+  const { songs, songsLoading } = useSongs();
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {

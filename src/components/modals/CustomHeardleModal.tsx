@@ -1,18 +1,17 @@
 'use client';
 
-import { checkUserCustomHeardle, createCustomHeardle, deleteCustomHeardle } from '@/lib/customHeardleApi';
-import { getSongs } from '@/lib/songsApi';
 import { faCheck, faCloudArrowUp, faLink, faTrash, faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Song } from '@prisma/client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { Session } from 'next-auth';
 import SignInButton from '../buttons/SignInButton';
 import { motion } from 'framer-motion';
+import useCustomHeardle from '@/hooks/useCustomHeardle';
+import useSongs from '@/hooks/useSongs';
 
 interface SelectProps {
   onSongSelect: (song: Song) => void;
@@ -20,10 +19,7 @@ interface SelectProps {
 }
 
 function SelectSong({ onSongSelect, session }: SelectProps) {
-  const { data: songs, isLoading: songsLoading } = useQuery({
-    queryKey: ['songs'],
-    queryFn: getSongs
-  });
+  const { songs, songsLoading } = useSongs();
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     const song = songs?.find((song) => song.name === event.target.value);
@@ -99,42 +95,9 @@ export default function CustomHeardleModal() {
 
   const [error, setError] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
-  const link = useRef<string>('');
 
   const { data: session } = useSession();
-  const queryClient = useQueryClient();
-
-  const { data: userCustomHeardle } = useQuery({
-    queryFn: () => checkUserCustomHeardle(session?.user.id ?? 'fakeid'),
-    queryKey: ['userCustomHeardle', session?.user.id],
-    enabled: !!session?.user.id
-  });
-
-  const createHeardleMutation = useMutation({
-    mutationFn: () => createCustomHeardle(selectedSong!, startTime, session?.user.id!),
-    onError: (error: any) => {
-      setError(error.message);
-    },
-    onSuccess: (data) => {
-      link.current = data ?? 'https://eden-heardle.io/play';
-      setSelectedSong(null);
-
-      queryClient.invalidateQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
-    }
-  });
-
-  const deleteHeardleMutation = useMutation({
-    mutationFn: () => deleteCustomHeardle(userCustomHeardle?.id ?? 'fakeheardleid', session?.user.id ?? 'fakeuserid'),
-    onError: (error: any) => {
-      setError(error.message);
-    },
-    onSuccess: () => {
-      link.current = '';
-      setSelectedSong(null);
-
-      queryClient.invalidateQueries({ queryKey: ['userCustomHeardle', session?.user.id] });
-    }
-  });
+  const customHeardle = useCustomHeardle();
 
   const handleSelection = (song: Song) => {
     setSelectedSong(song);
@@ -149,26 +112,44 @@ export default function CustomHeardleModal() {
       return setError('Please sign in to create a Custom Heardle');
     }
 
-    await createHeardleMutation.mutateAsync();
+    try {
+      const newLink = await customHeardle.create(selectedSong, startTime);
+      await navigator.clipboard.writeText(newLink);
+
+      setSelectedSong(null);
+      setError('');
+    } catch (error: any) {
+      setError(error.message);
+    }
   };
 
   const sendDeleteRequest = async () => {
-    if (!userCustomHeardle) {
+    if (!customHeardle.data) {
       return setError('No custom Heardle found');
     }
     if (!session?.user.id) {
       return setError('Please sign in to delete this Custom Heardle');
     }
 
-    await deleteHeardleMutation.mutateAsync();
+    try {
+      await customHeardle.remove();
+
+      setSelectedSong(null);
+      setError('');
+    } catch (error: any) {
+      console.log('hi:', error);
+
+      setError(error.message);
+    }
   };
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
-    if (copied) return;
+    if (copied || !customHeardle.data) return;
 
     setCopied(true);
-    await navigator.clipboard.writeText(link.current);
+
+    await navigator.clipboard.writeText(`https://eden-heardle.io/play/${customHeardle.data?.id}`);
 
     setTimeout(() => {
       setCopied(false);
@@ -182,20 +163,20 @@ export default function CustomHeardleModal() {
           {'Custom Heardle '}
           {/* <span className="badge badge-md badge-warning">{'Temporarily disabled'}</span> */}
         </h3>
-        {userCustomHeardle ? (
+        {customHeardle.data ? (
           <div className="card sm:card-side bg-base-200 shadow-xl mt-4">
             <figure>
-              <Image src={userCustomHeardle.cover} alt="Album" width={500} height={500} />
+              <Image src={customHeardle.data.cover} alt="Album" width={500} height={500} />
             </figure>
             <div className="card-body">
-              <h2 className="card-title">Your Custom Heardle</h2>
-              <h3 className="font-semibold">{`${userCustomHeardle.name} (${formatTime(userCustomHeardle.startTime)} - ${formatTime(userCustomHeardle.startTime + 6)})`}</h3>
-              <div className="card-actions justify-center sm:justify-end">
+              <h2 className="card-title">{customHeardle.data.name}</h2>
+              <h3 className="font-semibold">{`${formatTime(customHeardle.data.startTime)} - ${formatTime(customHeardle.data.startTime + 6)}`}</h3>
+              <div className="card-actions justify-around md:justify-end">
                 <div className="tooltip sm:tooltip-left" data-tip="Delete this Heardle to create a new one">
                   <motion.button
                     onClick={sendDeleteRequest}
                     className="btn btn-sm btn-error"
-                    disabled={deleteHeardleMutation.isLoading}
+                    disabled={customHeardle.deleteLoading}
                     // disabled
                     whileHover={{
                       scale: 1.1,
@@ -206,7 +187,7 @@ export default function CustomHeardleModal() {
                     whileTap={{ scale: 0.9 }}
                   >
                     Delete
-                    {deleteHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faTrash} />}
+                    {customHeardle.deleteLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faTrash} />}
                   </motion.button>
                 </div>
                 <motion.button
@@ -220,10 +201,11 @@ export default function CustomHeardleModal() {
                   }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  Share
+                  {copied ? 'Copied!' : 'Share'}
                   <FontAwesomeIcon icon={copied ? faCheck : faLink} />
                 </motion.button>
               </div>
+              <p className="text-xs text-center text-error">{error}</p>
             </div>
           </div>
         ) : (
@@ -262,7 +244,7 @@ export default function CustomHeardleModal() {
               <motion.button
                 onClick={sendCreateRequest}
                 className="btn btn-primary"
-                disabled={!selectedSong || createHeardleMutation.isLoading}
+                disabled={!selectedSong || customHeardle.createLoading}
                 // disabled
                 whileHover={{
                   scale: 1.1,
@@ -272,8 +254,8 @@ export default function CustomHeardleModal() {
                 }}
                 whileTap={{ scale: 0.9 }}
               >
-                {createHeardleMutation.isLoading ? 'Generating...' : 'Generate'}
-                {createHeardleMutation.isLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />}
+                {customHeardle.createLoading ? 'Generating...' : 'Generate'}
+                {customHeardle.createLoading ? <span className="loading loading-spinner"></span> : <FontAwesomeIcon icon={faCloudArrowUp} className="h-6 w-6" />}
               </motion.button>
               {!session && <SignInButton />}
             </div>

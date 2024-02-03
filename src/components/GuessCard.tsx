@@ -13,31 +13,31 @@ interface IProps {
   showAnimation: boolean;
 }
 
+const getIcon = (correctStatus: string) => {
+  switch (correctStatus) {
+    case 'CORRECT':
+      return <FontAwesomeIcon icon={faCheck} style={{ color: '#52fa7c' }} />;
+    case 'ALBUM':
+      return <FontAwesomeIcon icon={faX} style={{ color: '#ffa257' }} />;
+    case 'WRONG':
+      return <FontAwesomeIcon icon={faX} style={{ color: '#ff5757' }} />;
+    default: // isLoading = true
+      return <span className="loading loading-ring loading-xs"></span>;
+  }
+};
+
+const getTooltip = (correctStatus: string) => {
+  switch (correctStatus) {
+    case 'CORRECT':
+      return 'You got it!';
+    case 'ALBUM':
+      return 'Same album...';
+    case 'WRONG':
+      return 'Nope!';
+  }
+};
+
 export function GuessCard({ name, album, cover, correctStatus, showAnimation }: IProps) {
-  const getIcon = () => {
-    switch (correctStatus) {
-      case 'CORRECT':
-        return <FontAwesomeIcon icon={faCheck} style={{ color: '#52fa7c' }} />;
-      case 'ALBUM':
-        return <FontAwesomeIcon icon={faX} style={{ color: '#ffa257' }} />;
-      case 'WRONG':
-        return <FontAwesomeIcon icon={faX} style={{ color: '#ff5757' }} />;
-      default: // isLoading = true
-        return <span className="loading loading-ring loading-xs"></span>;
-    }
-  };
-
-  const getTooltip = () => {
-    switch (correctStatus) {
-      case 'CORRECT':
-        return 'You got it!';
-      case 'ALBUM':
-        return 'Same album...';
-      case 'WRONG':
-        return 'Nope!';
-    }
-  };
-
   return (
     <motion.div className="card card-side bg-base-200 shadow-xl w-full" initial={showAnimation && { y: '100vh' }} animate={showAnimation && { y: 0 }}>
       <figure>
@@ -47,8 +47,8 @@ export function GuessCard({ name, album, cover, correctStatus, showAnimation }: 
         <div className="tooltip" data-tip={`From: ${album}`}>
           <h2 className="card-title text-left">{name}</h2>
         </div>
-        <div className="tooltip tooltip-left" data-tip={getTooltip()}>
-          {getIcon()}
+        <div className="tooltip tooltip-left" data-tip={getTooltip(correctStatus ?? '')}>
+          {getIcon(correctStatus ?? '')}
         </div>
       </div>
     </motion.div>

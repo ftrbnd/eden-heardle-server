@@ -18,6 +18,7 @@ import { Session } from 'next-auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
+import statusSquares from '@/utils/statusSquares';
 
 interface NavbarProps {
   children: ReactNode;
@@ -94,34 +95,12 @@ function CustomHeardlePageNavbar({ children, creator }: NavbarProps) {
 function CustomResultCard({ song, guessedSong, creator, session, guesses }: ResultCardProps) {
   const [copied, setCopied] = useState(false);
 
-  const statusSquares = (): string => {
-    function getStatusSquare(status: string) {
-      switch (status) {
-        case 'CORRECT':
-          return '🟩';
-        case 'ALBUM':
-          return '🟧';
-        case 'WRONG':
-          return '🟥';
-        default:
-          return '⬜';
-      }
-    }
-
-    let squares: string[] = [];
-    guesses?.forEach((guess) => {
-      squares.push(getStatusSquare(guess.correctStatus));
-    });
-
-    return squares.join(' ');
-  };
-
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
     if (copied) return;
 
     setCopied(true);
-    await navigator.clipboard.writeText(`EDEN Heardle #${creator?.name} ${statusSquares().replace(/\s/g, '')}`);
+    await navigator.clipboard.writeText(`EDEN Heardle #${creator?.name} ${statusSquares(guesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
 
     setTimeout(() => {
       setCopied(false);
@@ -140,9 +119,9 @@ function CustomResultCard({ song, guessedSong, creator, session, guesses }: Resu
       </figure>
       <div className="card-body items-center">
         <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? 'Great job on the puzzle!' : `The song was ${song?.name}`}</h2>
-        <p className="text-md">This custom Heardle was created by {creator?.name}</p>
+        <p className="text-md">This Custom Heardle was created by {creator?.name}</p>
         {!session && <p className="text-sm">Sign in to create your own!</p>}
-        <kbd className="kbd">{statusSquares()}</kbd>
+        <kbd className="kbd">{statusSquares(guesses.map((g) => g.correctStatus))}</kbd>
         <div className="card-actions">
           <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
             {copied ? 'Copied!' : 'Share'}

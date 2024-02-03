@@ -1,145 +1,30 @@
 'use client';
 
 import SignInButton from '../buttons/SignInButton';
-import { useSession } from 'next-auth/react';
-import { getStats } from '@/lib/statsApi';
-import { useQuery } from '@tanstack/react-query';
-import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
 import { MouseEvent, useState } from 'react';
-import { faArrowTrendUp, faBullseye, faCalendarDays, faCopy, faPercent, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import useLocalUser from '@/context/LocalUserProvider';
 import { motion } from 'framer-motion';
-
-function Stats() {
-  const { data: session } = useSession();
-  const localUser = useLocalUser();
-
-  const { data: stats } = useQuery({
-    queryKey: ['stats'],
-    queryFn: getStats,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-
-  return (
-    <div className="grid grid-rows-3 sm:grid-cols-2 gap-2 py-4">
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faCalendarDays} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Games Played</div>
-        <div className="stat-value text-left">{session ? stats?.gamesPlayed ?? 0 : localUser.user?.statistics.gamesPlayed}</div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faPercent} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Win Percentage</div>
-        <div className="tooltip" data-tip={`${session ? stats?.gamesWon : localUser.user?.statistics.gamesWon} games won`}>
-          <div className="stat-value text-left">
-            {session
-              ? Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)
-              : Math.round(((localUser.user?.statistics?.gamesWon ?? 0) / (localUser.user?.statistics?.gamesPlayed || 1)) * 100)}
-          </div>
-        </div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faBullseye} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Accuracy</div>
-        <div
-          className="tooltip"
-          data-tip={`${
-            session ? (stats?.gamesPlayed ?? 0) * 6 - (stats?.accuracy ?? 0) : (localUser.user?.statistics.gamesPlayed ?? 0) * 6 - (localUser.user?.statistics.accuracy ?? 0)
-          } incorrect guesses overall`}
-        >
-          <div className="stat-value text-left">
-            {session
-              ? Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)
-              : Math.round(((localUser.user?.statistics.accuracy ?? 0) / ((localUser.user?.statistics.gamesPlayed || 1) * 6)) * 100)}
-          </div>
-        </div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faArrowTrendUp} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Current Streak</div>
-        <div className="stat-value text-left">{session ? stats?.currentStreak ?? 0 : localUser.user?.statistics.currentStreak}</div>
-      </div>
-
-      <div className="stat shadow">
-        <div className="stat-figure text-secondary">
-          <FontAwesomeIcon icon={faTrophy} className="w-8 h-8" />
-        </div>
-        <div className="stat-title">Max Streak</div>
-        <div className="stat-value text-left">{session ? stats?.maxStreak ?? 0 : localUser.user?.statistics.maxStreak}</div>
-      </div>
-    </div>
-  );
-}
+import useGuesses from '@/hooks/useGuesses';
+import useDailySong from '@/hooks/useDailySong';
+import useStatistics from '@/hooks/useStatistics';
+import statusSquares from '@/utils/statusSquares';
+import StatsGrid from '../StatsGrid';
 
 export default function StatsModal() {
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { data: session } = useSession();
-  const localUser = useLocalUser();
+  const { guesses, guessType } = useGuesses();
+  const { stats } = useStatistics();
 
-  const { data: guesses } = useQuery({
-    queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-
-  const { data: dailySong } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-
-  const statusSquares = (): string => {
-    function getStatusSquare(status: string) {
-      switch (status) {
-        case 'CORRECT':
-          return '🟩';
-        case 'ALBUM':
-          return '🟧';
-        case 'WRONG':
-          return '🟥';
-        default:
-          return '⬜';
-      }
-    }
-
-    let squares: string[] = [];
-    if (session) {
-      guesses?.forEach((guess) => {
-        squares.push(getStatusSquare(guess.correctStatus));
-      });
-    } else {
-      localUser.user?.guesses.forEach((guess) => {
-        squares.push(getStatusSquare(guess.correctStatus));
-      });
-    }
-
-    return squares.join(' ');
-  };
+  const { dailySong } = useDailySong();
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
-    if (showSuccess) return;
+    if (showSuccess || !guesses) return;
 
     setShowSuccess(true);
-    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares().replace(/\s/g, '')}`);
+    await navigator.clipboard.writeText(`EDEN Heardle #${dailySong?.heardleDay} ${statusSquares(guesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
 
     setTimeout(() => {
       setShowSuccess(false);
@@ -150,24 +35,17 @@ export default function StatsModal() {
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <h3 className="font-bold text-lg">Statistics</h3>
-        <Stats />
+        <StatsGrid stats={stats} />
 
-        {session
-          ? (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <div className="flex justify-center pb-4">
-                <kbd className="kbd">{statusSquares()}</kbd>
-              </div>
-            )
-          : (localUser.user?.guesses.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT') && (
-              <div className="flex justify-center pb-4">
-                <kbd className="kbd">{statusSquares()}</kbd>
-              </div>
-            )}
+        {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          <div className="flex justify-center pb-4">
+            <kbd className="kbd">{statusSquares(guesses.map((g) => g.correctStatus))}</kbd>
+          </div>
+        )}
 
         <div className="flex justify-end gap-2">
-          {!session && <SignInButton />}
-          {((session && (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT')) ||
-            (!session && (localUser.user?.guesses?.length === 6 || localUser.user?.guesses?.at(-1)?.correctStatus === 'CORRECT'))) && (
+          {guessType === 'local' && <SignInButton />}
+          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
             <motion.button
               className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`}
               onClick={(e) => copyToClipboard(e)}

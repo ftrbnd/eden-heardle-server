@@ -1,11 +1,9 @@
 'use client';
 
-import useLocalUser from '@/context/LocalUserProvider';
-import { getDailySong, getGuessedSongs } from '@/lib/songsApi';
+import useDailySong from '@/hooks/useDailySong';
+import useGuesses from '@/hooks/useGuesses';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function AudioPlayer() {
@@ -13,22 +11,8 @@ export default function AudioPlayer() {
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { data: session } = useSession();
-  const { data: guesses } = useQuery({
-    queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
-    enabled: session !== null,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
-  const localUser = useLocalUser();
-
-  const { data: dailySong, isLoading: dailyLoading } = useQuery({
-    queryKey: ['daily'],
-    queryFn: getDailySong,
-    refetchInterval: 30000, // 30 seconds,
-    refetchIntervalInBackground: true
-  });
+  const { guesses } = useGuesses();
+  const { dailySong, dailySongLoading } = useDailySong();
 
   useEffect(() => {
     const handleTimeUpdate = () => {
@@ -43,16 +27,8 @@ export default function AudioPlayer() {
         setSecond(audioRef.current.currentTime);
       }
 
-      if (session && guesses?.length !== undefined) {
-        if (currentSecond >= guesses.length + 1 && !finishedGame()) {
-          pauseSong();
-        }
-      } else {
-        if (localUser.user?.guesses.length !== undefined && !finishedGame()) {
-          if (currentSecond >= localUser.user.guesses.length + 1) {
-            pauseSong();
-          }
-        }
+      if (guesses && currentSecond >= guesses?.length + 1 && !finishedGame()) {
+        pauseSong();
       }
     };
 
@@ -90,12 +66,7 @@ export default function AudioPlayer() {
   };
 
   const finishedGame = () => {
-    if (session && guesses?.length !== undefined) {
-      return guesses.at(-1)?.correctStatus === 'CORRECT' || guesses.length === 6;
-    } else if (localUser.user?.guesses.length !== undefined) {
-      return localUser.user.guesses.at(-1)?.correctStatus === 'CORRECT' || localUser.user.guesses.length === 6;
-    }
-    return 0;
+    return guesses?.at(-1)?.correctStatus === 'CORRECT' || guesses?.length === 6;
   };
 
   return (
@@ -104,7 +75,7 @@ export default function AudioPlayer() {
 
       <div className="flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5">
         <kbd className="kbd">00:{String(Math.floor(second)).padStart(2, '0')}</kbd>
-        {dailyLoading ? (
+        {dailySongLoading ? (
           <button className="btn btn-ghost btn-disabled">
             <span className="loading loading-ring loading-md"></span>
           </button>
