@@ -1,5 +1,6 @@
 import { Song } from '@prisma/client';
-import Ffmpeg from 'fluent-ffmpeg';
+import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
 import { createWriteStream, readFileSync } from 'fs';
 import { Blob } from 'buffer';
 import ytdl from 'ytdl-core';
@@ -13,6 +14,8 @@ type Mp3File = Blob & {
   lastModified: number;
   webkitRelativePath: string;
 };
+
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const CLIENT_LINK = 'https://eden-heardle.io';
 
@@ -38,7 +41,7 @@ export async function ytdlDownload(song: Song, startTime: number, fileName: stri
 export async function m4aToMp3(m4aFilename: string, startTime: number, heardleType: Heardle): Promise<string> {
   return new Promise((resolve, reject) => {
     // Convert .m4a to .mp3
-    Ffmpeg(m4aFilename)
+    ffmpeg(m4aFilename)
       .format('mp3')
       .setStartTime(startTime)
       .setDuration(6)

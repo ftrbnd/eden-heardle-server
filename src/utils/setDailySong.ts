@@ -1,13 +1,9 @@
 import prisma from '../lib/prisma';
 import ytdl from 'ytdl-core';
-import ffmpegPath from '@ffmpeg-installer/ffmpeg';
-import ffmpeg from 'fluent-ffmpeg';
 import { downloadMp3 } from './downloadMp3';
 import { Song } from '@prisma/client';
 import { updateDatabase } from './updateDatabase';
 import { Heardle, logger } from './logger';
-
-ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export async function getRandomSong(): Promise<Song> {
   // get a new random song
