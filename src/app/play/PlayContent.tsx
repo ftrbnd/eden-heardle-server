@@ -125,7 +125,7 @@ function WelcomeCard({ heardleDay }: WelcomeProps) {
       <div className="card-body">
         <div className="flex justify-center items-center gap-4">
           <EdenLogo height={50} width={50} />
-          <h1 className="text-3xl lg:text-5xl font-bold text-center">Day #{heardleDay ?? 0}</h1>
+          <h1 className="text-3xl lg:text-5xl font-bold text-center">Day {heardleDay ?? 0}</h1>
         </div>
         <p className="lg:text-lg text-center">Press play and choose a song to get started!</p>
       </div>
