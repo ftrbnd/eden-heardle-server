@@ -11,20 +11,20 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/ftrbnd/eden-heardle-cronjobs">
+  <a href="https://github.com/ftrbnd/eden-heardle-server">
     <img src="https://i.imgur.com/rQmm1FM.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">EDEN Heardle Cronjobs</h3>
+<h3 align="center">EDEN Heardle Server</h3>
 
   <p align="center">
     An Express server that handles creating Custom and Daily Heardles for EDEN Heardle
     <br />
     <a href="https://github.com/ftrbnd/eden-heardle">EDEN Heardle</a>
     ·
-    <a href="https://github.com/ftrbnd/eden-heardle-cronjobs/issues">Report Bug</a>
+    <a href="https://github.com/ftrbnd/eden-heardle-server/issues">Report Bug</a>
     ·
-    <a href="https://github.com/ftrbnd/eden-heardle-cronjobs/issues">Request Feature</a>
+    <a href="https://github.com/ftrbnd/eden-heardle-server/issues">Request Feature</a>
   </p>
 </div>
 
@@ -60,7 +60,7 @@
 
 This server has 2 responsibilities:
 * Choose a new random song every day at 4am UTC with a daily cron job
-* Handle POST and DELETE api requests from [EDEN Heardle](https://eden-heardle-cronjobs.io) when users interact with the Custom Heardle modal
+* Handle POST and DELETE api requests from [EDEN Heardle](https://eden-heardle.io) when users interact with the Custom Heardle modal
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -91,7 +91,7 @@ This server has 2 responsibilities:
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/ftrbnd/eden-heardle-cronjobs.git
+   git clone https://github.com/ftrbnd/eden-heardle-server.git
    ```
 2. Install NPM packages
    ```sh
@@ -148,7 +148,7 @@ Don't forget to give the project a star! Thanks again!
 
 Giovanni Salas - [@finalcalI](https://twitter.com/finalcali) - giosalas25@gmail.com
 
-Project Link: [https://github.com/ftrbnd/eden-heardle-cronjobs](https://github.com/ftrbnd/eden-heardle-cronjobs)
+Project Link: [https://github.com/ftrbnd/eden-heardle-server](https://github.com/ftrbnd/eden-heardle-server)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -156,18 +156,6 @@ Project Link: [https://github.com/ftrbnd/eden-heardle-cronjobs](https://github.c
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/ftrbnd/eden-heardle-cronjobs.svg?style=for-the-badge
-[contributors-url]: https://github.com/ftrbnd/eden-heardle-cronjobs/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ftrbnd/eden-heardle-cronjobs.svg?style=for-the-badge
-[forks-url]: https://github.com/ftrbnd/eden-heardle-cronjobs/network/members
-[stars-shield]: https://img.shields.io/github/stars/ftrbnd/eden-heardle-cronjobs.svg?style=for-the-badge
-[stars-url]: https://github.com/ftrbnd/eden-heardle-cronjobs/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ftrbnd/eden-heardle-cronjobs.svg?style=for-the-badge
-[issues-url]: https://github.com/ftrbnd/eden-heardle-cronjobs/issues
-[license-shield]: https://img.shields.io/github/license/ftrbnd/eden-heardle-cronjobs.svg?style=for-the-badge
-[license-url]: https://github.com/ftrbnd/eden-heardle-cronjobs/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: https://i.imgur.com/OzETWxS.png
 [website-leaderboard-screenshot]: https://i.imgur.com/dVr4AOB.png
 [discord-leaderboard-screenshot]: https://i.imgur.com/3TyTIKe.png
