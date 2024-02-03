@@ -16,7 +16,7 @@ type Mp3File = Blob & {
 
 const CLIENT_LINK = 'https://eden-heardle.io';
 
-async function ytdlDownload(song: Song, startTime: number, fileName: string, heardleType: Heardle) {
+export async function ytdlDownload(song: Song, startTime: number, fileName: string, heardleType: Heardle) {
   return new Promise((resolve, reject) => {
     ytdl(song.link, {
       begin: `${startTime}s`,
@@ -35,7 +35,7 @@ async function ytdlDownload(song: Song, startTime: number, fileName: string, hea
   });
 }
 
-async function m4aToMp3(m4aFilename: string, startTime: number, heardleType: Heardle): Promise<string> {
+export async function m4aToMp3(m4aFilename: string, startTime: number, heardleType: Heardle): Promise<string> {
   return new Promise((resolve, reject) => {
     // Convert .m4a to .mp3
     Ffmpeg(m4aFilename)
@@ -54,7 +54,7 @@ async function m4aToMp3(m4aFilename: string, startTime: number, heardleType: Hea
   });
 }
 
-async function getMp3File(fileName: string, heardleType: Heardle): Promise<Mp3File> {
+export async function getMp3File(fileName: string, heardleType: Heardle): Promise<Mp3File> {
   return new Promise((resolve, reject) => {
     try {
       const fileBuffer = readFileSync(fileName);
@@ -76,7 +76,7 @@ async function getMp3File(fileName: string, heardleType: Heardle): Promise<Mp3Fi
   });
 }
 
-async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number, heardleType: Heardle, userId?: string): Promise<string> {
+export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number, heardleType: Heardle, userId?: string): Promise<string> {
   if (userId) {
     const customId = createId();
 

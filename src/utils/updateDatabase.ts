@@ -1,49 +1,62 @@
+import { DailySong, Statistics, User } from '@prisma/client';
 import prisma from '../lib/prisma';
 import { Heardle, logger } from './logger';
 
-async function updateStats() {
-  // check users' current streaks
-  const users = await prisma.user.findMany();
-  for (const user of users) {
-    const dailyGuesses = await prisma.guesses.findUnique({
-      where: {
-        userId: user.id
-      },
-      select: {
-        songs: true
-      }
-    });
-    const completedDaily = dailyGuesses?.songs.at(-1)?.correctStatus === 'CORRECT';
+export async function userGuessedCorrectly(user: User): Promise<boolean> {
+  const dailyGuesses = await prisma.guesses.findUnique({
+    where: {
+      userId: user.id
+    },
+    select: {
+      songs: true
+    }
+  });
 
+  const guessedCorrectly = dailyGuesses?.songs.at(-1)?.correctStatus === 'CORRECT';
+  return guessedCorrectly;
+}
+
+export async function updateStatistics(payload: Statistics) {
+  return await prisma.statistics.update({
+    where: {
+      userId: payload.userId
+    },
+    data: payload
+  });
+}
+
+async function updateUserStreak(user: User, guessedCorrectly: boolean) {
+  if (!guessedCorrectly) {
     const prevStats = await prisma.statistics.findUnique({
       where: {
         userId: user.id
       }
     });
+    if (!prevStats) throw new Error("Failed to find this user's statistics");
 
-    if (!completedDaily) {
-      await prisma.statistics.update({
-        where: {
-          userId: user.id
-        },
-        data: {
-          gamesPlayed: prevStats?.gamesPlayed,
-          gamesWon: prevStats?.gamesWon,
-          currentStreak: 0,
-          maxStreak: prevStats?.maxStreak
-        }
-      });
-    }
+    const newStats: Statistics = {
+      ...prevStats,
+      currentStreak: 0
+    };
+
+    updateStatistics(newStats);
   }
 }
 
-async function resetGuesses() {
-  // reset all users' guesses
-  await prisma.guessedSong.deleteMany({});
+export async function updateAllStreaks() {
+  const users = await prisma.user.findMany();
+  for (const user of users) {
+    const guessedCorrectly = await userGuessedCorrectly(user);
+    updateUserStreak(user, guessedCorrectly);
+  }
 }
 
-async function updateDailySong() {
-  // set saved next daily song to current daily song
+export async function resetGuesses() {
+  // reset all users' guesses
+  return await prisma.guessedSong.deleteMany({});
+}
+
+export async function getNextDailySong() {
   const nextDailySong = await prisma.dailySong.findUnique({
     where: {
       id: '1'
@@ -51,7 +64,12 @@ async function updateDailySong() {
   });
   if (!nextDailySong) throw new Error('Error finding next daily song');
 
-  await prisma.dailySong.upsert({
+  return nextDailySong;
+}
+
+export async function updateDailySong(nextDailySong: DailySong) {
+  // set saved next daily song to current daily song
+  return await prisma.dailySong.upsert({
     where: {
       id: '0'
     },
@@ -78,9 +96,10 @@ export async function updateDatabase() {
   try {
     logger(Heardle.Daily, 'Updating stats and daily song...');
 
-    await updateStats();
+    await updateAllStreaks();
     await resetGuesses();
-    await updateDailySong();
+    const nextDailySong = await getNextDailySong();
+    await updateDailySong(nextDailySong);
 
     logger(Heardle.Daily, 'DONE');
 

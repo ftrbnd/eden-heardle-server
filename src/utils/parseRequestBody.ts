@@ -50,7 +50,7 @@ const parseSong = (song: unknown): Song => {
   return song;
 };
 
-function parseGetRequest(body: unknown): GetRequest {
+function parsePostRequest(body: unknown): GetRequest {
   if (!body || typeof body !== 'object') {
     throw new Error('Incorrect or missing data');
   }
@@ -85,4 +85,4 @@ function parseDeleteRequest(body: unknown): DeleteRequest {
   throw new Error('Incorrect data: some fields are missing');
 }
 
-export { parseGetRequest, parseDeleteRequest };
+export { parsePostRequest, parseDeleteRequest };

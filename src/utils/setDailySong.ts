@@ -9,7 +9,7 @@ import { Heardle, logger } from './logger';
 
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 
-async function getRandomSong(): Promise<Song> {
+export async function getRandomSong(): Promise<Song> {
   // get a new random song
   const songsCount = await prisma.song.count();
   const skip = Math.floor(Math.random() * songsCount);
@@ -23,7 +23,7 @@ async function getRandomSong(): Promise<Song> {
   return newDailySong;
 }
 
-async function getRandomStartTime(song: Song): Promise<number> {
+export async function getRandomStartTime(song: Song): Promise<number> {
   // determine the random start time
   const dailySongInfo = await ytdl.getBasicInfo(song.link);
   const songLength = parseInt(dailySongInfo.videoDetails.lengthSeconds);

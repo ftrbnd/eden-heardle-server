@@ -1,6 +1,6 @@
 import { CorsOptions } from 'cors';
 
-export const whitelist = process.env.WHITELISTED_DOMAINS ? process.env.WHITELISTED_DOMAINS.split(',') : [];
+const whitelist = process.env.WHITELISTED_DOMAINS ? process.env.WHITELISTED_DOMAINS.split(',') : [];
 
 export const corsOptions: CorsOptions = {
   origin: function (origin, callback) {
