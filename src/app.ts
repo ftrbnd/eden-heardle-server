@@ -1,13 +1,7 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import { customHeardleRouter } from './routes/customHeardle';
 import cors from 'cors';
 import { corsOptions } from './utils/corsOptions';
-import { registerDailyCronJob } from './lib/cron';
-
-dotenv.config();
-
-registerDailyCronJob();
+import { customHeardleRouter } from './routes/customHeardle';
 
 const app = express();
 
