@@ -2,6 +2,7 @@
 
 import useGuesses from '@/hooks/useGuesses';
 import useSongs from '@/hooks/useSongs';
+import { finishedHeardle } from '@/utils/userGuesses';
 import { Song, DailySong } from '@prisma/client';
 import { useEffect, ChangeEvent } from 'react';
 
@@ -11,7 +12,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
   const { songs, songsLoading } = useSongs();
 
   useEffect(() => {
-    if (guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') {
+    if (finishedHeardle(guesses)) {
       const modal = document.getElementById('stats_modal') as HTMLDialogElement;
       if (!modal.open) modal.showModal();
     }
@@ -33,7 +34,7 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
 
   // disable the song if it has already been selected or the user has completed today's heardle
   const disableOption = (song: Song) => {
-    return guesses?.some((guess) => guess.name === song.name) || guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT';
+    return guesses?.some((guess) => guess.name === song.name) || finishedHeardle(guesses);
   };
 
   return (

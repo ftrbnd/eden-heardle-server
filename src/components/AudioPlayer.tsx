@@ -2,6 +2,7 @@
 
 import useDailySong from '@/hooks/useDailySong';
 import useGuesses from '@/hooks/useGuesses';
+import { finishedHeardle } from '@/utils/userGuesses';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
@@ -28,7 +29,7 @@ export default function AudioPlayer() {
         setSecond(audioRef.current.currentTime);
       }
 
-      if (guesses && currentSecond >= guesses?.length + 1 && !finishedGame()) {
+      if (guesses && currentSecond >= guesses?.length + 1 && !finishedHeardle(guesses)) {
         pauseSong();
       }
     };
@@ -69,10 +70,6 @@ export default function AudioPlayer() {
     } catch (err) {
       setError('Failed to use audio player');
     }
-  };
-
-  const finishedGame = () => {
-    return guesses?.at(-1)?.correctStatus === 'CORRECT' || guesses?.length === 6;
   };
 
   return (

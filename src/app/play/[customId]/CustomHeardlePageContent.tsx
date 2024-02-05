@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import statusSquares from '@/utils/statusSquares';
+import { correctlyGuessedHeardle } from '@/utils/userGuesses';
 
 interface NavbarProps {
   children: ReactNode;
@@ -170,7 +171,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
         </div>
 
         {customGuesses.length === 6 || customGuesses.at(-1)?.correctStatus === 'CORRECT' ? (
-          <CustomResultCard song={song!} guessedSong={customGuesses?.at(-1)?.correctStatus === 'CORRECT'} creator={user!} session={session} guesses={customGuesses} />
+          <CustomResultCard song={song!} guessedSong={correctlyGuessedHeardle(customGuesses)} creator={user!} session={session} guesses={customGuesses} />
         ) : (
           <div></div>
         )}

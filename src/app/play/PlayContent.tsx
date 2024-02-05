@@ -15,6 +15,7 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import OpenModalButton from '@/components/modals/OpenModalButton';
 import EdenLogo from '@/components/EdenLogo';
+import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
 interface CountdownProps {
   song: DailySong;
   guessedSong: boolean;
@@ -181,7 +182,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
           </div>
         </AnimatePresence>
 
-        {guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT' ? <Countdown song={dailySong!} guessedSong={guesses?.at(-1)?.correctStatus === 'CORRECT'} /> : <div></div>}
+        {finishedHeardle(guesses) ? <Countdown song={dailySong!} guessedSong={correctlyGuessedHeardle(guesses)} /> : <div></div>}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         <SongSelectInput dailySong={dailySong} />
