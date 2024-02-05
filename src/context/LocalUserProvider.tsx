@@ -17,7 +17,9 @@ const initialUser: LocalUser = {
 };
 
 type LocalUserState = {
-  user: LocalUser | null;
+  statistics: LocalUser['statistics'];
+  guesses: LocalUser['guesses'];
+  name?: LocalUser['name'];
   updateGuesses: (guess: LocalGuessedSong) => void;
 };
 
@@ -188,7 +190,7 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
   //   );
   // };
 
-  return <LocalUserContext.Provider value={{ user, updateGuesses }}>{props.children}</LocalUserContext.Provider>;
+  return <LocalUserContext.Provider value={{ statistics: user.statistics, guesses: user.guesses, name: user.name, updateGuesses }}>{props.children}</LocalUserContext.Provider>;
 };
 
 export default useLocalUser;

@@ -99,7 +99,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: sessionGuesses ?? localUser.user?.guesses, loadingGuessType: sessionStatus === 'loading', guessType: getGuessType(), submitGuess };
+  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuessType: sessionStatus === 'loading', guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;

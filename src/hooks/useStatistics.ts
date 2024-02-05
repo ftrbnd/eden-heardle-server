@@ -15,7 +15,7 @@ const useStatistics = () => {
     refetchIntervalInBackground: true
   });
 
-  return { stats: session ? data : localUser.user?.statistics };
+  return { stats: session ? data : localUser?.statistics };
 };
 
 export default useStatistics;
