@@ -2,25 +2,32 @@
 
 import useGuesses from '@/hooks/useGuesses';
 import useSongs from '@/hooks/useSongs';
+import { LocalGuessedSong } from '@/utils/types';
 import { finishedHeardle } from '@/utils/userGuesses';
-import { Song, DailySong } from '@prisma/client';
-import { useEffect, ChangeEvent } from 'react';
+import { createId } from '@paralleldrive/cuid2';
+import { Song, DailySong, CustomHeardle, GuessedSong } from '@prisma/client';
+import { useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 
-export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }) {
-  const { guesses, submitGuess } = useGuesses();
+interface SelectProps {
+  heardleSong: DailySong | CustomHeardle;
+  guesses: GuessedSong[] | LocalGuessedSong[];
+  setCustomGuesses?: Dispatch<SetStateAction<GuessedSong[]>>;
+}
 
+export default function SongSelectInput({ heardleSong, guesses, setCustomGuesses }: SelectProps) {
   const { songs, songsLoading } = useSongs();
+  const { submitGuess } = useGuesses();
 
   useEffect(() => {
-    if (finishedHeardle(guesses)) {
+    if (finishedHeardle(guesses) && !setCustomGuesses) {
       const modal = document.getElementById('stats_modal') as HTMLDialogElement;
       if (!modal.open) modal.showModal();
     }
-  }, [guesses]);
+  }, [guesses, setCustomGuesses]);
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {
-      return song.name === dailySong?.name ? 'CORRECT' : song?.album === dailySong?.album ? 'ALBUM' : 'WRONG';
+      return song.name === heardleSong?.name ? 'CORRECT' : song?.album === heardleSong?.album ? 'ALBUM' : 'WRONG';
     }
 
     if (event.target.className === 'default_selection') return;
@@ -29,7 +36,11 @@ export default function SongSelectInput({ dailySong }: { dailySong?: DailySong }
     const selectedSong = songs?.find((song) => song.name === event.target.value);
     if (!selectedSong) return;
 
-    submitGuess(selectedSong, getCorrectStatus(selectedSong));
+    if (!setCustomGuesses) {
+      submitGuess(selectedSong, getCorrectStatus(selectedSong));
+    } else {
+      setCustomGuesses((prev) => [...prev, { ...selectedSong, correctStatus: getCorrectStatus(selectedSong), id: createId(), guessListId: createId() }]);
+    }
   };
 
   // disable the song if it has already been selected or the user has completed today's heardle

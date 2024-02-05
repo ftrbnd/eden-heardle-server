@@ -1,4 +1,4 @@
-import PlayContent from './PlayContent';
+import PlayContent from './_content';
 import RulesModal from '@/components/modals/RulesModal';
 import SettingsModal from '@/components/modals/SettingsModal';
 import LeaderboardModal from '@/components/modals/LeaderboardModal';

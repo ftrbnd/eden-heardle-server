@@ -1,20 +1,23 @@
 'use client';
 
-import useDailySong from '@/hooks/useDailySong';
-import useGuesses from '@/hooks/useGuesses';
+import { LocalGuessedSong } from '@/utils/types';
 import { finishedHeardle } from '@/utils/userGuesses';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CustomHeardle, DailySong, GuessedSong } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 
-export default function AudioPlayer() {
+interface AudioProps {
+  song: DailySong | CustomHeardle;
+  songLoading: boolean;
+  guesses?: GuessedSong[] | LocalGuessedSong[] | null;
+}
+
+export default function AudioPlayer({ song, songLoading, guesses }: AudioProps) {
   const [second, setSecond] = useState(0);
   const [icon, setIcon] = useState<IconDefinition>(faPlay);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [error, setError] = useState('');
-
-  const { guesses } = useGuesses();
-  const { dailySong, dailySongLoading } = useDailySong();
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const handleTimeUpdate = () => {
@@ -79,7 +82,7 @@ export default function AudioPlayer() {
 
       <div className="flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5">
         <kbd className="kbd">00:{String(Math.floor(second)).padStart(2, '0')}</kbd>
-        {dailySongLoading ? (
+        {songLoading ? (
           <button className="btn btn-ghost btn-disabled">
             <span className="loading loading-ring loading-md"></span>
           </button>
@@ -91,7 +94,7 @@ export default function AudioPlayer() {
         <kbd className="kbd">00:06</kbd>
       </div>
 
-      <audio ref={audioRef} className="hidden" src={dailySong?.link} />
+      <audio ref={audioRef} className="hidden" src={song?.link} />
     </div>
   );
 }
