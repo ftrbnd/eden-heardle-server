@@ -3,7 +3,7 @@ import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faCalendarDays, faPercent, faBullseye, faArrowTrendUp, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-function StatBox({ stat, title, icon, tooltip }: { stat: any; title: string; icon: IconDefinition; tooltip?: string }) {
+function StatBox({ stat, title, icon, tooltip, loading }: { stat: any; title: string; icon: IconDefinition; tooltip?: string; loading?: boolean }) {
   return (
     <div className="stat shadow bg-base-200 rounded-box">
       <div className="stat-figure text-secondary">
@@ -11,25 +11,32 @@ function StatBox({ stat, title, icon, tooltip }: { stat: any; title: string; ico
       </div>
       <div className="stat-title">{title}</div>
       <div className="tooltip" data-tip={tooltip}>
-        <div className="stat-value text-left">{stat}</div>
+        {loading ? <div className="skeleton h-8 w-16"></div> : <div className="stat-value text-left">{stat}</div>}
       </div>
     </div>
   );
 }
 
-function StatsGrid({ stats }: { stats: LocalStatistics | null | undefined }) {
+function StatsGrid({ stats, loading }: { stats: LocalStatistics | null | undefined; loading?: boolean }) {
   return (
     <div className="grid grid-rows-3 sm:grid-cols-2 gap-2 py-4">
-      <StatBox stat={stats?.gamesPlayed ?? 0} title={'Games Played'} icon={faCalendarDays} />
-      <StatBox stat={Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)} title={'Win Percentage'} icon={faPercent} tooltip={`${stats?.gamesWon ?? 0} games won`} />
+      <StatBox loading={loading} stat={stats?.gamesPlayed ?? 0} title={'Games Played'} icon={faCalendarDays} />
       <StatBox
+        loading={loading}
+        stat={Math.round(((stats?.gamesWon ?? 0) / (stats?.gamesPlayed || 1)) * 100)}
+        title={'Win Percentage'}
+        icon={faPercent}
+        tooltip={`${stats?.gamesWon ?? 0} games won`}
+      />
+      <StatBox
+        loading={loading}
         stat={Math.round(((stats?.accuracy ?? 0) / ((stats?.gamesPlayed || 1) * 6)) * 100)}
         title={'Accuracy'}
         icon={faBullseye}
         tooltip={`${(stats?.gamesPlayed ?? 0) * 6 - (stats?.accuracy ?? 0)} incorrect guesses overall`}
       />
-      <StatBox stat={stats?.currentStreak ?? 0} title={'Current Streak'} icon={faArrowTrendUp} />
-      <StatBox stat={stats?.maxStreak ?? 0} title={'Max Streak'} icon={faTrophy} />
+      <StatBox loading={loading} stat={stats?.currentStreak ?? 0} title={'Current Streak'} icon={faArrowTrendUp} />
+      <StatBox loading={loading} stat={stats?.maxStreak ?? 0} title={'Max Streak'} icon={faTrophy} />
     </div>
   );
 }

@@ -7,7 +7,7 @@ const useStatistics = () => {
   const { data: session } = useSession();
   const localUser = useLocalUser();
 
-  const { data } = useQuery({
+  const { data: sessionStatistics, isLoading } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats,
     enabled: session !== null,
@@ -15,7 +15,7 @@ const useStatistics = () => {
     refetchIntervalInBackground: true
   });
 
-  return { stats: session ? data : localUser?.statistics };
+  return { stats: session ? sessionStatistics : localUser?.statistics, loadingStats: isLoading };
 };
 
 export default useStatistics;
