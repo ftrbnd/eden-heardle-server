@@ -14,7 +14,7 @@ export default function WelcomeCard({ heardleDay, customHeardleCreator }: Welcom
           {heardleDay ? <h1 className="text-3xl lg:text-5xl font-bold text-center">Day {heardleDay}</h1> : <h1 className="text-3xl lg:text-5xl font-bold">Custom Heardle</h1>}
         </div>
         <p className="text-sm lg:text-lg text-center">Press play and choose a song to get started!</p>
-        <p className="text-sm lg:text-lg text-center">Created by {customHeardleCreator}</p>
+        {customHeardleCreator && <p className="text-sm lg:text-lg text-center">Created by {customHeardleCreator}</p>}
       </div>
     </div>
   );
