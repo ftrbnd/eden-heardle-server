@@ -10,12 +10,13 @@ import useDailySong from '@/hooks/useDailySong';
 import useStatistics from '@/hooks/useStatistics';
 import statusSquares from '@/utils/statusSquares';
 import StatsGrid from '../StatsGrid';
+import { finishedHeardle } from '@/utils/userGuesses';
 
 export default function StatsModal() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { guesses, guessType } = useGuesses();
-  const { stats } = useStatistics();
+  const { stats, loadingStats } = useStatistics();
 
   const { dailySong } = useDailySong();
 
@@ -35,17 +36,17 @@ export default function StatsModal() {
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <h3 className="font-bold text-lg">Statistics</h3>
-        <StatsGrid stats={stats} />
+        <StatsGrid stats={stats} loading={loadingStats} />
 
-        {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+        {guesses && finishedHeardle(guesses) && (
           <div className="flex justify-center pb-4">
-            <kbd className="kbd">{statusSquares(guesses.map((g) => g.correctStatus))}</kbd>
+            <kbd className="kbd">{statusSquares(guesses?.map((g) => g.correctStatus))}</kbd>
           </div>
         )}
 
         <div className="flex justify-end gap-2">
           {guessType === 'local' && <SignInButton />}
-          {(guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT') && (
+          {finishedHeardle(guesses) && (
             <motion.button
               className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`}
               onClick={(e) => copyToClipboard(e)}

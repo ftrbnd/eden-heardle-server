@@ -4,11 +4,11 @@ import { Session } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { ReactNode, useEffect } from 'react';
-import OpenModalButton from './modals/OpenModalButton';
+import OpenModalButton from '../../../components/buttons/OpenModalButton';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import ThemeButton from './buttons/ThemeButton';
-import StatsModal from './modals/StatsModal';
+import ThemeButton from '../../../components/buttons/ThemeButton';
+import StatsModal from '../../../components/modals/StatsModal';
 import { motion } from 'framer-motion';
 
 export function ProfileDropdown({ session }: { session: Session | null }) {
@@ -41,7 +41,7 @@ export function ProfileDropdown({ session }: { session: Session | null }) {
   );
 }
 
-export default function Navbar({ children }: { children: ReactNode }) {
+export default function Navbar({ children, onCustomHeardlePage }: { children: ReactNode; onCustomHeardlePage?: boolean }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const openRules = searchParams.get('rules');
@@ -67,12 +67,16 @@ export default function Navbar({ children }: { children: ReactNode }) {
             <li>
               <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
             </li>
-            <li>
-              <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-            </li>
-            <li>
-              <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
-            </li>
+            {!onCustomHeardlePage && (
+              <>
+                <li>
+                  <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
+                </li>
+                <li>
+                  <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
+                </li>
+              </>
+            )}
             <li>
               <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
             </li>
@@ -87,12 +91,16 @@ export default function Navbar({ children }: { children: ReactNode }) {
           <li>
             <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
           </li>
-          <li>
-            <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-          </li>
-          <li>
-            <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
-          </li>
+          {!onCustomHeardlePage && (
+            <>
+              <li>
+                <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
+              </li>
+              <li>
+                <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
+              </li>
+            </>
+          )}
           <li>
             <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
           </li>

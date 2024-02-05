@@ -1,0 +1,148 @@
+import OpenModalButton from '@/components/buttons/OpenModalButton';
+import statusSquares from '@/utils/statusSquares';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CustomHeardle, DailySong, GuessedSong, User } from '@prisma/client';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { CSSProperties, useState, useEffect, MouseEvent } from 'react';
+
+interface ResultCardProps {
+  song: DailySong | CustomHeardle;
+  guessedSong: boolean;
+  onCustomHeardlePage?: boolean;
+  customHeardleCreator?: User;
+  customHeardleGuesses?: GuessedSong[];
+}
+
+interface CSSPropertiesWithVars extends CSSProperties {
+  '--value': number;
+}
+
+function Countdown() {
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const now = new Date();
+
+    const currentUTCHours = now.getUTCHours();
+    const currentUTCMinutes = now.getUTCMinutes();
+    const currentUTCSeconds = now.getUTCSeconds();
+
+    const targetHour = 3;
+    const targetMinute = 0;
+    const targetSecond = 0;
+
+    let hoursRemaining = (targetHour - currentUTCHours + 24) % 24;
+    let minutesRemaining = (targetMinute - currentUTCMinutes + 60) % 60;
+    let secondsRemaining = (targetSecond - currentUTCSeconds + 60) % 60;
+
+    const intervalId = setInterval(() => {
+      secondsRemaining--;
+      setSeconds(secondsRemaining);
+      setMinutes(minutesRemaining);
+      setHours(hoursRemaining);
+
+      if (secondsRemaining < 0) {
+        secondsRemaining = 59;
+        minutesRemaining--;
+        setSeconds(secondsRemaining);
+        setMinutes(minutesRemaining);
+
+        if (minutesRemaining < 0) {
+          minutesRemaining = 59;
+          hoursRemaining--;
+          setMinutes(minutesRemaining);
+          setHours(hoursRemaining);
+
+          if (hoursRemaining < 0) {
+            setHours(hoursRemaining);
+            clearInterval(intervalId);
+            console.log('Countdown to 4 AM UTC has reached 0!');
+          }
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return (
+    <div className="card-actions justify-center">
+      <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
+        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span className="countdown font-mono text-3xl sm:text-5xl">
+            <span id="hours" style={{ '--value': hours } as CSSPropertiesWithVars}></span>
+          </span>
+          hours
+        </div>
+        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span className="countdown font-mono text-3xl sm:text-5xl">
+            <span id="minutes" style={{ '--value': minutes } as CSSPropertiesWithVars}></span>
+          </span>
+          min
+        </div>
+        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+          <span className="countdown font-mono text-3xl sm:text-5xl">
+            <span id="seconds" style={{ '--value': seconds } as CSSPropertiesWithVars}></span>
+          </span>
+          sec
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ResultCard({ song, guessedSong, onCustomHeardlePage, customHeardleCreator, customHeardleGuesses }: ResultCardProps) {
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async (e: MouseEvent) => {
+    e.preventDefault();
+    if (copied || !customHeardleGuesses) return;
+
+    setCopied(true);
+    await navigator.clipboard.writeText(`EDEN Heardle #${customHeardleCreator?.name} ${statusSquares(customHeardleGuesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 3000);
+  };
+
+  return (
+    <motion.div
+      className="self-end w-4/5 md:w-3/5 xl:w-2/5 card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 3 }}
+    >
+      <figure>
+        <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
+      </figure>
+      <div className="card-body items-center">
+        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
+
+        {onCustomHeardlePage && customHeardleGuesses ? (
+          <>
+            <kbd className="kbd">{statusSquares(customHeardleGuesses.map((g) => g.correctStatus))}</kbd>
+            <p className="text-md">Created by {customHeardleCreator?.name}</p>
+            <div className="flex gap-2">
+              <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
+                <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
+                <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
+              </button>
+              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Create your own" className="btn btn-outline" />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-md">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
+            <Countdown />
+            <OpenModalButton modalId="stats_modal" modalTitle="View Statistics" className="btn btn-outline" />
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+}

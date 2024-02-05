@@ -1,6 +1,6 @@
 import RulesModal from '@/components/modals/RulesModal';
 import SettingsModal from '@/components/modals/SettingsModal';
-import CustomHeardlePageContent from './CustomHeardlePageContent';
+import CustomHeardlePageContent from './_content';
 import CustomHeardleModal from '@/components/modals/CustomHeardleModal';
 import { Metadata } from 'next';
 import prisma from '@/lib/db';
@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: CustomPageProps): Promise<Met
       user: true
     }
   });
+
   if (!customHeardle) {
     return {
       title: 'Custom EDEN Heardle'

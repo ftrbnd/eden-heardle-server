@@ -137,8 +137,6 @@ export default function CustomHeardleModal() {
       setSelectedSong(null);
       setError('');
     } catch (error: any) {
-      console.log('hi:', error);
-
       setError(error.message);
     }
   };

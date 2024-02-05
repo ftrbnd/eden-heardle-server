@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { createId } from '@paralleldrive/cuid2';
 import { GuessType } from '@/utils/types';
+import { correctlyGuessedHeardle } from '@/utils/userGuesses';
 
 const useGuesses = () => {
   const { data: session, status: sessionStatus } = useSession();
@@ -73,7 +74,7 @@ const useGuesses = () => {
         console.log('GUESS MUTATION ERROR: ', err);
         queryClient.setQueryData(['guesses'], context?.prevGuesses);
       } else {
-        if (newGuesses?.at(-1)?.correctStatus === 'CORRECT') {
+        if (correctlyGuessedHeardle(sessionGuesses)) {
           statsMutation.mutate(true);
         } else if (newGuesses?.length === 6 && newGuesses.at(-1)?.correctStatus !== 'CORRECT') {
           statsMutation.mutate(false);
@@ -99,7 +100,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: sessionGuesses ?? localUser.user?.guesses, loadingGuessType: sessionStatus === 'loading', guessType: getGuessType(), submitGuess };
+  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuessType: sessionStatus === 'loading', guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;
