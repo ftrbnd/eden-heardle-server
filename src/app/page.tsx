@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { options } from './api/auth/[...nextauth]/options';
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 import SignInButton from '@/components/buttons/SignInButton';
 import RulesButton from '@/components/buttons/RulesButton';
 import Image from 'next/image';

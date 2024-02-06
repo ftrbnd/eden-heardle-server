@@ -1,6 +1,6 @@
 'use client';
 
-import { getLeaderboard, getUserStats } from '@/lib/statsApi';
+import { getLeaderboard } from '@/services/leaderboard';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -12,6 +12,7 @@ import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LeaderboardStat } from '@/utils/types';
 import statusSquares from '@/utils/statusSquares';
+import { getStats } from '@/services/users';
 
 function ProfileColumn({ user }: { user: User }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -21,7 +22,7 @@ function ProfileColumn({ user }: { user: User }) {
   const prefetchUserStats = async () => {
     await queryClient.prefetchQuery({
       queryKey: ['stats', user.id],
-      queryFn: () => getUserStats(user.id)
+      queryFn: () => getStats(user.id)
     });
   };
 

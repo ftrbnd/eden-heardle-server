@@ -2,17 +2,17 @@
 
 import { GuessCard } from '@/components/GuessCard';
 import Navbar from '@/app/play/content/Navbar';
-import { getCustomHeardle } from '@/lib/customHeardleApi';
 import { GuessedSong } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
-import { getUser } from '@/lib/usersApi';
+import { getUser } from '@/services/users';
 import { AnimatePresence } from 'framer-motion';
 import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
 import WelcomeCard from '@/app/play/content/WelcomeCard';
 import ResultCard from '../../content/ResultCard';
 import AudioPlayer from '../../content/AudioPlayer';
 import SongSelectInput from '../../content/SongSelectInput';
+import { getOtherCustomHeardle } from '@/services/customHeardles';
 
 interface PageProps {
   params: { customId: string };
@@ -24,7 +24,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
 
   const { data: customHeardleSong, isLoading: songLoading } = useQuery({
     queryKey: ['customHeardle', params.customId],
-    queryFn: () => getCustomHeardle(params.customId)
+    queryFn: () => getOtherCustomHeardle(params.customId)
   });
 
   const { data: customHeardleCreator } = useQuery({

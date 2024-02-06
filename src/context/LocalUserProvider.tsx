@@ -1,8 +1,8 @@
 'use client';
 
 import useDailySong from '@/hooks/useDailySong';
-import { LocalUser, LocalGuessedSong, LocalStatistics } from '@/utils/types';
-import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
+import { LocalUser, LocalGuessedSong, LocalStatistics, LocalUserState } from '@/utils/types';
+import { PropsWithChildren, createContext, useEffect, useState } from 'react';
 
 const initialUser: LocalUser = {
   statistics: {
@@ -16,24 +16,7 @@ const initialUser: LocalUser = {
   name: 'anon'
 };
 
-type LocalUserState = {
-  statistics: LocalUser['statistics'];
-  guesses: LocalUser['guesses'];
-  name?: LocalUser['name'];
-  updateGuesses: (guess: LocalGuessedSong) => void;
-};
-
-const LocalUserContext = createContext<LocalUserState | null>(null);
-
-const useLocalUser = (): LocalUserState => {
-  const context = useContext(LocalUserContext);
-
-  if (!context) {
-    throw new Error('Please use LocalUserProvider in parent component');
-  }
-
-  return context;
-};
+export const LocalUserContext = createContext<LocalUserState | null>(null);
 
 export const LocalUserProvider = (props: PropsWithChildren) => {
   const [user, setUser] = useState<LocalUser>(initialUser);
@@ -192,5 +175,3 @@ export const LocalUserProvider = (props: PropsWithChildren) => {
 
   return <LocalUserContext.Provider value={{ statistics: user.statistics, guesses: user.guesses, name: user.name, updateGuesses }}>{props.children}</LocalUserContext.Provider>;
 };
-
-export default useLocalUser;

@@ -21,6 +21,13 @@ export interface LocalUser {
   name?: 'anon';
 }
 
+export type LocalUserState = {
+  statistics: LocalUser['statistics'];
+  guesses: LocalUser['guesses'];
+  name?: LocalUser['name'];
+  updateGuesses: (guess: LocalGuessedSong) => void;
+};
+
 /////////////////////////////////////////////////////////
 
 export type GuessType = 'session' | 'local';
