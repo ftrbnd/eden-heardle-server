@@ -1,7 +1,7 @@
 'use client';
 
 import { GuessCard } from '@/components/GuessCard';
-import Navbar from '@/app/play/_content/Navbar';
+import Navbar from '@/app/play/content/Navbar';
 import { getCustomHeardle } from '@/lib/customHeardleApi';
 import { GuessedSong } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
@@ -9,10 +9,10 @@ import { ReactNode, useState } from 'react';
 import { getUser } from '@/lib/usersApi';
 import { AnimatePresence } from 'framer-motion';
 import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
-import WelcomeCard from '@/app/play/_content/WelcomeCard';
-import ResultCard from '../../_content/ResultCard';
-import AudioPlayer from '../../_content/AudioPlayer';
-import SongSelectInput from '../../_content/SongSelectInput';
+import WelcomeCard from '@/app/play/content/WelcomeCard';
+import ResultCard from '../../content/ResultCard';
+import AudioPlayer from '../../content/AudioPlayer';
+import SongSelectInput from '../../content/SongSelectInput';
 
 interface PageProps {
   params: { customId: string };
@@ -42,7 +42,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
             {customGuesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
             ))}
-            {customGuesses.length === 0 && <WelcomeCard customHeardleCreator={customHeardleCreator?.name} />}
+            {customGuesses.length === 0 && <WelcomeCard onCustomHeardlePage customHeardleCreator={customHeardleCreator} />}
           </div>
         </AnimatePresence>
 
@@ -59,8 +59,8 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
         )}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput heardleSong={customHeardleSong!} guesses={customGuesses} setCustomGuesses={setCustomGuesses} />
-        <AudioPlayer song={customHeardleSong!} songLoading={songLoading} guesses={customGuesses} />
+        <SongSelectInput heardleSong={customHeardleSong} guesses={customGuesses} setCustomGuesses={setCustomGuesses} />
+        <AudioPlayer song={customHeardleSong} songLoading={songLoading} guesses={customGuesses} />
       </div>
     </div>
   );

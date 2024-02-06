@@ -1,18 +1,18 @@
 'use client';
 
 import AudioPlayer from './AudioPlayer';
-import Navbar from '@/app/play/_content/Navbar';
+import Navbar from '@/app/play/content/Navbar';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GuessCard } from '@/components/GuessCard';
-import SongSelectInput from '@/app/play/_content/SongSelectInput';
+import SongSelectInput from '@/app/play/content/SongSelectInput';
 import { AnimatePresence } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
-import WelcomeCard from '@/app/play/_content/WelcomeCard';
+import WelcomeCard from '@/app/play/content/WelcomeCard';
 import ResultCard from './ResultCard';
 
 interface AnnouncementProps {
