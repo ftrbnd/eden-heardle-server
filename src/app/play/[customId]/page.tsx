@@ -1,9 +1,9 @@
 import RulesModal from '@/components/modals/RulesModal';
 import SettingsModal from '@/components/modals/SettingsModal';
-import CustomHeardlePageContent from './_content';
+import CustomHeardlePageContent from './content';
 import CustomHeardleModal from '@/components/modals/CustomHeardleModal';
 import { Metadata } from 'next';
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 
 interface CustomPageProps {
   params: { customId: string };

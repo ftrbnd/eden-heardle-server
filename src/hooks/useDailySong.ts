@@ -1,4 +1,4 @@
-import { getDailySong } from '@/lib/songsApi';
+import { getDailySong } from '@/services/songs';
 import { useQuery } from '@tanstack/react-query';
 
 const useDailySong = () => {

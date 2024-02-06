@@ -1,12 +1,11 @@
-import useLocalUser from '@/context/LocalUserProvider';
-import { getGuessedSongs, updateGuessedSongs } from '@/lib/songsApi';
-import { updateStats } from '@/lib/statsApi';
 import { GuessedSong, Song, Statistics } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { createId } from '@paralleldrive/cuid2';
 import { GuessType } from '@/utils/types';
 import { correctlyGuessedHeardle } from '@/utils/userGuesses';
+import useLocalUser from './useLocalUser';
+import { getGuessedSongs, updateGuessedSongs, updateStats } from '@/services/users';
 
 const useGuesses = () => {
   const { data: session, status: sessionStatus } = useSession();
@@ -15,14 +14,14 @@ const useGuesses = () => {
 
   const { data: sessionGuesses } = useQuery({
     queryKey: ['guesses'],
-    queryFn: getGuessedSongs,
+    queryFn: () => getGuessedSongs(session?.user.id),
     enabled: session !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
 
   const statsMutation = useMutation({
-    mutationFn: (guessedSong: boolean) => updateStats(guessedSong),
+    mutationFn: (guessedSong: boolean) => updateStats(guessedSong, session?.user.id),
     onMutate: async (guessedSong: boolean) => {
       await queryClient.cancelQueries({ queryKey: ['stats'] });
 
@@ -58,7 +57,7 @@ const useGuesses = () => {
   });
 
   const guessMutation = useMutation({
-    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess),
+    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess, session?.user.id),
     onMutate: async (newGuess: GuessedSong) => {
       await queryClient.cancelQueries({ queryKey: ['guesses'] });
 

@@ -1,7 +1,7 @@
 import { Song } from '@prisma/client';
 import { GuessCard } from '../GuessCard';
 import Link from 'next/link';
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 
 async function getThreeRandomSongs() {
   try {

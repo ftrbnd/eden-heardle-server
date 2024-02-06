@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-interface IProps {
+interface GuessCardProps {
   name: string;
   album: string;
   cover: string;
@@ -37,7 +37,7 @@ const getTooltip = (correctStatus: string) => {
   }
 };
 
-export function GuessCard({ name, album, cover, correctStatus, showAnimation }: IProps) {
+export function GuessCard({ name, album, cover, correctStatus, showAnimation }: GuessCardProps) {
   return (
     <motion.div className="card card-side bg-base-200 shadow-xl w-full" initial={showAnimation && { y: '100vh' }} animate={showAnimation && { y: 0 }}>
       <figure>

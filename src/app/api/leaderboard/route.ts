@@ -1,7 +1,9 @@
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 import { TodayStat, WinPctStat, AccuracyStat, CurStrkStat, MaxStrkStat } from '@/utils/types';
 import { GuessedSong } from '@prisma/client';
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 
 export interface LeaderboardStats {
   today: TodayStat[];
@@ -20,8 +22,6 @@ function guessStatuses(songs: GuessedSong[]): string[] {
 
   return statuses;
 }
-
-export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -109,7 +109,6 @@ export async function GET() {
 
     return NextResponse.json({ leaderboard }, { status: 200 });
   } catch (err) {
-    console.log('GET /stats: ', err);
     return NextResponse.json(err, { status: 400 });
   }
 }

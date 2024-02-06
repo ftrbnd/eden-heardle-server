@@ -1,19 +1,16 @@
-import prisma from '@/lib/db';
-import { getServerSession } from 'next-auth';
-import { NextRequest, NextResponse } from 'next/server';
-import { options } from '../auth/[...nextauth]/options';
+import prisma from '@/utils/db';
 import { Statistics } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  const session = await getServerSession(options);
-  if (!session) return NextResponse.json(null, { status: 200 });
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+  const userId = params.id;
 
   try {
     const stats = await prisma.statistics.findUnique({
       where: {
-        userId: session.user.id
+        userId
       }
     });
     if (!stats) return NextResponse.json({ message: 'Failed to find user stats' }, { status: 404 });
@@ -25,23 +22,22 @@ export async function GET() {
   }
 }
 
-export async function PATCH(req: NextRequest) {
-  const session = await getServerSession(options);
-  if (!session) return NextResponse.json(null, { status: 200 });
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const userId = params.id;
 
   try {
     const { guessedSong }: { guessedSong: boolean } = await req.json();
 
     const oldStats = await prisma.statistics.findUnique({
       where: {
-        userId: session.user.id
+        userId
       }
     });
     if (!oldStats) return NextResponse.json({ message: "Failed to find user's stats" }, { status: 404 });
 
     const guesses = await prisma.guesses.findUnique({
       where: {
-        userId: session.user.id
+        userId
       },
       include: {
         songs: true
@@ -69,7 +65,7 @@ export async function PATCH(req: NextRequest) {
 
     const updatedStats = await prisma.statistics.update({
       where: {
-        userId: session.user.id
+        userId
       },
       data: {
         gamesPlayed: newStats.gamesPlayed,

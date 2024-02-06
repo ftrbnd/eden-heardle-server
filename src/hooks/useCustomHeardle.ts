@@ -1,4 +1,5 @@
-import { checkUserCustomHeardle, createCustomHeardle, deleteCustomHeardle } from '@/lib/customHeardleApi';
+import { createCustomHeardle, deleteCustomHeardle } from '@/services/customHeardles';
+import { getUserCustomHeardle } from '@/services/users';
 import { Song } from '@prisma/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
@@ -13,7 +14,7 @@ const useCustomHeardle = () => {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryFn: () => checkUserCustomHeardle(session?.user.id ?? 'fakeid'),
+    queryFn: () => getUserCustomHeardle(session?.user.id ?? 'fakeid'),
     queryKey: ['userCustomHeardle', session?.user.id],
     enabled: !!session?.user.id
   });

@@ -3,14 +3,14 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
-interface IProps {
+interface ButtonProps {
   modalId: string;
   modalTitle: string;
   className?: string;
   children?: ReactNode;
 }
 
-export default function OpenModalButton({ modalId, modalTitle, className, children }: IProps) {
+export default function OpenModalButton({ modalId, modalTitle, className, children }: ButtonProps) {
   const openModal = () => {
     const modal = document.getElementById(modalId) as HTMLDialogElement;
     if (!modal.open) modal.showModal();

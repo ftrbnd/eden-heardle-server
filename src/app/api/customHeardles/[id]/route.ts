@@ -1,15 +1,16 @@
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_req: NextRequest, { params }: { params: { heardleId: string } }) {
-  const { heardleId } = params;
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  if (!id) throw new Error('Missing the Custom Heardle id');
 
   try {
     const song = await prisma.customHeardle.findUnique({
       where: {
-        id: heardleId
+        id
       }
     });
     if (!song) return NextResponse.json({ error: 'Custom heardle song not found' }, { status: 404 });

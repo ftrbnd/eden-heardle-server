@@ -4,8 +4,10 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CustomHeardle, DailySong, GuessedSong, User } from '@prisma/client';
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { CSSProperties, useState, useEffect, MouseEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { CSSProperties, useState, useEffect, MouseEvent, useMemo } from 'react';
 
 interface ResultCardProps {
   song: DailySong | CustomHeardle;
@@ -24,6 +26,9 @@ function Countdown() {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
+  const { theme } = useTheme();
+  const router = useRouter();
+
   useEffect(() => {
     const now = new Date();
 
@@ -31,6 +36,7 @@ function Countdown() {
     const currentUTCMinutes = now.getUTCMinutes();
     const currentUTCSeconds = now.getUTCSeconds();
 
+    // 4am UTC
     const targetHour = 3;
     const targetMinute = 0;
     const targetSecond = 0;
@@ -59,32 +65,34 @@ function Countdown() {
 
           if (hoursRemaining < 0) {
             setHours(hoursRemaining);
-            clearInterval(intervalId);
             console.log('Countdown to 4 AM UTC has reached 0!');
+            router.replace('/');
+
+            clearInterval(intervalId);
           }
         }
       }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [router]);
 
   return (
     <div className="card-actions justify-center">
-      <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
-        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+      <div className={`grid grid-flow-col gap-5 text-center auto-cols-max ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+        <div className="flex flex-col p-2 rounded-box bg-base-100">
           <span className="countdown font-mono text-3xl sm:text-5xl">
             <span id="hours" style={{ '--value': hours } as CSSPropertiesWithVars}></span>
           </span>
           hours
         </div>
-        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+        <div className="flex flex-col p-2 rounded-box bg-base-100">
           <span className="countdown font-mono text-3xl sm:text-5xl">
             <span id="minutes" style={{ '--value': minutes } as CSSPropertiesWithVars}></span>
           </span>
           min
         </div>
-        <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+        <div className="flex flex-col p-2 rounded-box bg-base-100">
           <span className="countdown font-mono text-3xl sm:text-5xl">
             <span id="seconds" style={{ '--value': seconds } as CSSPropertiesWithVars}></span>
           </span>
@@ -139,7 +147,7 @@ export default function ResultCard({ song, guessedSong, onCustomHeardlePage, cus
           <>
             <p className="text-md">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
             <Countdown />
-            <OpenModalButton modalId="stats_modal" modalTitle="View Statistics" className="btn btn-outline" />
+            <OpenModalButton modalId="stats_modal" modalTitle="View Statistics" className={`btn glass btn-ghost`} />
           </>
         )}
       </div>

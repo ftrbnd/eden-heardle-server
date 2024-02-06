@@ -1,4 +1,4 @@
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';

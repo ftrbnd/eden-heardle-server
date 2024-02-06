@@ -1,4 +1,3 @@
-import { getUserStats } from '@/lib/statsApi';
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { User } from '@prisma/client';
@@ -6,13 +5,14 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useEffect, useRef, MouseEvent } from 'react';
 import StatsGrid from '../StatsGrid';
+import { getStats } from '@/services/users';
 
 export default function ProfileModal({ user, showProfile, setShowProfile }: { user: User; showProfile: boolean; setShowProfile: (show: boolean) => void }) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
   const { data: userStats, isLoading } = useQuery({
     queryKey: ['stats', user.id],
-    queryFn: () => getUserStats(user.id)
+    queryFn: () => getStats(user.id)
   });
 
   useEffect(() => {

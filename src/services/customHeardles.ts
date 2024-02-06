@@ -1,12 +1,25 @@
 import { CustomHeardle, Song } from '@prisma/client';
 
-const customHeardleApi = process.env.NEXT_PUBLIC_EXPRESS_URL!;
+const CUSTOM_HEARDLE_ENDPOINT_EXPRESS = process.env.NEXT_PUBLIC_EXPRESS_URL!;
+const CUSTOM_HEARDLE_ENDPOINT_NEXT = '/api/customHeardles';
+
+export const getOtherCustomHeardle = async (heardleId: string) => {
+  try {
+    const response = await fetch(`${CUSTOM_HEARDLE_ENDPOINT_NEXT}/${heardleId}`);
+    if (!response.ok) throw new Error(`Failed to get Custom Heardle #${heardleId}`);
+
+    const { song }: { song: CustomHeardle } = await response.json();
+    return song;
+  } catch (err) {
+    throw new Error(`Failed to get Custom Heardle #${heardleId}`);
+  }
+};
 
 export const createCustomHeardle = async (song: Song, startTime: number, userId: string) => {
   try {
     if (!song || startTime === null || startTime === undefined || !userId) throw new Error('Missing required parameters');
 
-    const response = await fetch(customHeardleApi, {
+    const response = await fetch(CUSTOM_HEARDLE_ENDPOINT_EXPRESS, {
       method: 'POST',
       body: JSON.stringify({ song, startTime, userId }),
       headers: {
@@ -28,7 +41,7 @@ export const deleteCustomHeardle = async (heardleId: string, userId: string) => 
   try {
     if (!heardleId || !userId) throw new Error('Missing heardleId or userId');
 
-    const response = await fetch(customHeardleApi, {
+    const response = await fetch(CUSTOM_HEARDLE_ENDPOINT_EXPRESS, {
       method: 'DELETE',
       body: JSON.stringify({ heardleId, userId }),
       headers: {
@@ -43,29 +56,5 @@ export const deleteCustomHeardle = async (heardleId: string, userId: string) => 
     return data;
   } catch (err) {
     throw new Error('Failed to delete Custom Heardle');
-  }
-};
-
-export const getCustomHeardle = async (heardleId: string) => {
-  try {
-    const response = await fetch(`/api/customHeardles/${heardleId}`);
-    if (!response.ok) throw new Error(`Failed to get Custom Heardle #${heardleId}`);
-
-    const { song }: { song: CustomHeardle } = await response.json();
-    return song;
-  } catch (err) {
-    throw new Error(`Failed to get Custom Heardle #${heardleId}`);
-  }
-};
-
-export const checkUserCustomHeardle = async (userId: string) => {
-  try {
-    const response = await fetch(`/api/customHeardles/user/${userId}`);
-    if (!response.ok) throw new Error('Failed to check if user has a Custom Heardle');
-
-    const { song }: { song: CustomHeardle } = await response.json();
-    return song;
-  } catch (err) {
-    throw new Error('Failed to check if user has a Custom Heardle');
   }
 };

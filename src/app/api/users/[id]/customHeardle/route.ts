@@ -1,15 +1,15 @@
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+  const userId = params.id;
 
   try {
     const song = await prisma.customHeardle.findUnique({
       where: {
-        userId: id
+        userId
       }
     });
 

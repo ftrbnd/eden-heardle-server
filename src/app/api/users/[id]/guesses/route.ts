@@ -1,19 +1,18 @@
-import prisma from '@/lib/db';
+import prisma from '@/utils/db';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { options } from '../../auth/[...nextauth]/options';
 import { GuessedSong } from '@prisma/client';
+import { options } from '@/app/api/auth/[...nextauth]/options';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  const session = await getServerSession(options);
-  if (!session) return NextResponse.json(null, { status: 200 });
+export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+  const id = params.id;
 
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: session.user.id
+        id
       },
       select: {
         guesses: {
@@ -32,16 +31,15 @@ export async function GET() {
   }
 }
 
-export async function PATCH(req: NextRequest) {
-  const session = await getServerSession(options);
-  if (!session) return NextResponse.json(null, { status: 200 });
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const userId = params.id;
 
   try {
     const { song }: { song: GuessedSong } = await req.json();
 
     const oldGuesses = await prisma.guesses.findUnique({
       where: {
-        userId: session.user.id
+        userId
       },
       include: {
         songs: true
@@ -54,7 +52,7 @@ export async function PATCH(req: NextRequest) {
 
     const updatedGuesses = await prisma.guesses.update({
       where: {
-        userId: session.user.id
+        userId
       },
       data: {
         songs: {
