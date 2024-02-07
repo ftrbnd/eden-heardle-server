@@ -9,7 +9,7 @@ import { Song, DailySong, CustomHeardle, GuessedSong } from '@prisma/client';
 import { useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 interface SelectProps {
-  heardleSong: DailySong | CustomHeardle | undefined;
+  heardleSong: DailySong | CustomHeardle;
   guesses: GuessedSong[] | LocalGuessedSong[];
   setCustomGuesses?: Dispatch<SetStateAction<GuessedSong[]>>;
 }
@@ -49,7 +49,7 @@ export default function SongSelectInput({ heardleSong, guesses, setCustomGuesses
   };
 
   return (
-    <select className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading || !heardleSong}>
+    <select className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
       <option className="default_selection">Choose a song!</option>
       {songs?.map((song) => (
         <option key={song.id} value={song.name} disabled={disableOption(song)}>
