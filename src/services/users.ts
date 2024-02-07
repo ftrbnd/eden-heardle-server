@@ -60,7 +60,7 @@ export const getStats = async (userId?: string) => {
 
     return stats;
   } catch (err) {
-    console.error(err);
+    throw new Error('Failed to get stats');
   }
 };
 
@@ -76,7 +76,7 @@ export const updateStats = async (guessedSong: boolean, userId?: string) => {
     const { stats }: { stats: Statistics } = await response.json();
     return stats;
   } catch (err) {
-    console.error(err);
+    throw new Error('Failed to update stats');
   }
 };
 
