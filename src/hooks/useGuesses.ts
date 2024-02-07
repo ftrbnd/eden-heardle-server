@@ -12,11 +12,7 @@ const useGuesses = () => {
   const localUser = useLocalUser();
   const queryClient = useQueryClient();
 
-  const {
-    data: sessionGuesses,
-    isFetching: fetchingSessionGuesses,
-    isRefetching: refetchingSessionGuesses
-  } = useQuery({
+  const { data: sessionGuesses, isInitialLoading: initialLoadingSessionGuesses } = useQuery({
     queryKey: ['guesses'],
     queryFn: () => getGuessedSongs(session?.user.id!),
     enabled: session?.user.id !== null,
@@ -103,7 +99,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuesses: fetchingSessionGuesses && !refetchingSessionGuesses, guessType: getGuessType(), submitGuess };
+  return { guesses: session?.user ? sessionGuesses : localUser?.guesses, loadingGuesses: initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;

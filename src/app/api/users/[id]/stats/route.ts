@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const userId = params.id;
+  if (!userId) return NextResponse.json({ message: 'User id is required' }, { status: 400 });
 
   try {
     const stats = await prisma.statistics.findUnique({
@@ -24,6 +25,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const userId = params.id;
+  if (!userId) return NextResponse.json({ message: 'User id is required' }, { status: 400 });
 
   try {
     const { guessedSong }: { guessedSong: boolean } = await req.json();
