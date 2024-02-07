@@ -67,7 +67,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         <SongSelectInput heardleSong={dailySong!} guesses={guesses!} />
-        <AudioPlayer song={dailySong!} songLoading={dailySongLoading || loadingGuesses} guesses={guesses} />
+        <AudioPlayer song={dailySong!} songLoading={dailySongLoading || loadingGuesses || !guesses} guesses={guesses} />
       </div>
     </div>
   );
