@@ -14,7 +14,11 @@ const useGuesses = () => {
 
   const { data: sessionGuesses, isInitialLoading: initialLoadingSessionGuesses } = useQuery({
     queryKey: ['guesses'],
-    queryFn: () => getGuessedSongs(session?.user.id!),
+    queryFn: () => {
+      if (!session?.user.id) return;
+
+      return getGuessedSongs(session?.user.id);
+    },
     enabled: session?.user.id !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true

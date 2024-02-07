@@ -9,7 +9,11 @@ const useStatistics = () => {
 
   const { data: sessionStatistics, isInitialLoading } = useQuery({
     queryKey: ['stats'],
-    queryFn: () => getStats(session?.user.id!),
+    queryFn: () => {
+      if (!session?.user.id) return;
+
+      return getStats(session?.user.id);
+    },
     enabled: session?.user.id !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
