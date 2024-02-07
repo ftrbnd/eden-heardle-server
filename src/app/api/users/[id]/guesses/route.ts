@@ -1,8 +1,6 @@
 import prisma from '@/utils/db';
-import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { GuessedSong } from '@prisma/client';
-import { options } from '@/app/api/auth/[...nextauth]/options';
 
 export const dynamic = 'force-dynamic';
 
