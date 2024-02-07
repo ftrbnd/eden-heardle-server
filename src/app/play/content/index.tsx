@@ -34,7 +34,7 @@ function AnnouncementBanner({ setShowBanner, announcement }: AnnouncementProps) 
 export default function PlayContent({ children }: { children: ReactNode }) {
   const [showBanner, setShowBanner] = useState(false);
 
-  const { guesses, loadingGuessType } = useGuesses();
+  const { guesses, loadingGuesses } = useGuesses();
   const { dailySong, dailySongLoading } = useDailySong();
   const router = useRouter();
 
@@ -50,7 +50,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <AnimatePresence>
           <div className={`grid ${guesses?.length === 0 ? 'grid-rows-1' : 'grid-rows-6'} w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center`}>
-            {loadingGuessType ? (
+            {loadingGuesses || !guesses ? (
               [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" showAnimation={false} />)
             ) : (
               <>
@@ -67,7 +67,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         <SongSelectInput heardleSong={dailySong!} guesses={guesses!} />
-        <AudioPlayer song={dailySong!} songLoading={dailySongLoading} guesses={guesses} />
+        <AudioPlayer song={dailySong!} songLoading={dailySongLoading || loadingGuesses} guesses={guesses} />
       </div>
     </div>
   );

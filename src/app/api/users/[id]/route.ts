@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
+  if (!id) return NextResponse.json({ message: 'User id is required' }, { status: 400 });
 
   try {
     const user = await prisma.user.findUnique({

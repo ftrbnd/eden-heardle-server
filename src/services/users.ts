@@ -18,7 +18,7 @@ export const getUser = async (id: string) => {
   }
 };
 
-export const getGuessedSongs = async (userId?: string) => {
+export const getGuessedSongs = async (userId: string) => {
   try {
     const response = await fetch(`${USERS_ENDPOINT}/${userId}/guesses`, {
       cache: 'no-store'
@@ -33,7 +33,7 @@ export const getGuessedSongs = async (userId?: string) => {
   }
 };
 
-export const updateGuessedSongs = async (guess: GuessedSong, userId?: string) => {
+export const updateGuessedSongs = async (guess: GuessedSong, userId: string) => {
   try {
     const response = await fetch(`${USERS_ENDPOINT}/${userId}/guesses`, {
       method: 'PATCH',
@@ -50,7 +50,7 @@ export const updateGuessedSongs = async (guess: GuessedSong, userId?: string) =>
   }
 };
 
-export const getStats = async (userId?: string) => {
+export const getStats = async (userId: string) => {
   try {
     const response = await fetch(`${USERS_ENDPOINT}/${userId}/stats`);
     if (!response.ok) throw new Error('Failed to get stats');
@@ -64,7 +64,7 @@ export const getStats = async (userId?: string) => {
   }
 };
 
-export const updateStats = async (guessedSong: boolean, userId?: string) => {
+export const updateStats = async (guessedSong: boolean, userId: string) => {
   try {
     const response = await fetch(`${USERS_ENDPOINT}/${userId}/stats`, {
       method: 'PATCH',
