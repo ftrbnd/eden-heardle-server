@@ -8,20 +8,24 @@ import useLocalUser from './useLocalUser';
 import { getGuessedSongs, updateGuessedSongs, updateStats } from '@/services/users';
 
 const useGuesses = () => {
-  const { data: session, status: sessionStatus } = useSession();
+  const { data: session } = useSession();
   const localUser = useLocalUser();
   const queryClient = useQueryClient();
 
-  const { data: sessionGuesses } = useQuery({
+  const {
+    data: sessionGuesses,
+    isFetching: fetchingSessionGuesses,
+    isRefetching: refetchingSessionGuesses
+  } = useQuery({
     queryKey: ['guesses'],
-    queryFn: () => getGuessedSongs(session?.user.id),
-    enabled: session !== null,
+    queryFn: () => getGuessedSongs(session?.user.id!),
+    enabled: session?.user.id !== null,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
 
   const statsMutation = useMutation({
-    mutationFn: (guessedSong: boolean) => updateStats(guessedSong, session?.user.id),
+    mutationFn: (guessedSong: boolean) => updateStats(guessedSong, session?.user.id!),
     onMutate: async (guessedSong: boolean) => {
       await queryClient.cancelQueries({ queryKey: ['stats'] });
 
@@ -57,7 +61,7 @@ const useGuesses = () => {
   });
 
   const guessMutation = useMutation({
-    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess, session?.user.id),
+    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess, session?.user.id!),
     onMutate: async (newGuess: GuessedSong) => {
       await queryClient.cancelQueries({ queryKey: ['guesses'] });
 
@@ -99,7 +103,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuessType: sessionStatus === 'loading', guessType: getGuessType(), submitGuess };
+  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuesses: fetchingSessionGuesses && !refetchingSessionGuesses, guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;

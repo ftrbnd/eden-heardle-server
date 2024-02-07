@@ -11,7 +11,7 @@ function StatBox({ stat, title, icon, tooltip, loading }: { stat: any; title: st
       </div>
       <div className="stat-title">{title}</div>
       <div className="tooltip" data-tip={tooltip}>
-        {loading ? <div className="skeleton h-8 w-16"></div> : <div className="stat-value text-left">{stat}</div>}
+        {loading || stat === undefined ? <div className="skeleton h-8 w-16"></div> : <div className="stat-value text-left">{stat}</div>}
       </div>
     </div>
   );
