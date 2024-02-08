@@ -10,9 +10,9 @@ import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { LeaderboardStat } from '@/utils/types';
 import statusSquares from '@/utils/statusSquares';
 import { getStats } from '@/services/users';
+import { IndividualLeaderboardStat } from '@/utils/types';
 
 function ProfileColumn({ user }: { user: User }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -58,7 +58,7 @@ const LoadingTableRow = () => {
   );
 };
 
-const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; stat?: LeaderboardStat[]; isLoading: boolean }) => {
+const StatTable = ({ type, stat, isLoading }: { type: IndividualLeaderboardStat['type']; stat?: IndividualLeaderboardStat[]; isLoading: boolean }) => {
   const getEmptyTableNotice = () => {
     if (!stat) return 'Statistics unavailable.';
 
@@ -111,7 +111,7 @@ const StatTable = ({ type, stat, isLoading }: { type: LeaderboardStat['type']; s
 };
 
 function Tabs() {
-  const [activeTab, setActiveTab] = useState<LeaderboardStat['type']>('Today');
+  const [activeTab, setActiveTab] = useState<IndividualLeaderboardStat['type']>('Today');
 
   const { data: leaderboard, isLoading: leaderboardLoading } = useQuery({
     queryKey: ['leaderboard'],
