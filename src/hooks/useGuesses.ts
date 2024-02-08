@@ -8,24 +8,20 @@ import useLocalUser from './useLocalUser';
 import { getGuessedSongs, updateGuessedSongs, updateStats } from '@/services/users';
 
 const useGuesses = () => {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const localUser = useLocalUser();
   const queryClient = useQueryClient();
 
-  const { data: sessionGuesses, isInitialLoading: initialLoadingSessionGuesses } = useQuery({
+  const { data: sessionGuesses, isInitialLoading: initialLoadingSessionGuesses } = useQuery<GuessedSong[]>({
     queryKey: ['guesses'],
-    queryFn: () => {
-      if (!session?.user.id) return;
-
-      return getGuessedSongs(session?.user.id);
-    },
-    enabled: session?.user.id !== null,
+    queryFn: () => getGuessedSongs(session?.user.id),
+    enabled: session?.user.id !== null && session?.user.id !== undefined,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
 
   const statsMutation = useMutation({
-    mutationFn: (guessedSong: boolean) => updateStats(guessedSong, session?.user.id!),
+    mutationFn: (guessedSong: boolean) => updateStats(guessedSong, session?.user.id),
     onMutate: async (guessedSong: boolean) => {
       await queryClient.cancelQueries({ queryKey: ['stats'] });
 
@@ -61,7 +57,7 @@ const useGuesses = () => {
   });
 
   const guessMutation = useMutation({
-    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess, session?.user.id!),
+    mutationFn: (newGuess: GuessedSong) => updateGuessedSongs(newGuess, session?.user.id),
     onMutate: async (newGuess: GuessedSong) => {
       await queryClient.cancelQueries({ queryKey: ['guesses'] });
 
@@ -103,7 +99,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: session?.user ? sessionGuesses : localUser?.guesses, loadingGuesses: initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
+  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuesses: sessionStatus === 'loading' || initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;

@@ -1,20 +1,12 @@
 import prisma from '@/utils/db';
-import { TodayStat, WinPctStat, AccuracyStat, CurStrkStat, MaxStrkStat } from '@/utils/types';
+import { LeaderboardStats } from '@/utils/types';
 import { GuessedSong } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-export interface LeaderboardStats {
-  today: TodayStat[];
-  winPercentages: WinPctStat[];
-  accuracies: AccuracyStat[];
-  currentStreaks: CurStrkStat[];
-  maxStreaks: MaxStrkStat[];
-}
-
 function guessStatuses(songs: GuessedSong[]): string[] {
-  const statuses = [];
+  const statuses: string[] = [];
 
   for (const song of songs) {
     statuses.push(song.correctStatus);
@@ -30,7 +22,7 @@ export async function GET() {
         user: true
       }
     });
-    if (!allStats) return NextResponse.json({ message: 'Failed to find leaderboard stats' }, { status: 404 });
+    if (!allStats) return NextResponse.json({ error: 'Failed to find leaderboard stats' }, { status: 404 });
 
     const leaderboard: LeaderboardStats = {
       today: [],
@@ -51,7 +43,7 @@ export async function GET() {
         }
       });
 
-      if (!userGuesses) return NextResponse.json({ message: 'Failed to find user guesses from userStat' }, { status: 404 });
+      if (!userGuesses) return NextResponse.json({ error: 'Failed to find user guesses from userStat' }, { status: 404 });
 
       // daily stats
       if (userGuesses.songs.length === 6 || userGuesses.songs.at(-1)?.correctStatus === 'CORRECT') {

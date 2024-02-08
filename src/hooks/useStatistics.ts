@@ -4,22 +4,18 @@ import useLocalUser from './useLocalUser';
 import { getStats } from '@/services/users';
 
 const useStatistics = () => {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const localUser = useLocalUser();
 
   const { data: sessionStatistics, isInitialLoading } = useQuery({
     queryKey: ['stats'],
-    queryFn: () => {
-      if (!session?.user.id) return;
-
-      return getStats(session?.user.id);
-    },
-    enabled: session?.user.id !== null,
+    queryFn: () => getStats(session?.user.id),
+    enabled: session?.user.id !== null && session?.user.id !== undefined,
     refetchInterval: 30000, // 30 seconds,
     refetchIntervalInBackground: true
   });
 
-  return { stats: session?.user ? sessionStatistics : localUser?.statistics, loadingStats: isInitialLoading };
+  return { stats: session ? sessionStatistics : localUser?.statistics, loadingStats: sessionStatus === 'loading' || isInitialLoading };
 };
 
 export default useStatistics;

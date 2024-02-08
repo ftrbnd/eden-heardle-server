@@ -8,8 +8,8 @@ export const getOtherCustomHeardle = async (heardleId: string) => {
     const response = await fetch(`${CUSTOM_HEARDLE_ENDPOINT_NEXT}/${heardleId}`);
     if (!response.ok) throw new Error(`Failed to get Custom Heardle #${heardleId}`);
 
-    const { song }: { song: CustomHeardle } = await response.json();
-    return song;
+    const { customHeardle }: { customHeardle: CustomHeardle } = await response.json();
+    return customHeardle;
   } catch (err) {
     throw new Error(`Failed to get Custom Heardle #${heardleId}`);
   }
