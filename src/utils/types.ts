@@ -64,4 +64,12 @@ export interface MaxStrkStat {
   type: 'MaxStrk';
 }
 
-export type LeaderboardStat = TodayStat | WinPctStat | AccuracyStat | CurStrkStat | MaxStrkStat;
+export interface LeaderboardStats {
+  today: TodayStat[];
+  winPercentages: WinPctStat[];
+  accuracies: AccuracyStat[];
+  currentStreaks: CurStrkStat[];
+  maxStreaks: MaxStrkStat[];
+}
+
+export type IndividualLeaderboardStat = TodayStat | WinPctStat | AccuracyStat | CurStrkStat | MaxStrkStat;

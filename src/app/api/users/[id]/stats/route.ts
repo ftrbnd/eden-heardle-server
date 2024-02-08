@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const userId = params.id;
-  if (!userId) return NextResponse.json({ message: 'User id is required' }, { status: 400 });
+  if (!userId) return NextResponse.json({ error: 'User id is required' }, { status: 400 });
 
   try {
     const stats = await prisma.statistics.findUnique({
@@ -14,18 +14,17 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
         userId
       }
     });
-    if (!stats) return NextResponse.json({ message: 'Failed to find user stats' }, { status: 404 });
+    if (!stats) return NextResponse.json({ error: 'Failed to find user stats' }, { status: 404 });
 
     return NextResponse.json({ stats }, { status: 200 });
   } catch (err) {
-    console.log('GET /stats: ', err);
     return NextResponse.json(err, { status: 400 });
   }
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const userId = params.id;
-  if (!userId) return NextResponse.json({ message: 'User id is required' }, { status: 400 });
+  if (!userId) return NextResponse.json({ error: 'User id is required' }, { status: 400 });
 
   try {
     const { guessedSong }: { guessedSong: boolean } = await req.json();
@@ -35,7 +34,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         userId
       }
     });
-    if (!oldStats) return NextResponse.json({ message: "Failed to find user's stats" }, { status: 404 });
+    if (!oldStats) return NextResponse.json({ error: "Failed to find user's stats" }, { status: 404 });
 
     const guesses = await prisma.guesses.findUnique({
       where: {
@@ -45,6 +44,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         songs: true
       }
     });
+    if (!guesses) return NextResponse.json({ error: "Failed to find user's guesses" }, { status: 404 });
 
     let gameAccuracy = 0;
     if (guesses?.songs) {
@@ -80,7 +80,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     return NextResponse.json({ stats: updatedStats }, { status: 200 });
   } catch (err) {
-    console.log('PATCH /stats: ', err);
     return NextResponse.json(err, { status: 400 });
   }
 }

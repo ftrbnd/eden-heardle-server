@@ -5,17 +5,17 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
-  if (!id) throw new Error('Missing the Custom Heardle id');
+  if (!id) return NextResponse.json({ error: 'Custom Heardle id is required' }, { status: 400 });
 
   try {
-    const song = await prisma.customHeardle.findUnique({
+    const customHeardle = await prisma.customHeardle.findUnique({
       where: {
         id
       }
     });
-    if (!song) return NextResponse.json({ error: 'Custom heardle song not found' }, { status: 404 });
+    if (!customHeardle) return NextResponse.json({ error: 'Custom Heardle song not found' }, { status: 404 });
 
-    return NextResponse.json({ song }, { status: 200 });
+    return NextResponse.json({ customHeardle }, { status: 200 });
   } catch (err) {
     return NextResponse.json(err, { status: 400 });
   }

@@ -5,7 +5,7 @@ import { options } from '../../auth/[...nextauth]/options';
 
 export async function GET() {
   const session = await getServerSession(options);
-  if (!session) return NextResponse.json(null, { status: 200 });
+  if (!session) return NextResponse.json({ error: 'No user session found' }, { status: 400 });
 
   try {
     const user = await prisma.user.findUnique({
@@ -13,8 +13,9 @@ export async function GET() {
         id: session?.user.id
       }
     });
+    if (!user) return NextResponse.json({ error: 'You were not found in the database' }, { status: 404 });
 
-    return NextResponse.json(user, { status: 200 });
+    return NextResponse.json({ me: user }, { status: 200 });
   } catch (err) {
     return NextResponse.json(err, { status: 400 });
   }

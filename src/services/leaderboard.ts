@@ -1,4 +1,4 @@
-import { LeaderboardStats } from '@/app/api/leaderboard/route';
+import { LeaderboardStats } from '@/utils/types';
 
 const LEADERBOARD_ENDPOINT = '/api/leaderboard';
 
@@ -10,9 +10,8 @@ export const getLeaderboard = async () => {
     if (!response.ok) throw new Error('Failed to get leaderboard');
 
     const { leaderboard }: { leaderboard: LeaderboardStats } = await response.json();
-
     return leaderboard;
   } catch (err) {
-    console.error(err);
+    throw new Error(`Failed to get leaderboard`);
   }
 };

@@ -5,14 +5,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_request: NextRequest) {
   try {
-    const song = await prisma.dailySong.findUnique({
+    const dailySong = await prisma.dailySong.findUnique({
       where: {
         id: '0'
       }
     });
-    if (!song) return NextResponse.json({ error: 'Daily song not found' }, { status: 404 });
+    if (!dailySong) return NextResponse.json({ error: 'Daily song not found' }, { status: 404 });
 
-    return NextResponse.json({ song }, { status: 200 });
+    return NextResponse.json({ dailySong }, { status: 200 });
   } catch (err) {
     return NextResponse.json(err, { status: 400 });
   }

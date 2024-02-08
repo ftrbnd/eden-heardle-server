@@ -14,9 +14,9 @@ const useCustomHeardle = () => {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryFn: () => getUserCustomHeardle(session?.user.id ?? 'fakeid'),
     queryKey: ['userCustomHeardle', session?.user.id],
-    enabled: !!session?.user.id
+    queryFn: () => getUserCustomHeardle(session?.user.id ?? 'fakeid'),
+    enabled: session?.user.id !== null && session?.user.id !== undefined
   });
 
   const createHeardleMutation = useMutation({
