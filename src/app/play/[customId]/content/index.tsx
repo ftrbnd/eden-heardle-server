@@ -42,7 +42,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
             {customGuesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
             ))}
-            {customGuesses.length === 0 && <WelcomeCard customHeardleCreator={customHeardleCreator?.name} />}
+            {customGuesses.length === 0 && <WelcomeCard heardleType="custom" customHeardleCreator={customHeardleCreator?.name} />}
           </div>
         </AnimatePresence>
 
@@ -52,14 +52,14 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
             guessedSong={correctlyGuessedHeardle(customGuesses)}
             onCustomHeardlePage
             customHeardleCreator={customHeardleCreator!}
-            customHeardleGuesses={customGuesses}
+            otherHeardleGuesses={customGuesses}
           />
         ) : (
           <div></div>
         )}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput heardleSong={customHeardleSong!} guesses={customGuesses} setCustomGuesses={setCustomGuesses} />
+        <SongSelectInput heardleSong={customHeardleSong!} guesses={customGuesses} setOtherGuesses={setCustomGuesses} />
         <AudioPlayer song={customHeardleSong!} songLoading={songLoading} guesses={customGuesses} />
       </div>
     </div>

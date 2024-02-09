@@ -3,6 +3,7 @@
 import { MouseEventHandler, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface RedirectButtonProps {
   title: string;
@@ -54,9 +55,15 @@ interface LinkButtonProps extends RedirectButtonProps {
 }
 
 export function LinkButton({ title, href, className, children }: LinkButtonProps) {
+  const router = useRouter();
+
+  const redirect = () => {
+    router.push(href);
+  };
+
   return (
-    <RedirectButton title={title} className={className}>
-      <Link href={href}>{children}</Link>
+    <RedirectButton title={title} className={className} onClick={redirect}>
+      {children}
     </RedirectButton>
   );
 }

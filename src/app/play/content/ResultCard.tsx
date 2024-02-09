@@ -14,7 +14,8 @@ interface ResultCardProps {
   guessedSong: boolean;
   onCustomHeardlePage?: boolean;
   customHeardleCreator?: User;
-  customHeardleGuesses?: GuessedSong[];
+  otherHeardleGuesses?: GuessedSong[];
+  onUnlimitedHeardlePage?: boolean;
 }
 
 interface CSSPropertiesWithVars extends CSSProperties {
@@ -103,15 +104,15 @@ function Countdown() {
   );
 }
 
-export default function ResultCard({ song, guessedSong, onCustomHeardlePage, customHeardleCreator, customHeardleGuesses }: ResultCardProps) {
+export default function ResultCard({ song, guessedSong, onCustomHeardlePage, onUnlimitedHeardlePage, customHeardleCreator, otherHeardleGuesses }: ResultCardProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
-    if (copied || !customHeardleGuesses) return;
+    if (copied || !otherHeardleGuesses) return;
 
     setCopied(true);
-    await navigator.clipboard.writeText(`EDEN Heardle #${customHeardleCreator?.name} ${statusSquares(customHeardleGuesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
+    await navigator.clipboard.writeText(`EDEN Heardle #${customHeardleCreator?.name} ${statusSquares(otherHeardleGuesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
 
     setTimeout(() => {
       setCopied(false);
@@ -131,16 +132,18 @@ export default function ResultCard({ song, guessedSong, onCustomHeardlePage, cus
       <div className="card-body items-center">
         <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
 
-        {onCustomHeardlePage && customHeardleGuesses ? (
+        {(onCustomHeardlePage || onUnlimitedHeardlePage) && otherHeardleGuesses ? (
           <>
-            <kbd className="kbd">{statusSquares(customHeardleGuesses.map((g) => g.correctStatus))}</kbd>
-            <p className="text-md">Created by {customHeardleCreator?.name}</p>
-            <div className="flex gap-2">
+            <kbd className="kbd">{statusSquares(otherHeardleGuesses.map((g) => g.correctStatus))}</kbd>
+            {onCustomHeardlePage && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
+            <div className="flex gap-2 list-none">
+              {/* due to ModalButton being a list item */}
               <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
                 <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
                 <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
               </button>
-              <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />
+              {onCustomHeardlePage && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
+              {/* TODO: onUnlimitedHeardlePage && <button>Generate another Heardle</button> */}
             </div>
           </>
         ) : (

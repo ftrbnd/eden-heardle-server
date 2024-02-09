@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import ThemeButton from '../../../components/buttons/ThemeButton';
 import StatsModal from '../../../components/modals/StatsModal';
-import { ModalButton } from '@/components/buttons/RedirectButton';
+import { LinkButton, ModalButton } from '@/components/buttons/RedirectButton';
 import SignOutButton from '@/components/buttons/SignOutButton';
 
 export function ProfileDropdown({ session }: { session: Session | null }) {
@@ -40,6 +40,7 @@ function Tabs({ onCustomHeardlePage }: { onCustomHeardlePage?: boolean }) {
         </>
       )}
       <ModalButton title="Custom" modalId="custom_heardle_modal" />
+      <LinkButton title="Unlimited" href="/play/unlimited" />
     </>
   );
 }
