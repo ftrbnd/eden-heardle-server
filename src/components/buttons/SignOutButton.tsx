@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { signOut } from 'next-auth/react';
 import { motion } from 'framer-motion';
 
-export default function SignOutButton() {
+export default function SignOutButton({ styled }: { styled: boolean }) {
   return (
     <motion.button
-      className="btn btn-secondary btn-outline"
+      className={`${styled && 'btn btn-secondary btn-outline'}`}
       onClick={() => signOut()}
       whileHover={{
         scale: 1.1,
@@ -19,7 +19,7 @@ export default function SignOutButton() {
       whileTap={{ scale: 0.9 }}
     >
       Sign Out
-      <FontAwesomeIcon icon={faArrowRightFromBracket} />
+      {styled && <FontAwesomeIcon icon={faArrowRightFromBracket} />}
     </motion.button>
   );
 }

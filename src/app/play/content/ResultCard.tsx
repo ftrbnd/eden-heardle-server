@@ -1,4 +1,4 @@
-import OpenModalButton from '@/components/buttons/OpenModalButton';
+import { ModalButton } from '@/components/buttons/RedirectButton';
 import statusSquares from '@/utils/statusSquares';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -140,14 +140,14 @@ export default function ResultCard({ song, guessedSong, onCustomHeardlePage, cus
                 <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
                 <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
               </button>
-              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Create your own" className="btn btn-outline" />
+              <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />
             </div>
           </>
         ) : (
           <>
             <p className="text-md">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
             <Countdown />
-            <OpenModalButton modalId="stats_modal" modalTitle="View Statistics" className={`btn glass btn-ghost`} />
+            <ModalButton title="View Statistics" modalId="stats_modal" className="btn glass btn-ghost" />
           </>
         )}
       </div>
