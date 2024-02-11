@@ -35,25 +35,19 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
 
   return (
     <div className="flex flex-col items-center h-full">
-      <Navbar onCustomHeardlePage={true}>{children}</Navbar>
+      <Navbar>{children}</Navbar>
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <AnimatePresence>
           <div className={`grid ${customGuesses?.length === 0 ? 'grid-rows-1' : 'grid-rows-6'} w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center`}>
             {customGuesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
             ))}
-            {customGuesses.length === 0 && <WelcomeCard heardleType="custom" customHeardleCreator={customHeardleCreator?.name} />}
+            {customGuesses.length === 0 && <WelcomeCard heardleType="CUSTOM" customHeardleCreator={customHeardleCreator?.name} />}
           </div>
         </AnimatePresence>
 
         {finishedHeardle(customGuesses) ? (
-          <ResultCard
-            song={customHeardleSong!}
-            guessedSong={correctlyGuessedHeardle(customGuesses)}
-            onCustomHeardlePage
-            customHeardleCreator={customHeardleCreator!}
-            otherHeardleGuesses={customGuesses}
-          />
+          <ResultCard song={customHeardleSong!} guessedSong={correctlyGuessedHeardle(customGuesses)} customHeardleCreator={customHeardleCreator!} otherHeardleGuesses={customGuesses} />
         ) : (
           <div></div>
         )}

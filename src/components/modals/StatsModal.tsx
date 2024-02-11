@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
 import useStatistics from '@/hooks/useStatistics';
-import statusSquares from '@/utils/statusSquares';
+import { statusSquares } from '@/utils/functions';
 import StatsGrid from '../StatsGrid';
 import { finishedHeardle } from '@/utils/userGuesses';
 

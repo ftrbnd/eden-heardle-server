@@ -1,18 +1,17 @@
 import { ModalButton } from '@/components/buttons/RedirectButton';
-import statusSquares from '@/utils/statusSquares';
+import { statusSquares, onnCustomHeardlePage } from '@/utils/functions';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CustomHeardle, DailySong, GuessedSong, User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { CSSProperties, useState, useEffect, MouseEvent, useMemo } from 'react';
 
 interface ResultCardProps {
   song: DailySong | CustomHeardle;
   guessedSong: boolean;
-  onCustomHeardlePage?: boolean;
   customHeardleCreator?: User;
   otherHeardleGuesses?: GuessedSong[];
   onUnlimitedHeardlePage?: boolean;
@@ -104,8 +103,9 @@ function Countdown() {
   );
 }
 
-export default function ResultCard({ song, guessedSong, onCustomHeardlePage, onUnlimitedHeardlePage, customHeardleCreator, otherHeardleGuesses }: ResultCardProps) {
+export default function ResultCard({ song, guessedSong, onUnlimitedHeardlePage, customHeardleCreator, otherHeardleGuesses }: ResultCardProps) {
   const [copied, setCopied] = useState(false);
+  const pathname = usePathname();
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
@@ -132,17 +132,17 @@ export default function ResultCard({ song, guessedSong, onCustomHeardlePage, onU
       <div className="card-body items-center">
         <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
 
-        {(onCustomHeardlePage || onUnlimitedHeardlePage) && otherHeardleGuesses ? (
+        {(onnCustomHeardlePage(pathname) || onUnlimitedHeardlePage) && otherHeardleGuesses ? (
           <>
             <kbd className="kbd">{statusSquares(otherHeardleGuesses.map((g) => g.correctStatus))}</kbd>
-            {onCustomHeardlePage && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
+            {onnCustomHeardlePage(pathname) && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
             <div className="flex gap-2 list-none">
               {/* due to ModalButton being a list item */}
               <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
                 <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
                 <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
               </button>
-              {onCustomHeardlePage && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
+              {onnCustomHeardlePage(pathname) && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
               {/* TODO: onUnlimitedHeardlePage && <button>Generate another Heardle</button> */}
             </div>
           </>

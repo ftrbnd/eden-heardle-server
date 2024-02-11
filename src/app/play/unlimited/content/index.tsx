@@ -27,14 +27,14 @@ export default function UnlimitedPageContent({ children }: PageProps) {
 
   return (
     <div className="flex flex-col items-center h-full">
-      <Navbar onCustomHeardlePage={true}>{children}</Navbar>
+      <Navbar>{children}</Navbar>
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <AnimatePresence>
           <div className={`grid ${unlimitedGuesses?.length === 0 ? 'grid-rows-1' : 'grid-rows-6'} w-4/5 md:w-3/5 xl:w-2/5 gap-2 place-self-center`}>
             {unlimitedGuesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
             ))}
-            {unlimitedGuesses.length === 0 && <WelcomeCard heardleType="unlimited" />}
+            {unlimitedGuesses.length === 0 && <WelcomeCard heardleType="UNLIMITED" />}
           </div>
         </AnimatePresence>
 

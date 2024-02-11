@@ -5,11 +5,12 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { ReactNode, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import ThemeButton from '../../../components/buttons/ThemeButton';
 import StatsModal from '../../../components/modals/StatsModal';
 import { LinkButton, ModalButton } from '@/components/buttons/RedirectButton';
 import SignOutButton from '@/components/buttons/SignOutButton';
+import { onnCustomHeardlePage } from '@/utils/functions';
 
 export function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -29,23 +30,25 @@ export function ProfileDropdown({ session }: { session: Session | null }) {
   );
 }
 
-function Tabs({ onCustomHeardlePage }: { onCustomHeardlePage?: boolean }) {
+function Tabs() {
+  const pathname = usePathname();
+
   return (
     <>
       <ModalButton title="Rules" modalId="rules_modal" />
-      {!onCustomHeardlePage && (
+      {pathname === '/play' && (
         <>
           <ModalButton title="Statistics" modalId="stats_modal" />
           <ModalButton title="Leaderboard" modalId="leaderboard_modal" />
         </>
       )}
-      <ModalButton title="Custom" modalId="custom_heardle_modal" />
-      <LinkButton title="Unlimited" href="/play/unlimited" />
+      {(pathname === '/play' || onnCustomHeardlePage(pathname)) && <ModalButton title="Custom" modalId="custom_heardle_modal" />}
+      {pathname !== '/play/unlimited' && <LinkButton title="Unlimited" href="/play/unlimited" />}
     </>
   );
 }
 
-export default function Navbar({ children, onCustomHeardlePage }: { children: ReactNode; onCustomHeardlePage?: boolean }) {
+export default function Navbar({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const openRules = searchParams.get('rules');
@@ -68,7 +71,7 @@ export default function Navbar({ children, onCustomHeardlePage }: { children: Re
             {/* <div className="badge badge-primary badge-xs badge-success"></div> */}
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            <Tabs onCustomHeardlePage={onCustomHeardlePage} />
+            <Tabs />
           </ul>
         </div>
         <Link href={'/'} className="btn btn-ghost normal-case text-xl px-2 lg:px-4">
@@ -78,7 +81,7 @@ export default function Navbar({ children, onCustomHeardlePage }: { children: Re
 
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <Tabs onCustomHeardlePage={onCustomHeardlePage} />
+          <Tabs />
         </ul>
       </div>
 
