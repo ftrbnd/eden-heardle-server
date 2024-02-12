@@ -5,9 +5,10 @@ interface WelcomeProps {
   heardleDay?: number | null | undefined;
   heardleType?: HeardleType;
   customHeardleCreator?: string | null;
+  error?: any;
 }
 
-export default function WelcomeCard({ heardleDay, heardleType, customHeardleCreator }: WelcomeProps) {
+export default function WelcomeCard({ heardleDay, heardleType, customHeardleCreator, error }: WelcomeProps) {
   return (
     <div className="card w-full bg-base-200 shadow-xl">
       <div className="card-body">
@@ -18,9 +19,8 @@ export default function WelcomeCard({ heardleDay, heardleType, customHeardleCrea
           {heardleType === 'UNLIMITED' && <h1 className="text-3xl lg:text-5xl font-bold">Unlimited Heardle</h1>}
         </div>
         <p className="text-sm lg:text-lg text-center">Press play and choose a song to get started!</p>
-        {heardleType === 'CUSTOM' && (
-          <p className={`text-sm lg:text-lg text-center ${!customHeardleCreator && 'text-error'}`}>{customHeardleCreator ? `Created by ${customHeardleCreator}` : 'Failed to find Custom Heardle'}</p>
-        )}
+        {heardleType === 'CUSTOM' && customHeardleCreator && <p className={`text-sm lg:text-lg text-center`}>Created by ${customHeardleCreator}</p>}
+        {error && <p className="text-sm lg:text-lg text-center text-error">{error}</p>}
       </div>
     </div>
   );

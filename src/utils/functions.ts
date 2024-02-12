@@ -21,7 +21,7 @@ const statusSquares = (guessStatuses: string[]): string => {
     squares.push(getStatusSquare(status));
   });
 
-  return squares.join('');
+  return squares.join(' ');
 };
 
 const finishedHeardle = (guesses?: GuessedSong[] | LocalGuessedSong[] | null) => guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT';

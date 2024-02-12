@@ -1,20 +1,21 @@
 import { ModalButton } from '@/components/buttons/RedirectButton';
 import { statusSquares, onnCustomHeardlePage } from '@/utils/functions';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRotateRight, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CustomHeardle, DailySong, GuessedSong, User } from '@prisma/client';
+import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle, User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { CSSProperties, useState, useEffect, MouseEvent, useMemo } from 'react';
+import { CSSProperties, useState, useEffect, MouseEvent } from 'react';
 
 interface ResultCardProps {
-  song: DailySong | CustomHeardle;
+  song: DailySong | CustomHeardle | UnlimitedHeardle;
   guessedSong: boolean;
   customHeardleCreator?: User;
   otherHeardleGuesses?: GuessedSong[];
   onUnlimitedHeardlePage?: boolean;
+  getNewUnlimitedSong?: () => Promise<void>;
 }
 
 interface CSSPropertiesWithVars extends CSSProperties {
@@ -103,7 +104,7 @@ function Countdown() {
   );
 }
 
-export default function ResultCard({ song, guessedSong, onUnlimitedHeardlePage, customHeardleCreator, otherHeardleGuesses }: ResultCardProps) {
+export default function ResultCard({ song, guessedSong, customHeardleCreator, otherHeardleGuesses, getNewUnlimitedSong }: ResultCardProps) {
   const [copied, setCopied] = useState(false);
   const pathname = usePathname();
 
@@ -130,25 +131,31 @@ export default function ResultCard({ song, guessedSong, onUnlimitedHeardlePage, 
         <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
       </figure>
       <div className="card-body items-center">
-        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
-
-        {(onnCustomHeardlePage(pathname) || onUnlimitedHeardlePage) && otherHeardleGuesses ? (
+        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? `Great job on ${pathname === '/play' ? "today's" : 'this;'} puzzle!` : `The song was ${song?.name}`}</h2>
+        {(onnCustomHeardlePage(pathname) || pathname === '/play/unlimited') && otherHeardleGuesses ? (
           <>
             <kbd className="kbd">{statusSquares(otherHeardleGuesses.map((g) => g.correctStatus))}</kbd>
             {onnCustomHeardlePage(pathname) && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
             <div className="flex gap-2 list-none">
               {/* due to ModalButton being a list item */}
-              <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
-                <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
-                <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
-              </button>
+              {pathname !== '/play/unlimited' && (
+                <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
+                  <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
+                  <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
+                </button>
+              )}
               {onnCustomHeardlePage(pathname) && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
-              {/* TODO: onUnlimitedHeardlePage && <button>Generate another Heardle</button> */}
+              {pathname === '/play/unlimited' && (
+                <button onClick={getNewUnlimitedSong} className="btn glass btn-ghost">
+                  New Song
+                  <FontAwesomeIcon icon={faArrowRotateRight} className="h-6 w-6" />
+                </button>
+              )}
             </div>
           </>
         ) : (
           <>
-            <p className="text-md">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
+            <p className="text-md">{guessedSong ? 'Check back getNewUnlimitedSong for a new song.' : 'Try again tomorrow!'}</p>
             <Countdown />
             <ModalButton title="View Statistics" modalId="stats_modal" className="btn glass btn-ghost" />
           </>

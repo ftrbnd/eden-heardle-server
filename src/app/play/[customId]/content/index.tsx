@@ -22,12 +22,16 @@ interface PageProps {
 export default function CustomHeardlePageContent({ params, children }: PageProps) {
   const [customGuesses, setCustomGuesses] = useState<GuessedSong[]>([]);
 
-  const { data: customHeardleSong, isLoading: songLoading } = useQuery({
+  const {
+    data: customHeardleSong,
+    isLoading: songLoading,
+    error: songError
+  } = useQuery({
     queryKey: ['customHeardle', params.customId],
     queryFn: () => getOtherCustomHeardle(params.customId)
   });
 
-  const { data: customHeardleCreator } = useQuery({
+  const { data: customHeardleCreator, error: creatorError } = useQuery({
     queryKey: ['customHeardleCreator'],
     queryFn: () => getUser(customHeardleSong!.userId),
     enabled: !!customHeardleSong?.userId
@@ -42,7 +46,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
             {customGuesses.map((song, index) => (
               <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
             ))}
-            {customGuesses.length === 0 && <WelcomeCard heardleType="CUSTOM" customHeardleCreator={customHeardleCreator?.name} />}
+            {customGuesses.length === 0 && <WelcomeCard heardleType="CUSTOM" customHeardleCreator={customHeardleCreator?.name} error={songError || creatorError} />}
           </div>
         </AnimatePresence>
 
@@ -53,7 +57,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
         )}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput heardleSong={customHeardleSong!} guesses={customGuesses} setOtherGuesses={setCustomGuesses} />
+        <SongSelectInput heardleSong={customHeardleSong!} songLoading={songLoading} guesses={customGuesses} setOtherGuesses={setCustomGuesses} />
         <AudioPlayer song={customHeardleSong!} songLoading={songLoading} guesses={customGuesses} />
       </div>
     </div>

@@ -66,7 +66,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
         {finishedHeardle(guesses) ? <ResultCard song={dailySong!} guessedSong={correctlyGuessedHeardle(guesses)} /> : <div></div>}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput heardleSong={dailySong!} guesses={guesses!} />
+        <SongSelectInput heardleSong={dailySong!} songLoading={dailySongLoading} guesses={guesses!} />
         <AudioPlayer song={dailySong!} songLoading={dailySongLoading || loadingGuesses || !guesses} guesses={guesses} />
       </div>
     </div>
