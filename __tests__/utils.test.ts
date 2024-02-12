@@ -1,7 +1,8 @@
 import ytdl from 'ytdl-core';
 import { mockSongs } from '../__mocks__/data';
 import { prismaMock } from '../__mocks__/singleton';
-import { getRandomSong, getRandomStartTime } from '../src/utils/setDailySong';
+import { getRandomSong, getRandomStartTime } from '../src/utils/heardleGenerators';
+import { Heardle } from '../src/utils/logger';
 
 jest.mock('ytdl-core');
 
@@ -11,7 +12,7 @@ describe('Test utility functions', () => {
       prismaMock.song.count.mockResolvedValue(mockSongs.length);
       prismaMock.song.findMany.mockResolvedValue(mockSongs);
 
-      const res = await getRandomSong();
+      const res = await getRandomSong(Heardle.Daily);
 
       expect(res).toHaveProperty('album', 'End Credits');
     });
@@ -25,7 +26,7 @@ describe('Test utility functions', () => {
         };
       });
 
-      const startTime = await getRandomStartTime(mockSongs[0]);
+      const startTime = await getRandomStartTime(mockSongs[0], Heardle.Daily);
 
       expect(startTime).toBeGreaterThanOrEqual(0);
       expect(startTime).toBeLessThanOrEqual(235);
