@@ -7,7 +7,7 @@
     "dev": "nodemon",
     "start": "node dist/server.js",
     "build": "tsc",
-    "postinstall": "prisma db pull && prisma generate && tsc",
+    "postinstall": "tsc && prisma generate",
     "test": "jest --verbose --runInBand --detectOpenHandles"
   },
   "dependencies": {
