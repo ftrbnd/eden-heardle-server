@@ -3,7 +3,7 @@
 import { GuessCard } from '@/components/GuessCard';
 import Navbar from '@/app/play/content/Navbar';
 import { GuessedSong, UnlimitedHeardle } from '@prisma/client';
-import { ReactNode, use, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
 import WelcomeCard from '@/app/play/content/WelcomeCard';
