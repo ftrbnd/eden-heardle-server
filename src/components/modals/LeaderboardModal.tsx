@@ -10,7 +10,7 @@ import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import statusSquares from '@/utils/statusSquares';
+import { statusSquares } from '@/utils/functions';
 import { getStats } from '@/services/users';
 import { IndividualLeaderboardStat } from '@/utils/types';
 

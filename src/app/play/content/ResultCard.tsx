@@ -1,20 +1,21 @@
-import OpenModalButton from '@/components/buttons/OpenModalButton';
-import statusSquares from '@/utils/statusSquares';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { ModalButton } from '@/components/buttons/RedirectButton';
+import { statusSquares, onnCustomHeardlePage } from '@/utils/functions';
+import { faArrowRotateRight, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CustomHeardle, DailySong, GuessedSong, User } from '@prisma/client';
+import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle, User } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { CSSProperties, useState, useEffect, MouseEvent, useMemo } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { CSSProperties, useState, useEffect, MouseEvent } from 'react';
 
 interface ResultCardProps {
-  song: DailySong | CustomHeardle;
+  song: DailySong | CustomHeardle | UnlimitedHeardle;
   guessedSong: boolean;
-  onCustomHeardlePage?: boolean;
   customHeardleCreator?: User;
-  customHeardleGuesses?: GuessedSong[];
+  otherHeardleGuesses?: GuessedSong[];
+  onUnlimitedHeardlePage?: boolean;
+  getNewUnlimitedSong?: () => Promise<void>;
 }
 
 interface CSSPropertiesWithVars extends CSSProperties {
@@ -103,15 +104,16 @@ function Countdown() {
   );
 }
 
-export default function ResultCard({ song, guessedSong, onCustomHeardlePage, customHeardleCreator, customHeardleGuesses }: ResultCardProps) {
+export default function ResultCard({ song, guessedSong, customHeardleCreator, otherHeardleGuesses, getNewUnlimitedSong }: ResultCardProps) {
   const [copied, setCopied] = useState(false);
+  const pathname = usePathname();
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();
-    if (copied || !customHeardleGuesses) return;
+    if (copied || !otherHeardleGuesses) return;
 
     setCopied(true);
-    await navigator.clipboard.writeText(`EDEN Heardle #${customHeardleCreator?.name} ${statusSquares(customHeardleGuesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
+    await navigator.clipboard.writeText(`EDEN Heardle #${customHeardleCreator?.name} ${statusSquares(otherHeardleGuesses.map((g) => g.correctStatus)).replace(/\s/g, '')}`);
 
     setTimeout(() => {
       setCopied(false);
@@ -129,25 +131,33 @@ export default function ResultCard({ song, guessedSong, onCustomHeardlePage, cus
         <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
       </figure>
       <div className="card-body items-center">
-        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? "Great job on today's puzzle!" : `The song was ${song?.name}`}</h2>
-
-        {onCustomHeardlePage && customHeardleGuesses ? (
+        <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? `Great job on ${pathname === '/play' ? "today's" : 'this;'} puzzle!` : `The song was ${song?.name}`}</h2>
+        {(onnCustomHeardlePage(pathname) || pathname === '/play/unlimited') && otherHeardleGuesses ? (
           <>
-            <kbd className="kbd">{statusSquares(customHeardleGuesses.map((g) => g.correctStatus))}</kbd>
-            <p className="text-md">Created by {customHeardleCreator?.name}</p>
-            <div className="flex gap-2">
-              <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
-                <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
-                <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
-              </button>
-              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Create your own" className="btn btn-outline" />
+            <kbd className="kbd">{statusSquares(otherHeardleGuesses.map((g) => g.correctStatus))}</kbd>
+            {onnCustomHeardlePage(pathname) && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
+            <div className="flex gap-2 list-none">
+              {/* due to ModalButton being a list item */}
+              {pathname !== '/play/unlimited' && (
+                <button className={`btn ${copied ? 'btn-success' : 'btn-primary'}`} onClick={(e) => copyToClipboard(e)}>
+                  <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
+                  <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
+                </button>
+              )}
+              {onnCustomHeardlePage(pathname) && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
+              {pathname === '/play/unlimited' && (
+                <button onClick={getNewUnlimitedSong} className="btn glass btn-ghost">
+                  New Song
+                  <FontAwesomeIcon icon={faArrowRotateRight} className="h-6 w-6" />
+                </button>
+              )}
             </div>
           </>
         ) : (
           <>
-            <p className="text-md">{guessedSong ? 'Check back tomorrow for a new song.' : 'Try again tomorrow!'}</p>
+            <p className="text-md">{guessedSong ? 'Check back getNewUnlimitedSong for a new song.' : 'Try again tomorrow!'}</p>
             <Countdown />
-            <OpenModalButton modalId="stats_modal" modalTitle="View Statistics" className={`btn glass btn-ghost`} />
+            <ModalButton title="View Statistics" modalId="stats_modal" className="btn glass btn-ghost" />
           </>
         )}
       </div>

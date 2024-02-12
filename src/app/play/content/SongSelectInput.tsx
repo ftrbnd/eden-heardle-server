@@ -5,25 +5,26 @@ import useSongs from '@/hooks/useSongs';
 import { LocalGuessedSong } from '@/utils/types';
 import { finishedHeardle } from '@/utils/userGuesses';
 import { createId } from '@paralleldrive/cuid2';
-import { Song, DailySong, CustomHeardle, GuessedSong } from '@prisma/client';
+import { Song, DailySong, CustomHeardle, GuessedSong, UnlimitedHeardle } from '@prisma/client';
 import { useEffect, ChangeEvent, Dispatch, SetStateAction } from 'react';
 
 interface SelectProps {
-  heardleSong: DailySong | CustomHeardle;
+  heardleSong: DailySong | CustomHeardle | UnlimitedHeardle;
+  songLoading: boolean;
   guesses: GuessedSong[] | LocalGuessedSong[];
-  setCustomGuesses?: Dispatch<SetStateAction<GuessedSong[]>>;
+  setOtherGuesses?: Dispatch<SetStateAction<GuessedSong[]>>;
 }
 
-export default function SongSelectInput({ heardleSong, guesses, setCustomGuesses }: SelectProps) {
+export default function SongSelectInput({ heardleSong, songLoading, guesses, setOtherGuesses }: SelectProps) {
   const { songs, songsLoading } = useSongs();
   const { submitGuess } = useGuesses();
 
   useEffect(() => {
-    if (finishedHeardle(guesses) && !setCustomGuesses) {
+    if (finishedHeardle(guesses) && !setOtherGuesses) {
       const modal = document.getElementById('stats_modal') as HTMLDialogElement;
       if (!modal.open) modal.showModal();
     }
-  }, [guesses, setCustomGuesses]);
+  }, [guesses, setOtherGuesses]);
 
   const handleSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     function getCorrectStatus(song: Song) {
@@ -36,10 +37,10 @@ export default function SongSelectInput({ heardleSong, guesses, setCustomGuesses
     const selectedSong = songs?.find((song) => song.name === event.target.value);
     if (!selectedSong) return;
 
-    if (!setCustomGuesses) {
+    if (!setOtherGuesses) {
       submitGuess(selectedSong, getCorrectStatus(selectedSong));
     } else {
-      setCustomGuesses((prev) => [...prev, { ...selectedSong, correctStatus: getCorrectStatus(selectedSong), id: createId(), guessListId: createId() }]);
+      setOtherGuesses((prev) => [...prev, { ...selectedSong, correctStatus: getCorrectStatus(selectedSong), id: createId(), guessListId: createId() }]);
     }
   };
 
@@ -49,7 +50,12 @@ export default function SongSelectInput({ heardleSong, guesses, setCustomGuesses
   };
 
   return (
-    <select className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center" defaultValue={'Choose a Song'} onChange={handleSelection} disabled={songsLoading}>
+    <select
+      className="select select-primary w-full md:w-3/5 xl:w-2/5 place-self-center"
+      defaultValue={'Choose a Song'}
+      onChange={handleSelection}
+      disabled={songsLoading || songLoading || !heardleSong}
+    >
       <option className="default_selection">Choose a song!</option>
       {songs?.map((song) => (
         <option key={song.id} value={song.name} disabled={disableOption(song)}>

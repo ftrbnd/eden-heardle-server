@@ -27,7 +27,7 @@ export default async function SettingsModal() {
           <div className="divider m-0"></div>
         </div>
         <p className="font-bold text-xs">© 2024 giosalad</p>
-        <div className="flex flex-col items-end">{session ? <SignOutButton /> : <SignInButton />}</div>
+        <div className="flex flex-col items-end">{session ? <SignOutButton styled /> : <SignInButton />}</div>
       </div>
 
       <form method="dialog" className="modal-backdrop">

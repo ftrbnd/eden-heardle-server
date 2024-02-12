@@ -73,3 +73,5 @@ export interface LeaderboardStats {
 }
 
 export type IndividualLeaderboardStat = TodayStat | WinPctStat | AccuracyStat | CurStrkStat | MaxStrkStat;
+
+export type HeardleType = 'DAILY' | 'CUSTOM' | 'UNLIMITED';

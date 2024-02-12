@@ -1,15 +1,16 @@
 'use client';
 
 import { Session } from 'next-auth';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { ReactNode, useEffect } from 'react';
-import OpenModalButton from '../../../components/buttons/OpenModalButton';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import ThemeButton from '../../../components/buttons/ThemeButton';
 import StatsModal from '../../../components/modals/StatsModal';
-import { motion } from 'framer-motion';
+import { LinkButton, ModalButton } from '@/components/buttons/RedirectButton';
+import SignOutButton from '@/components/buttons/SignOutButton';
+import { onnCustomHeardlePage } from '@/utils/functions';
 
 export function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -20,28 +21,34 @@ export function ProfileDropdown({ session }: { session: Session | null }) {
         </div>
       </label>
       <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+        <ModalButton title="Settings" modalId="settings_modal" />
         <li>
-          <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
-        </li>
-        <li onClick={() => signOut()}>
-          <motion.a
-            whileHover={{
-              scale: 1.1,
-              transition: {
-                duration: 0.2
-              }
-            }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Sign Out
-          </motion.a>
+          <SignOutButton styled={false} />
         </li>
       </ul>
     </div>
   );
 }
 
-export default function Navbar({ children, onCustomHeardlePage }: { children: ReactNode; onCustomHeardlePage?: boolean }) {
+function Tabs() {
+  const pathname = usePathname();
+
+  return (
+    <>
+      <ModalButton title="Rules" modalId="rules_modal" />
+      {pathname === '/play' && (
+        <>
+          <ModalButton title="Statistics" modalId="stats_modal" />
+          <ModalButton title="Leaderboard" modalId="leaderboard_modal" />
+        </>
+      )}
+      {(pathname === '/play' || onnCustomHeardlePage(pathname)) && <ModalButton title="Custom" modalId="custom_heardle_modal" />}
+      {pathname !== '/play/unlimited' && <LinkButton title="Unlimited" href="/play/unlimited" />}
+    </>
+  );
+}
+
+export default function Navbar({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const openRules = searchParams.get('rules');
@@ -64,46 +71,17 @@ export default function Navbar({ children, onCustomHeardlePage }: { children: Re
             {/* <div className="badge badge-primary badge-xs badge-success"></div> */}
           </label>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            <li>
-              <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
-            </li>
-            {!onCustomHeardlePage && (
-              <>
-                <li>
-                  <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-                </li>
-                <li>
-                  <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
-                </li>
-              </>
-            )}
-            <li>
-              <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
-            </li>
+            <Tabs />
           </ul>
         </div>
         <Link href={'/'} className="btn btn-ghost normal-case text-xl px-2 lg:px-4">
           EDEN Heardle
         </Link>
       </div>
+
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li>
-            <OpenModalButton modalId="rules_modal" modalTitle="Rules" />
-          </li>
-          {!onCustomHeardlePage && (
-            <>
-              <li>
-                <OpenModalButton modalId="stats_modal" modalTitle="Statistics" />
-              </li>
-              <li>
-                <OpenModalButton modalId="leaderboard_modal" modalTitle="Leaderboard" />
-              </li>
-            </>
-          )}
-          <li>
-            <OpenModalButton modalId="custom_heardle_modal" modalTitle="Custom Heardle" />
-          </li>
+          <Tabs />
         </ul>
       </div>
 
@@ -115,13 +93,7 @@ export default function Navbar({ children, onCustomHeardlePage }: { children: Re
         <li>
           <ThemeButton />
         </li>
-        {session ? (
-          <ProfileDropdown session={session} />
-        ) : (
-          <li>
-            <OpenModalButton modalId="settings_modal" modalTitle="Settings" />
-          </li>
-        )}
+        {session ? <ProfileDropdown session={session} /> : <ModalButton title="Settings" modalId="settings_modal" />}
       </div>
     </div>
   );
