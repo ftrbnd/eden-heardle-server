@@ -5,7 +5,7 @@ export enum Heardle {
 }
 
 export const logger = (type: Heardle, ...params: any) => {
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV !== 'test' && type !== Heardle.Unlimited) {
     console.log(type, ...params);
   }
 };
