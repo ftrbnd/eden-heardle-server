@@ -1,9 +1,10 @@
 import supertest from 'supertest';
 import app from '../src/app';
-import { mockSongs } from '../__mocks__/data';
+import { mockCustomHeardle, mockSongs } from '../__mocks__/data';
 import { parseDeleteRequest, parsePostRequest } from '../src/utils/parseRequestBody';
 import { downloadMp3 } from '../src/utils/downloadMp3';
 import { prismaMock } from '../__mocks__/singleton';
+import { Heardle } from '../src/utils/logger';
 
 jest.mock('../src/utils/downloadMp3');
 
@@ -55,7 +56,11 @@ describe(`Test ${API_ENDPOINT}`, () => {
     describe('with a valid request body', () => {
       it('expects status code 200', async () => {
         (downloadMp3 as jest.Mock).mockImplementation(() => {
-          return 'shareablelink';
+          return {
+            ...mockSongs[0],
+            startTime: 0,
+            userId: 'fakeid'
+          };
         });
 
         const response = await api.post(API_ENDPOINT).send({
@@ -64,23 +69,9 @@ describe(`Test ${API_ENDPOINT}`, () => {
           userId: 'fakeid'
         });
 
-        expect(downloadMp3).toHaveBeenCalledWith(
-          {
-            id: '1',
-            name: 'End Credits',
-            album: 'End Credits',
-            cover: 'https://i1.sndcdn.com/artworks-000125721149-whx70j-t500x500.jpg',
-            duration: 241,
-            link: 'https://youtu.be/0pVABElms84'
-          },
-          0,
-          'fakeid'
-        );
+        expect(downloadMp3).toHaveBeenCalledWith(mockSongs[0], 0, Heardle.Custom, 'fakeid');
         expect(response.status).toBe(200);
-        expect(response.body).toMatchObject({
-          message: 'Successfully created Custom Heardle',
-          link: 'shareablelink'
-        });
+        expect(response.body).toHaveProperty('message', 'Successfully created Custom Heardle');
       });
     });
 

@@ -1,4 +1,4 @@
-import { User, GuessedSong, Guesses, Statistics, DailySong, Song } from '@prisma/client';
+import { User, GuessedSong, Guesses, Statistics, DailySong, Song, CustomHeardle } from '@prisma/client';
 
 export const mockSongs: Song[] = [
   {
@@ -114,4 +114,15 @@ export const mockNextDailySong: DailySong = {
   link: 'https://youtu.be/f1eMI0d-1Hs',
   startTime: 24,
   nextReset: null
+};
+
+export const mockCustomHeardle: CustomHeardle = {
+  id: 'mock-custom-heardle',
+  userId: '0209',
+  name: 'forever//over',
+  album: 'vertigo',
+  cover: 'https://i1.sndcdn.com/artworks-000287371922-scp0d8-t500x500.jpg',
+  duration: 343,
+  link: 'https://mfovtgsiorxivjjhwtyw.supabase.co/storage/v1/object/sign/custom_heardles/custom_song_tjxl0ewonswi3mg3y08ks8zk.mp3?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJjdXN0b21faGVhcmRsZXMvY3VzdG9tX3NvbmdfdGp4bDBld29uc3dpM21nM3kwOGtzOHprLm1wMyIsImlhdCI6MTcwNTA5MDIxNywiZXhwIjoxNzA1MjYzMDE3fQ.K_oYGeJUzoNpzifof3CoO7rmccIHU9GlD2OWp9GYRc8',
+  startTime: 209
 };
