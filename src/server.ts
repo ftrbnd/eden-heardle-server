@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import { env } from './utils/env';
 
 import app from './app';
 import { registerDailyHeardleCronJob, registerUnlimitedHeardleCronJob } from './lib/cron';
@@ -7,6 +6,6 @@ import { registerDailyHeardleCronJob, registerUnlimitedHeardleCronJob } from './
 registerDailyHeardleCronJob();
 registerUnlimitedHeardleCronJob();
 
-app.listen(process.env.PORT || 3001, () => {
-  console.log(`Server ready at port ${process.env.PORT || 3001} `);
+app.listen(env.PORT, () => {
+  console.log(`Server ready at port ${env.PORT} `);
 });

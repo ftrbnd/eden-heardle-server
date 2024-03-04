@@ -1,12 +1,12 @@
 import supertest from 'supertest';
 import app from '../src/app';
-import { mockCustomHeardle, mockSongs } from '../__mocks__/data';
+import { mockSongs } from '../__mocks__/data';
 import { parseDeleteRequest, parsePostRequest } from '../src/utils/parseRequestBody';
-import { downloadMp3 } from '../src/utils/downloadMp3';
+import { downloadMp3 } from '../src/helpers/downloadMp3';
 import { prismaMock } from '../__mocks__/singleton';
 import { Heardle } from '../src/utils/logger';
 
-jest.mock('../src/utils/downloadMp3');
+jest.mock('../src/helpers/downloadMp3');
 
 const api = supertest(app);
 const API_ENDPOINT = '/api/customHeardle';

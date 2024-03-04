@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
-import { downloadMp3 } from '../utils/downloadMp3';
+import { downloadMp3 } from '../helpers/downloadMp3';
 import { Heardle, logger } from '../utils/logger';
 import { parseDeleteRequest, parsePostRequest } from '../utils/parseRequestBody';
 import { CustomHeardle } from '@prisma/client';

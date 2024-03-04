@@ -1,6 +1,6 @@
 import { Statistics } from '@prisma/client';
 import { prismaMock } from '../__mocks__/singleton';
-import { getNextDailySong, resetGuesses, updateAllStreaks, updateDailySong, updateStatistics, userGuessedCorrectly } from '../src/utils/updateDatabase';
+import { getNextDailySong, resetGuesses, updateAllStreaks, updateDailySong, updateStatistics, userGuessedCorrectly } from '../src/helpers/updateDatabase';
 import { mockGuessList, mockGuessListWrong, mockNextDailySong, mockStatistics, mockUser } from '../__mocks__/data';
 
 describe('Test database interactions with Prisma mock', () => {
