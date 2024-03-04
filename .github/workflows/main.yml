@@ -12,22 +12,28 @@ env:
   DATABASE_URL: ${{secrets.DATABASE_URL}}
   SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  DAILY_HEARDLE_CRON_UTC_HOUR: ${{ secrets.DAILY_HEARDLE_CRON_UTC_HOUR }}
+  DAILY_HEARDLE_CRON_UTC_MINUTE: ${{ secrets.DAILY_HEARDLE_CRON_UTC_MINUTE }}
+  UNLIMITED_HEARDLE_CRON_UTC_HOUR: ${{ secrets.UNLIMITED_HEARDLE_CRON_UTC_HOUR }}
+  UNLIMITED_HEARDLE_CRON_UTC_MINUTE: ${{ secrets.UNLIMITED_HEARDLE_CRON_UTC_MINUTE }}
+  WEBHOOK_URL: ${{secrets.WEBHOOK_URL}}
+  PORT: ${{secrets.PORT}}
   WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
 
 jobs:
-  # unit_tests:
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 18.x
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Unit tests
-  #       run: npm test
+  unit_tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Install dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm test
   deploy:
-    # needs: [unit_tests]
+    needs: [unit_tests]
     if: github.event_name == 'push'
     runs-on: ubuntu-22.04
     steps:
