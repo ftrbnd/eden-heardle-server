@@ -1,7 +1,7 @@
 import ytdl from 'ytdl-core';
 import { mockSongs } from '../__mocks__/data';
 import { prismaMock } from '../__mocks__/singleton';
-import { getRandomSong, getRandomStartTime } from '../src/utils/heardleGenerators';
+import { getRandomSong, getRandomStartTime } from '../src/helpers/heardleGenerators';
 import { Heardle } from '../src/utils/logger';
 
 jest.mock('ytdl-core');

@@ -1,6 +1,6 @@
 import { env } from '../utils/env';
 import { CronJob } from 'cron';
-import { setDailySong, repeatCreateUnlimitedHeardle } from '../utils/heardleGenerators';
+import { setDailySong, repeatCreateUnlimitedHeardle } from '../helpers/heardleGenerators';
 
 export const registerDailyHeardleCronJob = () => {
   if (process.env.NODE_ENV === 'test') return;

@@ -6,7 +6,7 @@ import { Blob } from 'buffer';
 import ytdl from 'ytdl-core';
 import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
-import { logger, Heardle } from './logger';
+import { logger, Heardle } from '../utils/logger';
 import { createId } from '@paralleldrive/cuid2';
 
 type Mp3File = Blob & {
@@ -79,7 +79,7 @@ export async function getMp3File(fileName: string, heardleType: Heardle): Promis
 
 export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number, heardleType: Heardle, userId?: string): Promise<DailySong | CustomHeardle | UnlimitedHeardle> {
   switch (heardleType) {
-    case Heardle.Daily: // returns https://eden-heardle.io
+    case Heardle.Daily:
       // get current daily song and ensure it exists
       const previousDailySong = await prisma.dailySong.findUnique({
         where: {
@@ -140,8 +140,8 @@ export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: 
 
       logger(heardleType, 'Saved audio url to Custom Heardle object in Supabase Database');
 
-      return dailyHeardle;
-    case Heardle.Custom: // returns https://eden-heardle.io/play/heardleId
+      return previousDailySong;
+    case Heardle.Custom:
       if (!userId) throw new Error('User Id is required');
       const customId = createId();
 
@@ -185,7 +185,7 @@ export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: 
       logger(heardleType, `Saved audio url to Custom Heardle #${customId} in Supabase Database`);
 
       return customHeardle;
-    case Heardle.Unlimited: // returns supabase audio link
+    case Heardle.Unlimited:
       logger(heardleType, `Uploading to Supabase...`);
       const heardleId = createId();
 
@@ -230,9 +230,9 @@ export async function downloadMp3(song: Song, startTime: number, heardleType: He
     const mp3Filename = await m4aToMp3(`${fileName}.m4a`, startTime, heardleType);
     const mp3File = await getMp3File(mp3Filename, heardleType);
 
-    const newHeardle = await uploadToDatabase(mp3File, song, startTime, heardleType, userId);
+    const heardleSong = await uploadToDatabase(mp3File, song, startTime, heardleType, userId);
 
-    return newHeardle;
+    return heardleSong;
   } catch (err: unknown) {
     logger(heardleType, err);
     throw new Error(`Failed to download "${song.name}.mp3"`);

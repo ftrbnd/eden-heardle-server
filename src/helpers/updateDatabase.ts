@@ -1,6 +1,6 @@
 import { DailySong, Statistics, User } from '@prisma/client';
 import prisma from '../lib/prisma';
-import { Heardle, logger } from './logger';
+import { Heardle, logger } from '../utils/logger';
 
 export async function userGuessedCorrectly(user: User): Promise<boolean> {
   const dailyGuesses = await prisma.guesses.findUnique({
@@ -106,5 +106,6 @@ export async function updateDatabase() {
     return { message: 'Successfully updated users and new daily song!' };
   } catch (error: unknown) {
     logger(Heardle.Daily, "Error updating today's database: ", error);
+    throw new Error("Error updating today's database");
   }
 }
