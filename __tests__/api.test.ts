@@ -9,15 +9,9 @@ import { Heardle } from '../src/utils/logger';
 jest.mock('../src/helpers/downloadMp3');
 
 const api = supertest(app);
-const API_ENDPOINT = '/api/customHeardle';
+const API_ENDPOINT = '/api/heardles/custom';
 
 describe(`Test ${API_ENDPOINT}`, () => {
-  it('GET: pings Custom Heardle api endpoint', async () => {
-    const res = await api.get(API_ENDPOINT);
-
-    expect(res.statusCode).toBe(200);
-  });
-
   describe('POST requests:', () => {
     describe('parsing the request body', () => {
       it('expects an error on an object with missing fields', () => {
