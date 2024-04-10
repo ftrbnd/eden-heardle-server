@@ -89,7 +89,8 @@ export const mockStatistics: Statistics = {
   gamesPlayed: 12,
   gamesWon: 12,
   currentStreak: 12,
-  maxStreak: 12
+  maxStreak: 12,
+  firstStreak: 0
 };
 
 export const mockCurrentDailySong: DailySong = {
