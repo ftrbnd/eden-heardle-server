@@ -34,17 +34,18 @@ model Session {
 }
 
 model User {
-  id             String         @id @default(cuid())
-  name           String?
-  email          String?        @unique
-  emailVerified  DateTime?
-  image          String?
-  earlySupporter Boolean?       @default(false)
-  accounts       Account[]
-  CustomHeardle  CustomHeardle?
-  guesses        Guesses?
-  sessions       Session[]
-  statistics     Statistics?
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String?              @unique
+  emailVerified       DateTime?
+  image               String?
+  earlySupporter      Boolean?             @default(false)
+  accounts            Account[]
+  CustomHeardle       CustomHeardle?
+  FirstCompletedDaily FirstCompletedDaily?
+  guesses             Guesses?
+  sessions            Session[]
+  statistics          Statistics?
 }
 
 model VerificationToken {
@@ -63,6 +64,7 @@ model Statistics {
   userId        String @unique
   currentStreak Int    @default(0)
   accuracy      Int    @default(0)
+  firstStreak   Int    @default(0)
   user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -125,4 +127,10 @@ model UnlimitedHeardle {
   link      String
   startTime Int
   duration  Int?
+}
+
+model FirstCompletedDaily {
+  id     String  @id
+  userId String? @unique
+  User   User?   @relation(fields: [userId], references: [id])
 }
