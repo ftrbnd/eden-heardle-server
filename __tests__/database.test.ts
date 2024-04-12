@@ -34,7 +34,8 @@ describe('Test database interactions with Prisma mock', () => {
       gamesPlayed: 12,
       gamesWon: 12,
       currentStreak: 0,
-      maxStreak: 12
+      maxStreak: 12,
+      firstStreak: 0
     });
   });
 

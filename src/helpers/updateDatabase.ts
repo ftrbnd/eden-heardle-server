@@ -92,12 +92,17 @@ export async function updateDailySong(nextDailySong: DailySong) {
   });
 }
 
+export async function resetFirstCompletedDaily() {
+  return await prisma.firstCompletedDaily.deleteMany({});
+}
+
 export async function updateDatabase() {
   try {
     logger(Heardle.Daily, 'Updating stats and daily song...');
 
     await updateAllStreaks();
     await resetGuesses();
+    await resetFirstCompletedDaily();
     const nextDailySong = await getNextDailySong();
     await updateDailySong(nextDailySong);
 

@@ -2,13 +2,13 @@ import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { downloadMp3 } from '../helpers/downloadMp3';
 import { Heardle, logger } from '../utils/logger';
-import { parseDeleteRequest, parsePostRequest } from '../utils/parseRequestBody';
 import { CustomHeardle } from '@prisma/client';
 import supabase from '../lib/supabase';
+import { deleteSchema, postSchema } from '../utils/schema';
 
 const createCustomHeardle = async (req: Request, res: Response) => {
   try {
-    const { song, startTime, userId } = parsePostRequest(req.body);
+    const { song, startTime, userId } = postSchema.parse(req.body);
 
     logger(Heardle.Custom, `POST request from User #${userId}`);
 
@@ -25,7 +25,7 @@ const createCustomHeardle = async (req: Request, res: Response) => {
 
 const deleteCustomHeardle = async (req: Request, res: Response) => {
   try {
-    const { heardleId, userId } = parseDeleteRequest(req.body);
+    const { heardleId, userId } = deleteSchema.parse(req.body);
 
     logger(Heardle.Custom, `DELETE request from User #${userId}`);
 

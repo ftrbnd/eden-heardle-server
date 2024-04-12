@@ -1,10 +1,10 @@
 import supertest from 'supertest';
 import app from '../src/app';
 import { mockSongs } from '../__mocks__/data';
-import { parseDeleteRequest, parsePostRequest } from '../src/utils/parseRequestBody';
 import { downloadMp3 } from '../src/helpers/downloadMp3';
 import { prismaMock } from '../__mocks__/singleton';
 import { Heardle } from '../src/utils/logger';
+import { deleteSchema, postSchema } from '../src/utils/schema';
 
 jest.mock('../src/helpers/downloadMp3');
 
@@ -16,34 +16,34 @@ describe(`Test ${API_ENDPOINT}`, () => {
     describe('parsing the request body', () => {
       it('expects an error on an object with missing fields', () => {
         expect(() => {
-          parsePostRequest({
+          postSchema.parse({
             song: mockSongs[0],
             startTime: 0
             // missing userId
           });
-        }).toThrow(/some fields are missing/i);
+        }).toThrow();
       });
 
       it('expects an error on an object with properties of invalid types', () => {
         expect(() => {
-          parsePostRequest({
+          postSchema.parse({
             song: 'not-a-song',
             startTime: 'not-a-number',
             userId: 'not-an-id'
           });
-        }).toThrow(/incorrect or missing data/i);
+        }).toThrow();
       });
 
       it('expects an error on an empty object', () => {
         expect(() => {
-          parsePostRequest({});
-        }).toThrow(/some fields are missing/i);
+          postSchema.parse({});
+        }).toThrow();
       });
 
       it('expects an error if not given an object', () => {
         expect(() => {
-          parsePostRequest('not-an-object');
-        }).toThrow(/incorrect or missing data/i);
+          postSchema.parse('not-an-object');
+        }).toThrow();
       });
     });
 
@@ -83,32 +83,32 @@ describe(`Test ${API_ENDPOINT}`, () => {
     describe('parsing the request body', () => {
       it('expects an error on an object with missing fields', () => {
         expect(() => {
-          parseDeleteRequest({
+          deleteSchema.parse({
             heardleId: 'fakeid'
             // missing userId
           });
-        }).toThrow(/some fields are missing/i);
+        }).toThrow();
       });
 
       it('expects an error on an object with properties of invalid types', () => {
         expect(() => {
-          parseDeleteRequest({
+          deleteSchema.parse({
             heardleId: 0,
             userId: 1
           });
-        }).toThrow(/incorrect or missing string value/i);
+        }).toThrow();
       });
 
       it('expects an error on an empty object', () => {
         expect(() => {
-          parseDeleteRequest({});
-        }).toThrow(/some fields are missing/i);
+          deleteSchema.parse({});
+        }).toThrow();
       });
 
       it('expects an error if not given an object', () => {
         expect(() => {
-          parseDeleteRequest('not-an-object');
-        }).toThrow(/incorrect or missing data/i);
+          deleteSchema.parse('not-an-object');
+        }).toThrow();
       });
     });
 
