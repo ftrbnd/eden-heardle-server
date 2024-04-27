@@ -11,10 +11,12 @@ import useStatistics from '@/hooks/useStatistics';
 import StatsGrid from '../StatsGrid';
 import { finishedHeardle, statusSquares } from '@/utils/helpers';
 import { ModalButton } from '../buttons/RedirectButton';
+import { useSession } from 'next-auth/react';
 
 export default function StatsModal() {
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const { data: session } = useSession();
   const { guesses, guessType } = useGuesses();
   const { stats, loadingStats } = useStatistics();
 
@@ -36,7 +38,7 @@ export default function StatsModal() {
     <dialog id="stats_modal" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box min-w-min max-h-80 sm:max-h-max">
         <h3 className="font-bold text-lg">Statistics</h3>
-        <StatsGrid stats={stats} loading={loadingStats} />
+        <StatsGrid stats={stats} userId={session?.user.id} loading={loadingStats} />
 
         {guesses && finishedHeardle(guesses) && (
           <div className="flex justify-center pb-4">

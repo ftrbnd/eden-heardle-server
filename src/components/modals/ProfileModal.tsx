@@ -46,7 +46,7 @@ export default function ProfileModal({ user, showProfile, setShowProfile }: { us
             </div>
           </div>
         </div>
-        {!isLoading && userStats && <StatsGrid stats={userStats} />}
+        {!isLoading && userStats && <StatsGrid stats={userStats} userId={user.id} />}
       </div>
 
       <form method="dialog" className="modal-backdrop">

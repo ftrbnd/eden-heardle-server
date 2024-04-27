@@ -4,7 +4,6 @@ import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { faCalendarDays, faPercent, faBullseye, faArrowTrendUp, faTrophy, faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 
 function StatBox({ stat, title, icon, tooltip, loading, isFirst }: { stat: any; title: string; icon: IconDefinition; tooltip?: string; loading?: boolean; isFirst?: boolean }) {
   return (
@@ -20,9 +19,7 @@ function StatBox({ stat, title, icon, tooltip, loading, isFirst }: { stat: any; 
   );
 }
 
-function StatsGrid({ stats, loading }: { stats: LocalStatistics | null | undefined; loading?: boolean }) {
-  const { data: session } = useSession();
-
+function StatsGrid({ stats, userId, loading }: { stats: LocalStatistics | null | undefined; userId?: string; loading?: boolean }) {
   const { data: firstCompletedDaily } = useQuery({
     queryKey: ['first'],
     queryFn: getFirstCompletedDaily,
@@ -49,9 +46,7 @@ function StatsGrid({ stats, loading }: { stats: LocalStatistics | null | undefin
       />
       <StatBox loading={loading} stat={stats?.currentStreak ?? 0} title={'Current Streak'} icon={faArrowTrendUp} />
       <StatBox loading={loading} stat={stats?.maxStreak ?? 0} title={'Max Streak'} icon={faTrophy} />
-      {session && session.user.id === firstCompletedDaily?.userId && (
-        <StatBox loading={loading} stat={`Streak: ${firstCompletedDaily?.user?.statistics?.firstStreak}`} title="First!" icon={faStar} isFirst />
-      )}
+      {userId === firstCompletedDaily?.userId && <StatBox loading={loading} stat={`Streak: ${firstCompletedDaily?.user?.statistics?.firstStreak}`} title="First!" icon={faStar} isFirst />}
     </div>
   );
 }
