@@ -8,9 +8,8 @@ import { motion } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
 import useStatistics from '@/hooks/useStatistics';
-import { statusSquares } from '@/utils/functions';
 import StatsGrid from '../StatsGrid';
-import { finishedHeardle } from '@/utils/userGuesses';
+import { finishedHeardle, statusSquares } from '@/utils/helpers';
 import { ModalButton } from '../buttons/RedirectButton';
 
 export default function StatsModal() {
@@ -51,7 +50,7 @@ export default function StatsModal() {
           </ModalButton>
 
           {guessType === 'local' && <SignInButton />}
-          {finishedHeardle(guesses) && (
+          {guesses && finishedHeardle(guesses) && (
             <motion.button
               className={`btn ${showSuccess ? 'btn-success' : 'btn-primary'}`}
               onClick={(e) => copyToClipboard(e)}

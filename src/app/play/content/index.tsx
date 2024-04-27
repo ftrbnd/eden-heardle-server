@@ -11,7 +11,7 @@ import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
+import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/helpers';
 import WelcomeCard from '@/app/play/content/WelcomeCard';
 import ResultCard from './ResultCard';
 
@@ -71,11 +71,11 @@ export default function PlayContent({ children }: { children: ReactNode }) {
           </div>
         </AnimatePresence>
 
-        {finishedHeardle(guesses) ? <ResultCard song={dailySong!} guessedSong={correctlyGuessedHeardle(guesses)} /> : <div></div>}
+        {finishedHeardle(guesses) ? <ResultCard song={dailySong} guessedSong={correctlyGuessedHeardle(guesses)} /> : <div></div>}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput heardleSong={dailySong!} songLoading={dailySongLoading} guesses={guesses!} />
-        <AudioPlayer song={dailySong!} songLoading={dailySongLoading || loadingGuesses || !guesses} guesses={guesses} />
+        <SongSelectInput heardleSong={dailySong} songLoading={dailySongLoading} guesses={guesses} />
+        <AudioPlayer song={dailySong} songLoading={dailySongLoading || loadingGuesses || !guesses} guesses={guesses} />
       </div>
     </div>
   );

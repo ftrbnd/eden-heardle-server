@@ -1,5 +1,5 @@
 import { ModalButton } from '@/components/buttons/RedirectButton';
-import { statusSquares, onnCustomHeardlePage } from '@/utils/functions';
+import { statusSquares, onCustomHeardlePage } from '@/utils/helpers';
 import { faArrowRotateRight, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle, User } from '@prisma/client';
@@ -10,7 +10,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { CSSProperties, useState, useEffect, MouseEvent } from 'react';
 
 interface ResultCardProps {
-  song: DailySong | CustomHeardle | UnlimitedHeardle;
+  song?: DailySong | CustomHeardle | UnlimitedHeardle;
   guessedSong: boolean;
   customHeardleCreator?: User;
   otherHeardleGuesses?: GuessedSong[];
@@ -128,14 +128,14 @@ export default function ResultCard({ song, guessedSong, customHeardleCreator, ot
       transition={{ duration: 3 }}
     >
       <figure>
-        <Image src={song?.cover ?? ''} alt={song?.name} fill style={{ objectFit: 'cover' }} priority />
+        <Image src={song?.cover ?? ''} alt={song?.name ?? 'Song name'} fill style={{ objectFit: 'cover' }} priority />
       </figure>
       <div className="card-body items-center">
         <h2 className="font-bold text-center text-lg sm:text-xl md:text-2xl">{guessedSong ? `Great job on ${pathname === '/play' ? "today's" : 'this'} puzzle!` : `The song was ${song?.name}`}</h2>
-        {(onnCustomHeardlePage(pathname) || pathname === '/play/unlimited') && otherHeardleGuesses ? (
+        {(onCustomHeardlePage(pathname) || pathname === '/play/unlimited') && otherHeardleGuesses ? (
           <>
             <kbd className="kbd">{statusSquares(otherHeardleGuesses.map((g) => g.correctStatus))}</kbd>
-            {onnCustomHeardlePage(pathname) && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
+            {onCustomHeardlePage(pathname) && <p className="text-md">Created by {customHeardleCreator?.name}</p>}
             <div className="flex gap-2 list-none">
               {/* due to ModalButton being a list item */}
               {pathname !== '/play/unlimited' && (
@@ -144,7 +144,7 @@ export default function ResultCard({ song, guessedSong, customHeardleCreator, ot
                   <FontAwesomeIcon icon={faCopy} className="h-6 w-6" />
                 </button>
               )}
-              {onnCustomHeardlePage(pathname) && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
+              {onCustomHeardlePage(pathname) && <ModalButton title="Create your own" modalId="custom_heardle_modal" className="btn btn-outline" />}
               {pathname === '/play/unlimited' && (
                 <button onClick={getNewUnlimitedSong} className="btn glass btn-ghost">
                   New Song

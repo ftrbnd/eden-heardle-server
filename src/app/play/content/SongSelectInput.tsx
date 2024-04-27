@@ -3,13 +3,13 @@
 import useGuesses from '@/hooks/useGuesses';
 import useSongs from '@/hooks/useSongs';
 import { LocalGuessedSong } from '@/utils/types';
-import { finishedHeardle } from '@/utils/userGuesses';
+import { finishedHeardle } from '@/utils/helpers';
 import { createId } from '@paralleldrive/cuid2';
 import { Song, DailySong, CustomHeardle, GuessedSong, UnlimitedHeardle } from '@prisma/client';
 import { useEffect, ChangeEvent, Dispatch, SetStateAction, useRef, forwardRef } from 'react';
 
 interface SelectProps {
-  heardleSong: DailySong | CustomHeardle | UnlimitedHeardle;
+  heardleSong?: DailySong | CustomHeardle | UnlimitedHeardle;
   songLoading: boolean;
   guesses: GuessedSong[] | LocalGuessedSong[];
   setOtherGuesses?: Dispatch<SetStateAction<GuessedSong[]>>;
@@ -22,7 +22,9 @@ const MySongSelectInput = forwardRef<Ref, SelectProps>(function SongSelectInput(
   const { submitGuess } = useGuesses();
 
   useEffect(() => {
-    if (finishedHeardle(guesses) && !setOtherGuesses) {
+    console.log({ guesses });
+
+    if (guesses && finishedHeardle(guesses) && !setOtherGuesses) {
       const modal = document.getElementById('stats_modal') as HTMLDialogElement;
       if (!modal.open) modal.showModal();
     }
@@ -48,7 +50,7 @@ const MySongSelectInput = forwardRef<Ref, SelectProps>(function SongSelectInput(
 
   // disable the song if it has already been selected or the user has completed today's heardle
   const disableOption = (song: Song) => {
-    return guesses?.some((guess) => guess.name === song.name) || finishedHeardle(guesses);
+    return guesses.some((guess) => guess.name === song.name) || finishedHeardle(guesses);
   };
 
   return (

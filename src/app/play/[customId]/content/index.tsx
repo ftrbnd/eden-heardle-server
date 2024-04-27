@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
 import { getUser } from '@/services/users';
 import { AnimatePresence } from 'framer-motion';
-import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/userGuesses';
+import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/helpers';
 import WelcomeCard from '@/app/play/content/WelcomeCard';
 import ResultCard from '../../content/ResultCard';
 import AudioPlayer from '../../content/AudioPlayer';
@@ -33,7 +33,7 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
 
   const { data: customHeardleCreator, error: creatorError } = useQuery({
     queryKey: ['customHeardleCreator'],
-    queryFn: () => getUser(customHeardleSong!.userId),
+    queryFn: () => getUser(customHeardleSong?.userId),
     enabled: !!customHeardleSong?.userId
   });
 
@@ -51,14 +51,14 @@ export default function CustomHeardlePageContent({ params, children }: PageProps
         </AnimatePresence>
 
         {finishedHeardle(customGuesses) ? (
-          <ResultCard song={customHeardleSong!} guessedSong={correctlyGuessedHeardle(customGuesses)} customHeardleCreator={customHeardleCreator!} otherHeardleGuesses={customGuesses} />
+          <ResultCard song={customHeardleSong} guessedSong={correctlyGuessedHeardle(customGuesses)} customHeardleCreator={customHeardleCreator} otherHeardleGuesses={customGuesses} />
         ) : (
           <div></div>
         )}
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
-        <SongSelectInput heardleSong={customHeardleSong!} songLoading={songLoading} guesses={customGuesses} setOtherGuesses={setCustomGuesses} />
-        <AudioPlayer song={customHeardleSong!} songLoading={songLoading} guesses={customGuesses} />
+        <SongSelectInput heardleSong={customHeardleSong} songLoading={songLoading} guesses={customGuesses} setOtherGuesses={setCustomGuesses} />
+        <AudioPlayer song={customHeardleSong} songLoading={songLoading} guesses={customGuesses} />
       </div>
     </div>
   );

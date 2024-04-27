@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { createId } from '@paralleldrive/cuid2';
 import { GuessType } from '@/utils/types';
-import { correctlyGuessedHeardle } from '@/utils/userGuesses';
+import { correctlyGuessedHeardle } from '@/utils/helpers';
 import useLocalUser from './useLocalUser';
 import { getGuessedSongs, updateGuessedSongs, updateStats } from '@/services/users';
 import { updateFirstCompletedDaily } from '@/services/leaderboard';
@@ -109,7 +109,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: session ? sessionGuesses : localUser?.guesses, loadingGuesses: sessionStatus === 'loading' || initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
+  return { guesses: session ? sessionGuesses ?? [] : localUser.guesses, loadingGuesses: sessionStatus === 'loading' || initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;

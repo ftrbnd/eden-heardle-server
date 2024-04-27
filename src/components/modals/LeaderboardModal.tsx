@@ -8,9 +8,9 @@ import { useState } from 'react';
 import SignInButton from '../buttons/SignInButton';
 import { User } from '@prisma/client';
 import ProfileModal from './ProfileModal';
-import { fa1, faGem, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { statusSquares } from '@/utils/functions';
+import { statusSquares } from '@/utils/helpers';
 import { getStats } from '@/services/users';
 import { IndividualLeaderboardStat } from '@/utils/types';
 

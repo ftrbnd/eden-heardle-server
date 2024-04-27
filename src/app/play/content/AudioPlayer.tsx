@@ -1,14 +1,14 @@
 'use client';
 
 import { LocalGuessedSong } from '@/utils/types';
-import { finishedHeardle } from '@/utils/userGuesses';
+import { finishedHeardle } from '@/utils/helpers';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 
 interface AudioProps {
-  song: DailySong | CustomHeardle | UnlimitedHeardle;
+  song?: DailySong | CustomHeardle | UnlimitedHeardle;
   songLoading: boolean;
   guesses?: GuessedSong[] | LocalGuessedSong[] | null;
 }

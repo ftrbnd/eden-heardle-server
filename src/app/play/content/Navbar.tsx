@@ -10,7 +10,7 @@ import ThemeButton from '../../../components/buttons/ThemeButton';
 import StatsModal from '../../../components/modals/StatsModal';
 import { LinkButton, ModalButton } from '@/components/buttons/RedirectButton';
 import SignOutButton from '@/components/buttons/SignOutButton';
-import { onnCustomHeardlePage } from '@/utils/functions';
+import { onCustomHeardlePage } from '@/utils/helpers';
 
 export function ProfileDropdown({ session }: { session: Session | null }) {
   return (
@@ -42,7 +42,7 @@ function Tabs() {
           <ModalButton title="Leaderboard" modalId="leaderboard_modal" />
         </>
       )}
-      {(pathname === '/play' || onnCustomHeardlePage(pathname)) && <ModalButton title="Custom" modalId="custom_heardle_modal" />}
+      {(pathname === '/play' || onCustomHeardlePage(pathname)) && <ModalButton title="Custom" modalId="custom_heardle_modal" />}
       {pathname !== '/play/unlimited' && <LinkButton title="Unlimited" href="/play/unlimited" />}
     </>
   );

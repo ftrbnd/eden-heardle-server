@@ -17,19 +17,19 @@ function getStatusSquare(status: string) {
 const statusSquares = (guessStatuses: string[]): string => {
   let squares: string[] = [];
 
-  guessStatuses?.forEach((status) => {
+  guessStatuses.forEach((status) => {
     squares.push(getStatusSquare(status));
   });
 
   return squares.join(' ');
 };
 
-const finishedHeardle = (guesses?: GuessedSong[] | LocalGuessedSong[] | null) => guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT';
+const correctlyGuessedHeardle = (guesses: GuessedSong[] | LocalGuessedSong[]) => guesses.some((guess) => guess.correctStatus === 'CORRECT');
 
-const correctlyGuessedHeardle = (guesses?: GuessedSong[] | LocalGuessedSong[] | null) => guesses?.at(-1)?.correctStatus === 'CORRECT' || guesses?.some((guess) => guess.correctStatus === 'CORRECT');
+const finishedHeardle = (guesses: GuessedSong[] | LocalGuessedSong[]) => guesses.length === 6 || correctlyGuessedHeardle(guesses);
 
-const onnCustomHeardlePage = (pathname: string): boolean => {
+const onCustomHeardlePage = (pathname: string): boolean => {
   return pathname.startsWith('/play/') && !pathname.endsWith('unlimited');
 };
 
-export { statusSquares, finishedHeardle, correctlyGuessedHeardle, onnCustomHeardlePage };
+export { statusSquares, finishedHeardle, correctlyGuessedHeardle, onCustomHeardlePage };
