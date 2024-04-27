@@ -26,7 +26,7 @@ const statusSquares = (guessStatuses: string[]): string => {
 
 const finishedHeardle = (guesses?: GuessedSong[] | LocalGuessedSong[] | null) => guesses?.length === 6 || guesses?.at(-1)?.correctStatus === 'CORRECT';
 
-const correctlyGuessedHeardle = (guesses?: GuessedSong[] | LocalGuessedSong[] | null) => guesses?.at(-1)?.correctStatus === 'CORRECT';
+const correctlyGuessedHeardle = (guesses?: GuessedSong[] | LocalGuessedSong[] | null) => guesses?.at(-1)?.correctStatus === 'CORRECT' || guesses?.some((guess) => guess.correctStatus === 'CORRECT');
 
 const onnCustomHeardlePage = (pathname: string): boolean => {
   return pathname.startsWith('/play/') && !pathname.endsWith('unlimited');
