@@ -16,6 +16,7 @@ const envSchema = z.object({
 
   WHITELISTED_DOMAINS: z.string(),
   WEBHOOK_URL: z.string().url(),
+  DISCORD_TOKEN: z.string(),
 
   PORT: z.coerce.number(),
   PAPERTRAIL_API_TOKEN: z.string()
