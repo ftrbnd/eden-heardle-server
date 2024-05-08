@@ -20,6 +20,7 @@ env:
   PORT: ${{secrets.PORT}}
   WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
   PAPERTRAIL_API_TOKEN: ${{ secrets.PAPERTRAIL_API_TOKEN}}
+  DISCORDS_TOKEN: ${{ secrets.DISCORD_TOKEN }}
 
 jobs:
   unit_tests:
