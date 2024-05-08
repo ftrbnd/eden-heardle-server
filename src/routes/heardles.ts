@@ -12,6 +12,8 @@ heardlesRouter.get('/', (_req, res) => {
 
 heardlesRouter.get('/daily', tokenExtractor, retryDailyHeardle);
 
+heardlesRouter.options('/custom', whitelistCheck);
+
 heardlesRouter.post('/custom', whitelistCheck, createCustomHeardle);
 
 heardlesRouter.delete('/custom', whitelistCheck, deleteCustomHeardle);
