@@ -57,7 +57,7 @@ describe(`Test ${API_ENDPOINT}`, () => {
           };
         });
 
-        const response = await api.post(API_ENDPOINT).send({
+        const response = await api.post(API_ENDPOINT).set('Origin', 'http://localhost:3000').send({
           song: mockSongs[0],
           startTime: 0,
           userId: 'fakeid'
@@ -71,7 +71,7 @@ describe(`Test ${API_ENDPOINT}`, () => {
 
     describe('with an invalid request body', () => {
       it('expects status code 400', async () => {
-        const response = await api.post(API_ENDPOINT).send({});
+        const response = await api.post(API_ENDPOINT).set('Origin', 'http://localhost:3000').send({});
 
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('message', 'Failed to create Custom Heardle');
@@ -116,7 +116,7 @@ describe(`Test ${API_ENDPOINT}`, () => {
       it('expects status code 200', async () => {
         prismaMock.customHeardle.delete.mockImplementation();
 
-        const response = await api.delete(API_ENDPOINT).send({ heardleId: 'fakeHeardleId', userId: 'fakeUserId' });
+        const response = await api.delete(API_ENDPOINT).set('Origin', 'http://localhost:3000').send({ heardleId: 'fakeHeardleId', userId: 'fakeUserId' });
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('message', 'Successfully deleted Custom Heardle');
@@ -125,7 +125,7 @@ describe(`Test ${API_ENDPOINT}`, () => {
 
     describe('with an invalid request body', () => {
       it('expects status code 400', async () => {
-        const response = await api.delete(API_ENDPOINT).send({});
+        const response = await api.delete(API_ENDPOINT).set('Origin', 'http://localhost:3000').send({});
 
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('message', 'Failed to delete Custom Heardle');
