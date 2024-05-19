@@ -55,7 +55,7 @@ export const mockGuessesWrong: GuessedSong[] = [
     guessListId: 'mock-guesslist-wrong',
     name: 'End Credits',
     album: 'End Credits',
-    correctStatus: 'CORRECT',
+    correctStatus: 'WRONG',
     cover: 'https://i1.sndcdn.com/artworks-000125721149-whx70j-t500x500.jpg',
     duration: 241
   },
