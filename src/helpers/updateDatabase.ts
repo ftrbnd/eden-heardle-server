@@ -11,8 +11,9 @@ export async function userGuessedCorrectly(user: User): Promise<boolean> {
       songs: true
     }
   });
+  if (!dailyGuesses) throw new Error("Failed to find this user's guesses");
 
-  const guessedCorrectly = dailyGuesses?.songs.at(-1)?.correctStatus === 'CORRECT';
+  const guessedCorrectly = dailyGuesses.songs.some((guess) => guess.correctStatus === 'CORRECT');
   return guessedCorrectly;
 }
 
