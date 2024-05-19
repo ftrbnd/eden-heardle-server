@@ -11,7 +11,7 @@ describe('Test database interactions with Prisma mock', () => {
     expect(guessedCorrectly).toBeTruthy();
   });
 
-  it('confirm that a user failed to  guess the Daily Heardle', async () => {
+  it('confirm that a user failed to guess the Daily Heardle', async () => {
     prismaMock.guesses.findUnique.mockResolvedValue(mockGuessListWrong);
 
     const guessedCorrectly = await userGuessedCorrectly(mockUser);
@@ -51,7 +51,7 @@ describe('Test database interactions with Prisma mock', () => {
     await updateAllStreaks();
 
     expect(mockGuesses.mock.calls).toHaveLength(3);
-    expect(mockUpdate.mock.calls).toHaveLength(1); // only one users's streak had to be updated since only the middle user didn't correctly guess the Daily hEARDLE
+    expect(mockUpdate.mock.calls).toHaveLength(1); // only one users's streak had to be updated since only the middle user didn't correctly guess the Daily Heardle
   });
 
   it('should reset all guesses', async () => {
