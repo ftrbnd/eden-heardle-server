@@ -62,7 +62,7 @@
 [![Product Name Screen Shot][product-screenshot]](https://eden-heardle.io)
 
 Just like the original Wordle, get 6 chances to guess the ~~word~~ song! 
-* New daily song with the help of a dedicated [Express server](https://github.com/ftrbnd/eden-heardle-cronjobs) for running cronjobs
+* New daily song with the help of a dedicated [Express server](https://github.com/ftrbnd/eden-heardle-server) for running cronjobs
 * Optional Discord authentication for saving statistics to the leaderboard
 * View statistics in the community [Discord server](https://discord.gg/futurebound) using the [EDEN Bot](https://github.com/ftrbnd/eden-bot)
 * Create custom Heardles with the help of the aforementioned Express server
