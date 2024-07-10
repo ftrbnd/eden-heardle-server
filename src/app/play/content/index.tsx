@@ -2,45 +2,20 @@
 
 import AudioPlayer from './AudioPlayer';
 import Navbar from '@/app/play/content/Navbar';
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GuessCard } from '@/components/GuessCard';
 import SongSelectInput from '@/app/play/content/SongSelectInput';
 import { AnimatePresence } from 'framer-motion';
 import useGuesses from '@/hooks/useGuesses';
 import useDailySong from '@/hooks/useDailySong';
-import { faClose } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/helpers';
 import WelcomeCard from '@/app/play/content/WelcomeCard';
 import ResultCard from './ResultCard';
-
-interface AnnouncementProps {
-  setShowBanner: Dispatch<SetStateAction<boolean>>;
-  announcement: string;
-}
-
-function AnnouncementBanner({ setShowBanner, announcement }: AnnouncementProps) {
-  const router = useRouter();
-
-  const handleBannerClick = () => {
-    router.push('/play/unlimited');
-  };
-
-  return (
-    <div className="flex justify-center items-center bg-success text-success-content w-full h-min p-2">
-      <div onClick={handleBannerClick} className="btn btn-ghost px-1 sm:px-2">
-        {announcement}
-      </div>
-      <button className="btn btn-ghost px-1 sm:px-2" onClick={() => setShowBanner(false)}>
-        <FontAwesomeIcon icon={faClose} className="h-4 w-4" />
-      </button>
-    </div>
-  );
-}
+import AnnouncementBanner from './AnnouncementBanner';
 
 export default function PlayContent({ children }: { children: ReactNode }) {
-  const [showBanner, setShowBanner] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
 
   const { guesses, loadingGuesses } = useGuesses();
   const { dailySong, dailySongLoading } = useDailySong();
@@ -53,7 +28,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex flex-col items-center h-full justify-between">
-      {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} announcement="NEW: Unlimited Heardles!" />}
+      {showBanner && <AnnouncementBanner setShowBanner={setShowBanner} announcement="EDEN Heardle is currently experiencing issues, please check the Discord server for updates." />}
       <Navbar>{children}</Navbar>
       <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 w-full h-full pt-4">
         <AnimatePresence>
