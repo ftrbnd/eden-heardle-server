@@ -1,10 +1,10 @@
-import ytdl from 'ytdl-core';
+import ytdl from '@distube/ytdl-core';
 import { mockSongs } from '../__mocks__/data';
 import { prismaMock } from '../__mocks__/singleton';
 import { getRandomSong, getRandomStartTime } from '../src/helpers/heardleGenerators';
 import { Heardle } from '../src/utils/logger';
 
-jest.mock('ytdl-core');
+jest.mock('@distube/ytdl-core');
 
 describe('Test utility functions', () => {
   describe('setDailySong', () => {

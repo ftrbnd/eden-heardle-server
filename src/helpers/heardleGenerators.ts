@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma';
-import ytdl from 'ytdl-core';
+import ytdl from '@distube/ytdl-core';
 import { downloadMp3 } from './downloadMp3';
 import { DailySong, Song, UnlimitedHeardle } from '@prisma/client';
 import { updateDatabase } from './updateDatabase';
