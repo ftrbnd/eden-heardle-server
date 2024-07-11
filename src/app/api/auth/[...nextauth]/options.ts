@@ -1,14 +1,16 @@
 import prisma from '@/utils/db';
+import { serverEnv } from '@/utils/env';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 
 export const options: NextAuthOptions = {
+  // @ts-ignore Property 'id' is missing in type 'Omit<AdapterUser, "id">' but required in type 'AdapterUser'
   adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!
+      clientId: serverEnv.DISCORD_CLIENT_ID,
+      clientSecret: serverEnv.DISCORD_CLIENT_SECRET
     })
   ],
   pages: {

@@ -1,6 +1,7 @@
+import { clientEnv } from '@/utils/env';
 import { UnlimitedHeardle } from '@prisma/client';
 
-const UNLIMITED_HEARDLE_ENDPOINT_EXPRESS = process.env.NEXT_PUBLIC_EXPRESS_URL!;
+const UNLIMITED_HEARDLE_ENDPOINT_EXPRESS = clientEnv.NEXT_PUBLIC_EXPRESS_URL;
 
 export const getUnlimitedHeardle = async () => {
   try {
