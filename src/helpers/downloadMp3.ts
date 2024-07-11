@@ -3,7 +3,7 @@ import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import { createWriteStream, readFileSync } from 'fs';
 import { Blob } from 'buffer';
-import ytdl from 'ytdl-core';
+import ytdl from '@distube/ytdl-core';
 import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
 import { logger, Heardle } from '../utils/logger';
