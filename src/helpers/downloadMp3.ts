@@ -24,6 +24,7 @@ export async function ytdlDownload(song: Song, startTime: number, fileName: stri
       filter: 'audioonly',
       quality: 'highestaudio'
     })
+      // @ts-ignore: Argument of type WriteStream is not assignable to parameter of type WritableStream
       .pipe(createWriteStream(`${fileName}.m4a`))
       .on('finish', async () => {
         logger(heardleType, `${song.name} downloaded successfully!`);
@@ -43,6 +44,7 @@ export async function m4aToMp3(m4aFilename: string, startTime: number, heardleTy
       .format('mp3')
       .setStartTime(startTime)
       .setDuration(6)
+      // @ts-ignore: Property 'on' does not exist on type 'FfmpegCommand'
       .on('end', async () => {
         logger(heardleType, `File conversion complete!`);
         resolve(m4aFilename.replace('m4a', 'mp3'));
