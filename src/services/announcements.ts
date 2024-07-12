@@ -4,7 +4,9 @@ const announcementsUrlEndpoint = '/api/announcements';
 
 export const getAnnouncement = async () => {
   try {
-    const response = await fetch(announcementsUrlEndpoint);
+    const response = await fetch(announcementsUrlEndpoint, {
+      cache: 'no-store'
+    });
     if (!response.ok) throw new Error('Failed to get announcements');
 
     const { announcements }: { announcements: Announcement[] } = await response.json();

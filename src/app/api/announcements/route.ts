@@ -1,6 +1,8 @@
 import { redis, redisSchema } from '@/utils/redis';
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const showBanner = await redis.get('show_banner');
