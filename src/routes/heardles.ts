@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createCustomHeardle, deleteCustomHeardle } from '../controllers/customHeardleController';
 import { getUnlimitedHeardle } from '../controllers/unlimitedHeardleController';
-import { retryDailyHeardle } from '../controllers/dailyHeardleController';
+import { getDailySong, getLeaderboard, getUserStatistics, retryDailyHeardle } from '../controllers/dailyHeardleController';
 import { tokenExtractor, whitelistCheck } from '../utils/middleware';
 
 const heardlesRouter = Router();
@@ -10,7 +10,13 @@ heardlesRouter.get('/', (_req, res) => {
   res.json({ title: 'EDEN Heardle API' });
 });
 
-heardlesRouter.get('/daily', tokenExtractor, retryDailyHeardle);
+heardlesRouter.get('/daily/retry', tokenExtractor, retryDailyHeardle);
+
+heardlesRouter.get('/daily', tokenExtractor, getDailySong);
+
+heardlesRouter.get('/statistics/:userId', getUserStatistics);
+
+heardlesRouter.get('/leaderboard', getLeaderboard);
 
 heardlesRouter.options('/custom', whitelistCheck);
 
