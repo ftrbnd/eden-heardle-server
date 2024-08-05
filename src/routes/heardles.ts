@@ -10,14 +10,16 @@ heardlesRouter.get('/', (_req, res) => {
   res.json({ title: 'EDEN Heardle API' });
 });
 
+// FROM DISCORD BOT:
 heardlesRouter.get('/daily/retry', tokenExtractor, retryDailyHeardle);
 
 heardlesRouter.get('/daily', tokenExtractor, getDailySong);
 
-heardlesRouter.get('/statistics/:userId', getUserStatistics);
+heardlesRouter.get('/statistics/:userId', tokenExtractor, getUserStatistics);
 
-heardlesRouter.get('/leaderboard', getLeaderboard);
+heardlesRouter.get('/leaderboard', tokenExtractor, getLeaderboard);
 
+// FROM HEARDLE CLIENT:
 heardlesRouter.options('/custom', whitelistCheck);
 
 heardlesRouter.post('/custom', whitelistCheck, createCustomHeardle);
