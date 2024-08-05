@@ -4,6 +4,7 @@ import { setDailySong } from '../helpers/heardleGenerators';
 import prisma from '../lib/prisma';
 import { GuessedSong } from '@prisma/client';
 import { LeaderboardStats } from '../utils/schema';
+import { announcementSchema, redis } from '../lib/redis';
 
 // Don't mark as async in order to immediately send response to client
 export const retryDailyHeardle = (_req: Request, res: Response) => {
@@ -174,6 +175,22 @@ export const getLeaderboard = async (_req: Request, res: Response) => {
     leaderboard.maxStreaks.sort((a, b) => b.data - a.data);
 
     res.json({ leaderboard });
+  } catch (error: any) {
+    logger(Heardle.Daily, error);
+    res.status(400).json({ message: 'Failed to get leaderboard', error: error.message });
+  }
+};
+
+export const setAnnouncement = async (req: Request, res: Response) => {
+  try {
+    const announcement = announcementSchema.parse(req.body.announcement);
+
+    await redis.set('show_banner', announcement.showBanner ? 'true' : 'false');
+    await redis.set('text', announcement.text);
+    await redis.set('link', announcement.link ?? '');
+    await redis.set('status', announcement.status);
+
+    res.json({ announcement });
   } catch (error: any) {
     logger(Heardle.Daily, error);
     res.status(400).json({ message: 'Failed to get leaderboard', error: error.message });
