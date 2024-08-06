@@ -21,6 +21,7 @@ env:
   WHITELISTED_DOMAINS: ${{ secrets.WHITELISTED_DOMAINS }}
   PAPERTRAIL_API_TOKEN: ${{ secrets.PAPERTRAIL_API_TOKEN}}
   DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
 
 jobs:
   unit_tests:

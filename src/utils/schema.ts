@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Song } from '@prisma/client';
+import { Song, User } from '@prisma/client';
 
 export const postSchema = z.object({
   song: z.custom<Song>(),
@@ -11,3 +11,40 @@ export const deleteSchema = z.object({
   heardleId: z.string(),
   userId: z.string()
 });
+
+interface TodayStat {
+  data: string[];
+  user: User;
+  type: 'Today';
+}
+
+interface WinPctStat {
+  data: number;
+  user: User;
+  type: 'WinPct';
+}
+
+interface AccuracyStat {
+  data: number;
+  user: User;
+  type: 'Accuracy';
+}
+
+interface CurStrkStat {
+  data: number;
+  user: User;
+  type: 'CurStrk';
+}
+
+interface MaxStrkStat {
+  data: number;
+  user: User;
+  type: 'MaxStrk';
+}
+export interface LeaderboardStats {
+  today: TodayStat[];
+  winPercentages: WinPctStat[];
+  accuracies: AccuracyStat[];
+  currentStreaks: CurStrkStat[];
+  maxStreaks: MaxStrkStat[];
+}

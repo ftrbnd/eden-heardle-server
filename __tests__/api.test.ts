@@ -5,6 +5,7 @@ import { downloadMp3 } from '../src/helpers/downloadMp3';
 import { prismaMock } from '../__mocks__/singleton';
 import { Heardle } from '../src/utils/logger';
 import { deleteSchema, postSchema } from '../src/utils/schema';
+import { redis } from '../src/lib/redis';
 
 jest.mock('../src/helpers/downloadMp3');
 
@@ -131,5 +132,9 @@ describe(`Test ${API_ENDPOINT}`, () => {
         expect(response.body).toHaveProperty('message', 'Failed to delete Custom Heardle');
       });
     });
+  });
+
+  afterAll(() => {
+    redis.quit();
   });
 });

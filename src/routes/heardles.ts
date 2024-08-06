@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createCustomHeardle, deleteCustomHeardle } from '../controllers/customHeardleController';
 import { getUnlimitedHeardle } from '../controllers/unlimitedHeardleController';
-import { retryDailyHeardle } from '../controllers/dailyHeardleController';
+import { getDailySong, getLeaderboard, getUserStatistics, retryDailyHeardle, setAnnouncement } from '../controllers/dailyHeardleController';
 import { tokenExtractor, whitelistCheck } from '../utils/middleware';
 
 const heardlesRouter = Router();
@@ -10,8 +10,18 @@ heardlesRouter.get('/', (_req, res) => {
   res.json({ title: 'EDEN Heardle API' });
 });
 
-heardlesRouter.get('/daily', tokenExtractor, retryDailyHeardle);
+// FROM DISCORD BOT:
+heardlesRouter.get('/daily/retry', tokenExtractor, retryDailyHeardle);
 
+heardlesRouter.get('/daily', tokenExtractor, getDailySong);
+
+heardlesRouter.get('/statistics/:userId', tokenExtractor, getUserStatistics);
+
+heardlesRouter.get('/leaderboard', tokenExtractor, getLeaderboard);
+
+heardlesRouter.patch('/announcement', tokenExtractor, setAnnouncement);
+
+// FROM HEARDLE CLIENT:
 heardlesRouter.options('/custom', whitelistCheck);
 
 heardlesRouter.post('/custom', whitelistCheck, createCustomHeardle);
