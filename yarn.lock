@@ -366,17 +366,17 @@
     tslib "^2.6.2"
     ws "^8.16.0"
 
-"@distube/ytdl-core@^4.13.7":
-  version "4.13.7"
-  resolved "https://registry.yarnpkg.com/@distube/ytdl-core/-/ytdl-core-4.13.7.tgz#4b48e009eb8df6ea21623c18999a4dd76d893fbf"
-  integrity sha512-xpovwZVPwQ0R4Mrwt/fhh1rqmBjiZ5qj30ck5kz+mQJ5XPzW9dUiTDz89qCxO3YvgbCAqaC5BNNnWiFC2uCV5Q==
+"@distube/ytdl-core@^4.14.3":
+  version "4.14.3"
+  resolved "https://registry.yarnpkg.com/@distube/ytdl-core/-/ytdl-core-4.14.3.tgz#ce862c7f6e68bf60a85a2d17a77a5f9c738f6b53"
+  integrity sha512-z6i5EVGEuKhuvuRNyIqafBSs5aRA28HssnWehCRhEtYrxeFgXImfmpKTjUusHYU5vQt1swSVPVb2JCd22P0CPA==
   dependencies:
     http-cookie-agent "^6.0.5"
     m3u8stream "^0.8.6"
     miniget "^4.2.3"
     sax "^1.4.1"
     tough-cookie "^4.1.4"
-    undici "^6.19.2"
+    undici five
 
 "@esbuild/aix-ppc64@0.21.5":
   version "0.21.5"
@@ -492,6 +492,11 @@
   version "0.21.5"
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.21.5.tgz#acad351d582d157bb145535db2a6ff53dd514b5c"
   integrity sha512-tQd/1efJuzPC6rCFwEvLtci/xNFcTZknmXs98FYDfGE4wP9ClFV98nyKrzJKVPMhdDnjzLhdUyMX4PsQAPjwIw==
+
+"@fastify/busboy@^2.0.0":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@fastify/busboy/-/busboy-2.1.1.tgz#b9da6a878a371829a0502c9b6c1c143ef6663f4d"
+  integrity sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==
 
 "@ffmpeg-installer/darwin-arm64@4.1.5":
   version "4.1.5"
@@ -5180,10 +5185,12 @@ undici@6.13.0:
   resolved "https://registry.yarnpkg.com/undici/-/undici-6.13.0.tgz#7edbf4b7f3aac5f8a681d515151bf55cb3589d72"
   integrity sha512-Q2rtqmZWrbP8nePMq7mOJIN98M0fYvSgV89vwl/BQRT4mDOeY2GXZngfGpcBBhtky3woM7G24wZV3Q304Bv6cw==
 
-undici@^6.19.2:
-  version "6.19.2"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-6.19.2.tgz#231bc5de78d0dafb6260cf454b294576c2f3cd31"
-  integrity sha512-JfjKqIauur3Q6biAtHJ564e3bWa8VvT+7cSiOJHFbX4Erv6CLGDpg8z+Fmg/1OI/47RA+GI2QZaF48SSaLvyBA==
+undici@five:
+  version "5.28.4"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.28.4.tgz#6b280408edb6a1a604a9b20340f45b422e373068"
+  integrity sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==
+  dependencies:
+    "@fastify/busboy" "^2.0.0"
 
 union-value@^1.0.0:
   version "1.0.1"
