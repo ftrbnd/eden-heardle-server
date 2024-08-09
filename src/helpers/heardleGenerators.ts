@@ -6,6 +6,7 @@ import { updateDatabase } from './updateDatabase';
 import { Heardle, logger } from '../utils/logger';
 import supabase from '../lib/supabase';
 import { createEmbed, discordWebhook } from '../lib/webhook';
+import { ytdlProxyAgent } from '../lib/ytdl';
 
 export async function getRandomSong(heardleType: Heardle): Promise<Song> {
   try {
@@ -29,7 +30,7 @@ export async function getRandomSong(heardleType: Heardle): Promise<Song> {
 export async function getRandomStartTime(song: Song, heardleType: Heardle): Promise<number> {
   try {
     // determine the random start time
-    const dailySongInfo = await ytdl.getBasicInfo(song.link);
+    const dailySongInfo = await ytdl.getBasicInfo(song.link, { agent: ytdlProxyAgent });
     const songLength = parseInt(dailySongInfo.videoDetails.lengthSeconds);
 
     let randomStartTime = Math.floor(Math.random() * songLength) - 7;

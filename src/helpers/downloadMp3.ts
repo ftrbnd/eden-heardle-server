@@ -8,6 +8,7 @@ import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
 import { logger, Heardle } from '../utils/logger';
 import { createId } from '@paralleldrive/cuid2';
+import { ytdlProxyAgent } from '../lib/ytdl';
 
 type Mp3File = Blob & {
   name: string;
@@ -22,7 +23,8 @@ export async function ytdlDownload(song: Song, startTime: number, fileName: stri
     ytdl(song.link, {
       begin: `${startTime}s`,
       filter: 'audioonly',
-      quality: 'highestaudio'
+      quality: 'highestaudio',
+      agent: ytdlProxyAgent
     })
       // @ts-ignore: Argument of type WriteStream is not assignable to parameter of type WritableStream
       .pipe(createWriteStream(`${fileName}.m4a`))

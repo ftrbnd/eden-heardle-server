@@ -18,6 +18,7 @@ const envSchema = z.object({
   WEBHOOK_URL: z.string().url(),
   DISCORD_TOKEN: z.string(),
   REDIS_URL: z.string().url(),
+  PROXY_URIS: z.string().transform((val) => val.split(',')),
 
   PORT: z.coerce.number(),
   PAPERTRAIL_API_TOKEN: z.string()
