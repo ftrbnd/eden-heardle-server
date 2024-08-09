@@ -7,6 +7,8 @@ const getRandomProxy = () => {
   const index = Math.floor(Math.random() * proxies.length);
   const proxy = proxies[index];
 
+  console.log({ proxy });
+
   return `http://${proxy}`;
 };
 

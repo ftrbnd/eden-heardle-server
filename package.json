@@ -10,7 +10,7 @@
     "test": "jest --verbose --runInBand --detectOpenHandles"
   },
   "dependencies": {
-    "@distube/ytdl-core": "^4.14.3",
+    "@distube/ytdl-core": "^4.14.4",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.17.0",
