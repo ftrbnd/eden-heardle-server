@@ -21,7 +21,8 @@ const envSchema = z.object({
   PROXY_URIS: z.string().transform((val) => val.split(',')),
 
   PORT: z.coerce.number(),
-  PAPERTRAIL_API_TOKEN: z.string()
+  PAPERTRAIL_API_TOKEN: z.string(),
+  NODE_ENV: z.enum(['production', 'development']).optional()
 });
 
 export const env = envSchema.parse(process.env);
