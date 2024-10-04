@@ -22,7 +22,7 @@ const envSchema = z.object({
 
   PORT: z.coerce.number(),
   PAPERTRAIL_API_TOKEN: z.string(),
-  NODE_ENV: z.enum(['production', 'development']).optional()
+  NODE_ENV: z.enum(['production', 'development', 'test']).optional()
 });
 
 export const env = envSchema.parse(process.env);
