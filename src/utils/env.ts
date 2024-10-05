@@ -20,6 +20,10 @@ const envSchema = z.object({
   REDIS_URL: z.string().url(),
   PROXY_URIS: z.string().transform((val) => val.split(',')),
 
+  VERCEL_WEBHOOK_SECRET: z.string(),
+  VERCEL_PROJECT_ID: z.string(),
+  VERCEL_API_TOKEN: z.string(),
+
   PORT: z.coerce.number(),
   PAPERTRAIL_API_TOKEN: z.string(),
   NODE_ENV: z.enum(['production', 'development', 'test']).optional()
