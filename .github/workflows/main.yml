@@ -24,6 +24,9 @@ env:
   DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
   REDIS_URL: ${{ secrets.REDIS_URL }}
   PROXY_URIS: ${{ secrets.PROXY_URIS }}
+  VERCEL_WEBHOOK_SECRET: ${{ secrets.VERCEL_WEBHOOK_SECRET}}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID}}
+  VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN}}
 
 jobs:
   unit_tests:
