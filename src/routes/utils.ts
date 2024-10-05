@@ -17,7 +17,7 @@ const payloadSchema = z.object({
 type Payload = z.infer<typeof payloadSchema>;
 
 const verifySignature: RequestHandler = (req, res, next) => {
-  const payload = req.body;
+  const payload = req.body.toString();
   const signature = crypto.createHmac('sha1', env.VERCEL_WEBHOOK_SECRET).update(payload).digest('hex');
 
   const valid = signature === req.headers['x-vercel-signature'];
