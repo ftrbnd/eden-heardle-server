@@ -12,4 +12,4 @@ const getRandomProxy = () => {
   return `http://${proxy}`;
 };
 
-export const ytdlProxyAgent = env.NODE_ENV === 'development' ? undefined : ytdl.createProxyAgent({ uri: getRandomProxy(), autoSelectFamily: true });
+export const ytdlProxyAgent = env.ENABLE_PROXY === 'true' ? ytdl.createProxyAgent({ uri: getRandomProxy() }) : undefined;

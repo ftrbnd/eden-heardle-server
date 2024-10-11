@@ -1,10 +1,14 @@
 import dotenv from 'dotenv';
-dotenv.config();
+
+const path = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+dotenv.config({ path });
 
 import z from 'zod';
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
+  DIRECT_URL: z.string().url(),
+
   SUPABASE_KEY: z.string(),
   SUPABASE_URL: z.string().url(),
 
@@ -18,6 +22,8 @@ const envSchema = z.object({
   WEBHOOK_URL: z.string().url(),
   DISCORD_TOKEN: z.string(),
   REDIS_URL: z.string().url(),
+
+  ENABLE_PROXY: z.enum(['true', 'false']),
   PROXY_URIS: z.string().transform((val) => val.split(',')),
 
   VERCEL_WEBHOOK_SECRET: z.string(),
@@ -26,7 +32,7 @@ const envSchema = z.object({
 
   PORT: z.coerce.number(),
   PAPERTRAIL_API_TOKEN: z.string(),
-  NODE_ENV: z.enum(['production', 'development', 'test']).optional()
+  NODE_ENV: z.enum(['production', 'development', 'test'])
 });
 
 export const env = envSchema.parse(process.env);
