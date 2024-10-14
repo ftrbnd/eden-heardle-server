@@ -24,7 +24,7 @@ export async function ytdlDownload(song: Song, startTime: number, fileName: stri
       begin: `${startTime}s`,
       filter: 'audioonly',
       quality: 'highestaudio',
-      agent: ytdlProxyAgent
+      agent: ytdlProxyAgent()
     })
       // @ts-ignore: Argument of type WriteStream is not assignable to parameter of type WritableStream
       .pipe(createWriteStream(`${fileName}.m4a`))
