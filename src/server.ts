@@ -7,5 +7,5 @@ registerDailyHeardleCronJob();
 registerUnlimitedHeardleCronJob();
 
 app.listen(env.PORT, () => {
-  console.log(`Server ready at port ${env.PORT} `);
+  console.log(`[HTTP] ${env.NODE_ENV} server ready at port ${env.PORT}`);
 });
