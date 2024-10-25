@@ -17,7 +17,7 @@ type Mp3File = Blob & {
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 export async function downloadSong(heardleType: Heardle, song: Song) {
-  const songFilename = `${song.name}.mp3`;
+  const songFilename = `${song.name.replace(/\W/g, '').toLowerCase()}.mp3`;
 
   const { data, error } = await supabase.storage.from('song').download(songFilename);
   if (error) throw error;

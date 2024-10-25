@@ -8,9 +8,11 @@
     "prod": "NODE_ENV=production tsx watch src/server.ts",
     "start": "NODE_ENV=production node dist/server.js",
     "build": "tsc",
-    "test": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles"
+    "test": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles",
+    "storage:download": "NODE_ENV=development tsx src/scripts/download.ts"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.14.4",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.20.0",

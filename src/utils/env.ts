@@ -23,9 +23,6 @@ const envSchema = z.object({
   DISCORD_TOKEN: z.string(),
   REDIS_URL: z.string().url(),
 
-  ENABLE_PROXY: z.enum(['true', 'false']),
-  PROXY_URIS: z.string().transform((val) => val.split(',')),
-
   VERCEL_WEBHOOK_SECRET: z.string(),
   VERCEL_PROJECT_ID: z.string(),
   VERCEL_API_TOKEN: z.string(),
