@@ -1,10 +1,7 @@
-import ytdl from '@distube/ytdl-core';
 import { mockSongs } from '../__mocks__/data';
 import { prismaMock } from '../__mocks__/singleton';
 import { getRandomSong, getRandomStartTime } from '../src/helpers/heardleGenerators';
 import { Heardle } from '../src/utils/logger';
-
-jest.mock('@distube/ytdl-core');
 
 describe('Test utility functions', () => {
   describe('setDailySong', () => {
@@ -18,18 +15,10 @@ describe('Test utility functions', () => {
     });
 
     it('get a random start time', async () => {
-      (ytdl.getBasicInfo as jest.Mock).mockImplementation(() => {
-        return {
-          videoDetails: {
-            lengthSeconds: 241
-          }
-        };
-      });
-
       const startTime = await getRandomStartTime(mockSongs[0], Heardle.Daily);
 
       expect(startTime).toBeGreaterThanOrEqual(0);
-      expect(startTime).toBeLessThanOrEqual(235);
+      expect(startTime).toBeLessThanOrEqual(mockSongs[0].duration ?? 0 - 6);
     });
   });
 
