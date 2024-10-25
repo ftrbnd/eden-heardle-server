@@ -1,12 +1,10 @@
 import prisma from '../lib/prisma';
-import ytdl from '@distube/ytdl-core';
 import { downloadMp3 } from './downloadMp3';
 import { DailySong, Song, UnlimitedHeardle } from '@prisma/client';
 import { updateDatabase } from './updateDatabase';
 import { Heardle, logger } from '../utils/logger';
 import supabase from '../lib/supabase';
 import { createEmbed, discordWebhook } from '../lib/webhook';
-import { ytdlProxyAgent } from '../lib/ytdl';
 
 export async function getRandomSong(heardleType: Heardle): Promise<Song> {
   try {
@@ -30,12 +28,11 @@ export async function getRandomSong(heardleType: Heardle): Promise<Song> {
 export async function getRandomStartTime(song: Song, heardleType: Heardle): Promise<number> {
   try {
     // determine the random start time
-    const dailySongInfo = await ytdl.getBasicInfo(song.link, { agent: ytdlProxyAgent() });
-    const songLength = parseInt(dailySongInfo.videoDetails.lengthSeconds);
+    if (!song.duration) throw new Error(`"${song.name}" has no duration listed`);
 
-    let randomStartTime = Math.floor(Math.random() * songLength) - 7;
+    let randomStartTime = Math.floor(Math.random() * song.duration) - 7;
     randomStartTime = randomStartTime < 0 ? 0 : randomStartTime;
-    randomStartTime = randomStartTime + 6 > songLength ? songLength - 6 : randomStartTime;
+    randomStartTime = randomStartTime + 6 > song.duration ? song.duration - 6 : randomStartTime;
     logger(heardleType, 'Random start time: ', randomStartTime);
 
     return randomStartTime;

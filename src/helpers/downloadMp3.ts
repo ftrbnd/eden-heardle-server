@@ -1,14 +1,12 @@
 import { CustomHeardle, DailySong, Song, UnlimitedHeardle } from '@prisma/client';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
-import { createWriteStream, readFileSync } from 'fs';
+import { readFileSync, promises } from 'fs';
 import { Blob } from 'buffer';
-import ytdl from '@distube/ytdl-core';
 import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
 import { logger, Heardle } from '../utils/logger';
 import { createId } from '@paralleldrive/cuid2';
-import { ytdlProxyAgent } from '../lib/ytdl';
 
 type Mp3File = Blob & {
   name: string;
@@ -18,48 +16,42 @@ type Mp3File = Blob & {
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-export async function ytdlDownload(song: Song, startTime: number, fileName: string, heardleType: Heardle) {
-  return new Promise((resolve, reject) => {
-    ytdl(song.link, {
-      begin: `${startTime}s`,
-      filter: 'audioonly',
-      quality: 'highestaudio',
-      agent: ytdlProxyAgent()
-    })
-      // @ts-ignore: Argument of type WriteStream is not assignable to parameter of type WritableStream
-      .pipe(createWriteStream(`${fileName}.m4a`))
-      .on('finish', async () => {
-        logger(heardleType, `${song.name} downloaded successfully!`);
-        resolve('ytdlDownload complete!');
-      })
-      .on('error', (err: unknown) => {
-        logger(heardleType, `Error downloading ${song.name} with ytdl-core`);
-        reject(err);
-      });
-  });
+export async function downloadSong(heardleType: Heardle, song: Song) {
+  const songFilename = `${song.name.replace(/\W/g, '').toLowerCase()}.mp3`;
+
+  const { data, error } = await supabase.storage.from('song').download(songFilename);
+  if (error) throw error;
+
+  const arrayBuffer = await data.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  await promises.writeFile(songFilename, buffer);
+
+  logger(heardleType, `${songFilename} downloaded successfully!`);
+  return songFilename;
 }
 
-export async function m4aToMp3(m4aFilename: string, startTime: number, heardleType: Heardle): Promise<string> {
+export async function trimSong(heardleType: Heardle, songFilename: string, startTime: number): Promise<string> {
+  const newFilename = heardleType === Heardle.Daily ? 'daily_song.mp3' : heardleType === Heardle.Custom ? 'custom_song.mp3' : 'unlimited_song.mp3';
+
   return new Promise((resolve, reject) => {
-    // Convert .m4a to .mp3
-    ffmpeg(m4aFilename)
-      .format('mp3')
+    // Trim song to 6 seconds
+    ffmpeg(songFilename)
       .setStartTime(startTime)
       .setDuration(6)
       // @ts-ignore: Property 'on' does not exist on type 'FfmpegCommand'
       .on('end', async () => {
-        logger(heardleType, `File conversion complete!`);
-        resolve(m4aFilename.replace('m4a', 'mp3'));
+        logger(heardleType, `File trimming complete!`);
+        resolve(newFilename);
       })
       .on('error', (err: unknown) => {
-        logger(heardleType, `Error converting ${m4aFilename} to .mp3`);
+        logger(heardleType, `Error trimming ${songFilename}`);
         reject(err);
       })
-      .save(m4aFilename.replace('m4a', 'mp3'));
+      .save(newFilename);
   });
 }
 
-export async function getMp3File(fileName: string, heardleType: Heardle): Promise<Mp3File> {
+export async function getMp3File(heardleType: Heardle, fileName: string): Promise<Mp3File> {
   return new Promise((resolve, reject) => {
     try {
       const fileBuffer = readFileSync(fileName);
@@ -81,7 +73,7 @@ export async function getMp3File(fileName: string, heardleType: Heardle): Promis
   });
 }
 
-export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: number, heardleType: Heardle, userId?: string): Promise<DailySong | CustomHeardle | UnlimitedHeardle> {
+export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, song: Song, startTime: number, userId?: string): Promise<DailySong | CustomHeardle | UnlimitedHeardle> {
   switch (heardleType) {
     case Heardle.Daily:
       // get current daily song and ensure it exists
@@ -118,7 +110,7 @@ export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: 
 
       logger(heardleType, 'Upserting Daily Heardle object...');
 
-      const dailyHeardle = await prisma.dailySong.upsert({
+      await prisma.dailySong.upsert({
         where: {
           id: '1'
         },
@@ -226,15 +218,12 @@ export async function uploadToDatabase(mp3File: Mp3File, song: Song, startTime: 
 }
 
 export async function downloadMp3(song: Song, startTime: number, heardleType: Heardle, userId?: string) {
-  const fileName = heardleType === Heardle.Daily ? 'daily_song' : heardleType === Heardle.Custom ? 'custom_song' : 'unlimited_song';
-
   try {
-    await ytdlDownload(song, startTime, fileName, heardleType);
+    const songFilename = await downloadSong(heardleType, song);
+    const newFilename = await trimSong(heardleType, songFilename, startTime);
+    const mp3File = await getMp3File(heardleType, newFilename);
 
-    const mp3Filename = await m4aToMp3(`${fileName}.m4a`, startTime, heardleType);
-    const mp3File = await getMp3File(mp3Filename, heardleType);
-
-    const heardleSong = await uploadToDatabase(mp3File, song, startTime, heardleType, userId);
+    const heardleSong = await uploadToDatabase(heardleType, mp3File, song, startTime, userId);
 
     return heardleSong;
   } catch (err: unknown) {
