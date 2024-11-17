@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createCustomHeardle, deleteCustomHeardle } from '../controllers/customHeardleController';
-import { getUnlimitedHeardle } from '../controllers/unlimitedHeardleController';
+import { getUnlimitedHeardle, retryUnlimitedHeardle } from '../controllers/unlimitedHeardleController';
 import { getDailySong, getLeaderboard, getUserStatistics, retryDailyHeardle, setAnnouncement } from '../controllers/dailyHeardleController';
 import { tokenExtractor, whitelistCheck } from '../utils/middleware';
 
@@ -14,6 +14,8 @@ heardlesRouter.get('/', (_req, res) => {
 heardlesRouter.get('/daily/retry', tokenExtractor, retryDailyHeardle);
 
 heardlesRouter.get('/daily', tokenExtractor, getDailySong);
+
+heardlesRouter.get('/unlimited/retry', tokenExtractor, retryUnlimitedHeardle);
 
 heardlesRouter.get('/statistics/:userId', tokenExtractor, getUserStatistics);
 

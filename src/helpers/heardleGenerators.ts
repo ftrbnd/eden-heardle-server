@@ -74,14 +74,21 @@ export async function repeatCreateUnlimitedHeardle(amount: number) {
 
     logger(Heardle.Unlimited, `Deleted yesterday's collection`);
 
+    let successCount = 0;
     for (let i = 1; i <= amount; i++) {
-      const song = await createNewUnlimitedHeardle();
-      logger(Heardle.Unlimited, `File #${i} created: ${song.name}`);
+      try {
+        const song = await createNewUnlimitedHeardle();
+        successCount++;
+        logger(Heardle.Unlimited, `File #${successCount} created: ${song.name}`);
+      } catch (err) {
+        logger(Heardle.Unlimited, err);
+        continue;
+      }
     }
 
-    logger(Heardle.Unlimited, `Finished creating ${amount} files`);
-
-    const embed = createEmbed(Heardle.Unlimited, `Finished creating ${amount} files`, 0x32ff25);
+    const message = `Finished creating ${successCount}/${amount} files`;
+    logger(Heardle.Unlimited, message);
+    const embed = createEmbed(Heardle.Unlimited, message, 0x32ff25);
     await discordWebhook.send({ embeds: [embed] });
   } catch (err: any) {
     logger(Heardle.Unlimited, err);
