@@ -3,9 +3,9 @@ import { options } from './api/auth/[...nextauth]/options';
 import prisma from '@/utils/db';
 import SignInButton from '@/components/buttons/SignInButton';
 import RulesButton from '@/components/buttons/RulesButton';
-import Image from 'next/image';
 import { PlayButton } from '@/components/buttons/PlayButton';
 import EdenLogo from '@/components/EdenLogo';
+import Banner from '@/components/ads/Banner';
 
 async function getUserDetails() {
   const session = await getServerSession(options);
@@ -99,6 +99,7 @@ export default async function Home() {
             <h5 className="text-sm">No. {dayNumber}</h5>
             <h6 className="text-sm font-light">Created by giosalad</h6>
           </div>
+          <Banner data-ad-slot="3863843568" data-ad-format="auto" data-full-width-responsive="true" />
         </div>
       </div>
     </div>

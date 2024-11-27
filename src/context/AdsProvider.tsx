@@ -1,26 +1,29 @@
 'use client';
 
-import { Dispatch, PropsWithChildren, SetStateAction, createContext, useEffect, useState } from 'react';
+import { PropsWithChildren, createContext, useState } from 'react';
 
 interface AdsContextProps {
-  prefersAds: boolean;
-  setPrefersAds: Dispatch<SetStateAction<boolean>>;
+  preference: boolean;
+  setPreference: (p: boolean) => void;
 }
 
-export const AdsContext = createContext<AdsContextProps>({ prefersAds: false, setPrefersAds: () => null });
+export const AdsContext = createContext<AdsContextProps | null>(null);
 const LOCAL_STORAGE_KEY = 'eden_heardle_ads_preference';
 
+const getLocalStoragePreference = () => {
+  if (global?.window === undefined) return false;
+
+  const preference = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+  return preference === 'true';
+};
+
 export const AdsProvider = (props: PropsWithChildren) => {
-  const [prefersAds, setPrefersAds] = useState<boolean>(false);
+  const [prefersAds, setPrefersAds] = useState<boolean>(getLocalStoragePreference());
 
-  useEffect(() => {
-    const preference = localStorage.getItem(LOCAL_STORAGE_KEY) === 'true';
+  const setPreference = (preference: boolean) => {
     setPrefersAds(preference);
-  }, []);
+    window.localStorage.setItem(LOCAL_STORAGE_KEY, `${preference}`);
+  };
 
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, prefersAds.toString());
-  }, [prefersAds]);
-
-  return <AdsContext.Provider value={{ prefersAds, setPrefersAds }}>{props.children}</AdsContext.Provider>;
+  return <AdsContext.Provider value={{ preference: prefersAds, setPreference }}>{props.children}</AdsContext.Provider>;
 };
