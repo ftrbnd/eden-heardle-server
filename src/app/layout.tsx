@@ -10,6 +10,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import Script from 'next/script';
 import { clientEnv } from '@/utils/env';
+import { AdsProvider } from '@/context/AdsProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,9 +30,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <AuthSessionProvider>
             <TanstackProvider>
               <LocalUserProvider>
-                {children}
-                <Analytics />
-                <SpeedInsights />
+                <AdsProvider>
+                  {children}
+                  <Analytics />
+                  <SpeedInsights />
+                </AdsProvider>
               </LocalUserProvider>
             </TanstackProvider>
           </AuthSessionProvider>
