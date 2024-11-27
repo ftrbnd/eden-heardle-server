@@ -2,6 +2,7 @@ import { options } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth';
 import SignInButton from '../buttons/SignInButton';
 import SignOutButton from '../buttons/SignOutButton';
+import Toggle from '../ads/Toggle';
 
 export default async function SettingsModal() {
   const session = await getServerSession(options);
@@ -24,6 +25,8 @@ export default async function SettingsModal() {
               Discord
             </a>
           </div>
+          <div className="divider m-0"></div>
+          <Toggle />
           <div className="divider m-0"></div>
         </div>
         <p className="font-bold text-xs">© 2024 giosalad</p>
