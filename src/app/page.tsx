@@ -72,7 +72,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-base-200 flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-16">
       <Banner data-ad-slot="3863843568" data-ad-format="auto" data-full-width-responsive="true" />
-      <div className="hero flex-1 w-full">
+      <div className="hero flex-1 w-full md:col-start-2">
         <div className="hero-content text-center w-full">
           <div className="max-w-md">
             <div className="flex gap-2 justify-center items-center h-3/5">
@@ -80,7 +80,7 @@ export default async function Home() {
               <h1 className="text-4xl md:text-5xl font-bold">EDEN Heardle</h1>
             </div>
             {user && <h2 className="text-2xl md:text-3xl font-semibold">Hello {user?.name}!</h2>}
-            <p className="py-6">{getConditionalDescription()}</p>
+            <p className="py-2 md:py-6">{getConditionalDescription()}</p>
             <div className="flex justify-center gap-2">
               {!user && (
                 <>
@@ -90,7 +90,7 @@ export default async function Home() {
               )}
               <PlayButton />
             </div>
-            <div className="flex flex-col py-6">
+            <div className="flex flex-col py-2 md:py-6">
               <h4 className="text-sm font-semibold">
                 {new Date().toLocaleDateString('en-US', {
                   month: 'long',
