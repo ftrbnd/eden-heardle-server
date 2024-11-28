@@ -17,6 +17,7 @@ interface AdsBannerProps {
   'data-full-width-responsive'?: 'true';
   desktopOnly?: boolean;
   className?: string;
+  isGuessCard?: boolean;
 }
 
 const handleRouteChange = () => {
@@ -57,15 +58,22 @@ export default function Banner(props: AdsBannerProps) {
   return preference ? (
     <div
       className={cn(
-        'overflow-hidden block h-full w-full',
+        'overflow-hidden h-full w-full',
         {
-          'hidden md:block': props.desktopOnly,
-          'border border-solid border-red-600 bg-red-600': process.env.NODE_ENV === 'development'
+          'border border-solid border-red-600 ': process.env.NODE_ENV === 'development',
+          'rounded-2xl': props.isGuessCard
         },
         props.className
       )}
     >
-      <ins className="adsbygoogle adbanner-customize h-full w-full" data-ad-client={clientEnv.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID} {...props} />
+      <ins
+        className={cn('adsbygoogle adbanner-customize h-full w-full block', {
+          'hidden md:block': props.desktopOnly,
+          'h-[54px] w-80 inline-block': props.isGuessCard
+        })}
+        data-ad-client={clientEnv.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID}
+        {...props}
+      />
     </div>
   ) : (
     <></>

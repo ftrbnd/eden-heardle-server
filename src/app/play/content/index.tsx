@@ -53,7 +53,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
                     <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
                   ))}
                   {guesses.length === 0 && <WelcomeCard heardleDay={dailySong?.heardleDay} />}
-                  {finishedHeardle(guesses) && remainingGuesses.map(() => <Banner data-ad-slot="3330886325" data-ad-format="auto" data-full-width-responsive="true" className="rounded-2xl" />)}
+                  {finishedHeardle(guesses) && remainingGuesses.map(() => <Banner data-ad-slot="3330886325" data-ad-format="auto" data-full-width-responsive="true" isGuessCard />)}
                 </>
               )}
             </div>
@@ -61,7 +61,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
 
           {finishedHeardle(guesses) ? <ResultCard song={dailySong} guessedSong={correctlyGuessedHeardle(guesses)} /> : <div></div>}
         </div>
-        <Banner desktopOnly data-ad-slot="9451773241" data-ad-format="autorelaxed" />
+        <Banner desktopOnly data-ad-slot="7787337789" data-ad-format="autorelaxed" />
       </div>
       <div className="grid grid-rows-2-auto flex-col gap-2 items-center w-full card shadow-2xl px-4 pb-4">
         <SongSelectInput heardleSong={dailySong} songPending={dailySongPending} guesses={guesses} />
