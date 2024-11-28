@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <Script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientEnv.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID}`} crossOrigin="anonymous" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} min-h-screen`}>
         <NextThemesProvider>
           <AuthSessionProvider>
             <TanstackProvider>

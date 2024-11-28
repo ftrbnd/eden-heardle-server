@@ -13,7 +13,7 @@ declare global {
 
 interface AdsBannerProps {
   'data-ad-slot': string;
-  'data-ad-format': string;
+  'data-ad-format'?: string;
   'data-full-width-responsive'?: 'true';
   desktopOnly?: boolean;
   className?: string;
