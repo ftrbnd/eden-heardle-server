@@ -16,6 +16,7 @@ import AnnouncementBanner from './AnnouncementBanner';
 import { useQuery } from '@tanstack/react-query';
 import { getAnnouncement } from '@/services/announcements';
 import Banner from '@/components/ads/Banner';
+import useAds from '@/hooks/useAds';
 
 export default function PlayContent({ children }: { children: ReactNode }) {
   const { data: announcement } = useQuery({
@@ -28,6 +29,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
   const { guesses, loadingGuesses } = useGuesses();
   const { dailySong, dailySongPending } = useDailySong();
   const router = useRouter();
+  const { preference } = useAds();
 
   const remainingGuesses = new Array<string>(6 - guesses.length).fill('');
 
@@ -44,7 +46,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
         <Banner desktopOnly data-ad-slot="7787337789" data-ad-format="autorelaxed" />
         <div className="grid grid-rows-2-auto place-items-center gap-1 px-4 h-full w-full md:max-w-md pt-4 md:col-start-2">
           <AnimatePresence>
-            <div className={`grid ${guesses?.length === 0 ? 'grid-rows-1' : 'grid-rows-6'} w-full gap-2 place-self-center`}>
+            <div className={`grid ${guesses?.length === 0 ? 'grid-rows-1' : preference ? 'auto-rows-auto' : 'grid-rows-6'} w-full gap-2 place-self-center`}>
               {loadingGuesses || !guesses ? (
                 [1, 2, 3, 4, 5, 6].map((num) => <GuessCard key={num} name="" album="" cover="/default_song.png" showAnimation={false} />)
               ) : (
