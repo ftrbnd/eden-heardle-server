@@ -62,7 +62,7 @@ export default function Banner(props: AdsBannerProps) {
         {
           'border border-solid border-red-600 ': process.env.NODE_ENV === 'development',
           'hidden md:block': props.desktopOnly,
-          'rounded-2xl': props.isGuessCard
+          'rounded-2xl max-h-[54px]': props.isGuessCard
         },
         props.className
       )}
@@ -70,7 +70,7 @@ export default function Banner(props: AdsBannerProps) {
       <ins
         className={cn('adsbygoogle adbanner-customize h-full w-full block', {
           'hidden md:block': props.desktopOnly,
-          'h-[54px] w-80 inline-block': props.isGuessCard
+          'w-80 inline-block': props.isGuessCard
         })}
         data-ad-client={clientEnv.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID}
         {...props}
