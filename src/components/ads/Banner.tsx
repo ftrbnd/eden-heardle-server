@@ -65,7 +65,7 @@ export default function Banner(props: AdsBannerProps) {
         props.className
       )}
     >
-      <ins className="adsbygoogle adbanner-customize" data-ad-client={clientEnv.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID} {...props} />
+      <ins className="adsbygoogle adbanner-customize h-full w-full" data-ad-client={clientEnv.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID} {...props} />
     </div>
   ) : (
     <></>
