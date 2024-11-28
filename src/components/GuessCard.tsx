@@ -39,7 +39,7 @@ const getTooltip = (correctStatus: string) => {
 
 export function GuessCard({ name, album, cover, correctStatus, showAnimation }: GuessCardProps) {
   return (
-    <motion.div className="card card-side bg-base-200 shadow-xl w-full" initial={showAnimation && { y: '100vh' }} animate={showAnimation && { y: 0 }}>
+    <motion.div className="card card-side bg-base-200 shadow-xl w-full max-h-[54px]" initial={showAnimation && { y: '100vh' }} animate={showAnimation && { y: 0 }}>
       <figure>
         <Image src={cover} alt={name} height={50} width={50} />
       </figure>
