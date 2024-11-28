@@ -61,6 +61,7 @@ export default function Banner(props: AdsBannerProps) {
         'overflow-hidden h-full w-full',
         {
           'border border-solid border-red-600 ': process.env.NODE_ENV === 'development',
+          'hidden md:block': props.desktopOnly,
           'rounded-2xl': props.isGuessCard
         },
         props.className
