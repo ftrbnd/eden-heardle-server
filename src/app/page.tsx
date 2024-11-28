@@ -71,7 +71,7 @@ export default async function Home() {
 
   return (
     <div className="h-full bg-base-200 flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-16">
-      <Banner data-ad-slot="3863843568" data-full-width-responsive="true" />
+      <Banner data-ad-slot="3863843568" data-ad-format="auto" data-full-width-responsive="true" onHomePage />
       <div className="hero flex-1 w-full md:col-start-2">
         <div className="hero-content text-center w-full">
           <div className="max-w-md">
@@ -104,7 +104,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <Banner data-ad-slot="3863843568" data-full-width-responsive="true" />
+      <Banner data-ad-slot="3863843568" data-ad-format="auto" data-full-width-responsive="true" onHomePage />
     </div>
   );
 }
