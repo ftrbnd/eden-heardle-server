@@ -6,6 +6,7 @@ import Toggle from '../ads/Toggle';
 
 export default async function SettingsModal() {
   const session = await getServerSession(options);
+  const year = new Date().getUTCFullYear();
 
   return (
     <dialog id="settings_modal" className="modal modal-bottom sm:modal-middle">
@@ -29,7 +30,7 @@ export default async function SettingsModal() {
           <Toggle />
           <div className="divider m-0"></div>
         </div>
-        <p className="font-bold text-xs">© 2024 giosalad</p>
+        <p className="font-bold text-xs">© {year} giosalad</p>
         <div className="flex flex-col items-end">{session ? <SignOutButton styled /> : <SignInButton />}</div>
       </div>
 
