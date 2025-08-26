@@ -4,7 +4,7 @@ import { Song } from '@prisma/client';
 import prisma from '../lib/prisma';
 import ytdl from '@distube/ytdl-core';
 import supabase from '../lib/supabase';
-import { createWriteStream, readFileSync } from 'fs';
+import { createWriteStream, readFileSync, unlinkSync } from 'fs';
 
 async function download(song: Song, fileName: string) {
   return new Promise((resolve, reject) => {
@@ -24,18 +24,20 @@ async function download(song: Song, fileName: string) {
   });
 }
 
-async function upload(filename: string) {
-  const fileBuffer = readFileSync(filename);
+async function checkFileExists(fileName: string) {
+  const { data } = await supabase.storage.from('song').list();
+  if (!data || data.length === 0) return false;
 
-  const { error } = await supabase.storage.from('song').upload(filename, fileBuffer, { contentType: 'audio/mp3', upsert: false });
-  if (error) {
-    if (error.message === 'The resource already exists') {
-      return console.log(`${filename} was already uploaded to Supabase.`);
-    }
-    throw error;
-  }
+  return data.some((song) => song.name === fileName);
+}
 
-  console.log(`Successfully uploaded ${filename} to Supabase!`);
+async function upload(fileName: string) {
+  const fileBuffer = readFileSync(fileName);
+
+  const { data, error } = await supabase.storage.from('song').upload(fileName, fileBuffer, { contentType: 'audio/mp3', upsert: false });
+  if (error && error.message === 'The resource already exists') {
+    console.log(`${fileName} was already uploaded to Supabase.`);
+  } else if (data) console.log(`Successfully uploaded ${fileName} to Supabase!`);
 }
 
 async function main() {
@@ -47,10 +49,17 @@ async function main() {
     console.log(`#${i + 1}/${songs.length}: ${song.name}`);
 
     try {
-      const cleanFilename = `${song.name.replace(/\W/g, '').toLowerCase()}.mp3`;
+      const cleanFileName = `${song.name.replace(/\W/g, '').toLowerCase()}.mp3`;
+      const alreadyExists = await checkFileExists(cleanFileName);
+      if (alreadyExists) {
+        console.log(`${song.name} already exists`);
+        continue;
+      }
 
-      await download(song, cleanFilename);
-      await upload(cleanFilename);
+      await download(song, cleanFileName);
+      await upload(cleanFileName);
+
+      unlinkSync(cleanFileName);
     } catch (error) {
       console.log(`${song.name} failed to download`, error);
       missing.push(song.name);
