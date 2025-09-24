@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { env } from '../utils/env';
 
 export const redis = new Redis(env.REDIS_URL).on('connect', () => {
-  console.log('[Redis] Connected to eden-heardle-announcements');
+  if (env.NODE_ENV !== 'test') console.log('[Redis] Connected to eden-heardle-announcements');
 });
 
 export const announcementSchema = z.object({
