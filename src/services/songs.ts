@@ -4,7 +4,9 @@ const songsUrlEndpoint = '/api/songs';
 
 export const getSongs = async () => {
   try {
-    const response = await fetch(songsUrlEndpoint);
+    const response = await fetch(songsUrlEndpoint, {
+      cache: 'no-store'
+    });
     if (!response.ok) throw new Error('Failed to get songs collection');
 
     const { songs }: { songs: Song[] } = await response.json();
