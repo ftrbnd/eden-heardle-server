@@ -12,8 +12,8 @@ const envSchema = z.object({
   SUPABASE_KEY: z.string(),
   SUPABASE_URL: z.string().url(),
 
-  DAILY_HEARDLE_CRON_UTC_HOUR: z.coerce.number(),
-  DAILY_HEARDLE_CRON_UTC_MINUTE: z.coerce.number(),
+  DAILY_HEARDLE_CRON_UTC_HOUR: z.coerce.number().or(z.literal('*')),
+  DAILY_HEARDLE_CRON_UTC_MINUTE: z.coerce.number().or(z.literal('*')),
 
   UNLIMITED_HEARDLE_CRON_UTC_HOUR: z.coerce.number(),
   UNLIMITED_HEARDLE_CRON_UTC_MINUTE: z.coerce.number(),
