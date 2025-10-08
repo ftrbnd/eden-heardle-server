@@ -1,6 +1,7 @@
 import '../utils/env';
 
-import { prisma, Song } from '@packages/database';
+import * as db from '@packages/database/queries';
+import { Song } from '@packages/database';
 import ytdl from '@distube/ytdl-core';
 import supabase from '../lib/supabase';
 import { createWriteStream, readFileSync, unlinkSync } from 'fs';
@@ -40,7 +41,7 @@ async function upload(fileName: string) {
 }
 
 async function main() {
-  const songs = await prisma.song.findMany();
+  const songs = await db.getAllSongs();
 
   const missing: string[] = [];
   for (let i = 0; i < songs.length; i++) {

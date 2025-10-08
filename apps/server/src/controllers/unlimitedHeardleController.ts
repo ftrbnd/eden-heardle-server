@@ -1,17 +1,11 @@
 import { Request, Response } from 'express';
 import { Heardle, logger } from '../utils/logger';
-import { prisma } from '@packages/database';
+import * as db from '@packages/database/queries';
 import { repeatCreateUnlimitedHeardle } from '../helpers/heardleGenerators';
 
 export const getUnlimitedHeardle = async (_req: Request, res: Response) => {
   try {
-    const count = await prisma.unlimitedHeardle.count();
-    const skip = Math.floor(Math.random() * count);
-    const randomSongs = await prisma.unlimitedHeardle.findMany({
-      take: 1,
-      skip
-    });
-    const unlimitedHeardle = randomSongs[0];
+    const unlimitedHeardle = db.getRandomSong('unlimitedHeardle');
 
     res.json({ unlimitedHeardle });
   } catch (error: any) {

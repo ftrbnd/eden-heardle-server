@@ -1,4 +1,5 @@
-import { prisma, DailySong, Song, UnlimitedHeardle } from '@packages/database';
+import * as db from '@packages/database/queries';
+import { DailySong, Song, UnlimitedHeardle } from '@packages/database';
 import { downloadMp3 } from './downloadMp3';
 import { updateDatabase } from './updateDatabase';
 import { Heardle, logger } from '../utils/logger';
@@ -8,15 +9,7 @@ import { createEmbed, discordWebhook } from '../lib/webhook';
 export async function getRandomSong(heardleType: Heardle): Promise<Song> {
   try {
     // get a new random song
-    const songsCount = await prisma.song.count();
-    if (songsCount === 0) throw new Error('Database has no songs.');
-
-    const skip = Math.floor(Math.random() * songsCount);
-    const randomSongs = await prisma.song.findMany({
-      take: 1,
-      skip
-    });
-    const randomSong = randomSongs[0];
+    const randomSong = await db.getRandomSong('song');
     logger(heardleType, `Random song: ${randomSong.name}`);
 
     return randomSong;
@@ -59,18 +52,14 @@ async function createNewUnlimitedHeardle(): Promise<UnlimitedHeardle> {
 
 export async function repeatCreateUnlimitedHeardle(amount: number) {
   try {
-    const unlimitedHeardles = await prisma.unlimitedHeardle.findMany({});
+    const unlimitedHeardles = await db.getAllUnlimitedHeardles();
 
     logger(Heardle.Unlimited, `Deleting yesterday's collection...`);
 
     for (const heardle of unlimitedHeardles) {
       await supabase.storage.from('unlimited_heardles').remove([`unlimited_heardle_${heardle.id}.mp3`]);
 
-      await prisma.unlimitedHeardle.delete({
-        where: {
-          id: heardle.id
-        }
-      });
+      await db.deleteUnlimitedHeardle(heardle.id);
     }
 
     logger(Heardle.Unlimited, `Deleted yesterday's collection`);

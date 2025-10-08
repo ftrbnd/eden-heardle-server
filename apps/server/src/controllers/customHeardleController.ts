@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { prisma, CustomHeardle } from '@packages/database';
+import { CustomHeardle } from '@packages/database';
+import * as db from '@packages/database/queries';
 import { downloadMp3 } from '../helpers/downloadMp3';
 import { Heardle, logger } from '../utils/logger';
 import supabase from '../lib/supabase';
@@ -29,9 +30,7 @@ const deleteCustomHeardle = async (req: Request, res: Response) => {
     logger(Heardle.Custom, `DELETE request from User #${userId}`);
 
     // Delete from Database
-    await prisma.customHeardle.delete({
-      where: { id: heardleId, userId }
-    });
+    await db.deleteCustomHeardle(heardleId, userId);
 
     // Delete from Storage
     const { error: deleteError } = await supabase.storage.from('custom_heardles').remove([`custom_song_${heardleId}.mp3`]);

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { Heardle, logger } from '../utils/logger';
 import { setDailySong } from '../helpers/heardleGenerators';
-import { prisma, GuessedSong } from '@packages/database';
+import * as db from '@packages/database/queries';
+import { GuessedSong } from '@packages/database';
 import { LeaderboardStats } from '../utils/schema';
 import { announcementSchema, redis } from '../lib/redis';
 
@@ -21,11 +22,7 @@ export const retryDailyHeardle = (_req: Request, res: Response) => {
 
 export const getDailySong = async (_req: Request, res: Response) => {
   try {
-    const song = await prisma.dailySong.findUnique({
-      where: {
-        id: '0'
-      }
-    });
+    const song = await db.getDailySong('previous');
 
     res.json({ song });
   } catch (error: any) {
@@ -38,23 +35,15 @@ export const getUserStatistics = async (req: Request, res: Response) => {
   try {
     const discordId = req.params.userId;
 
-    const account = await prisma.account.findFirst({
-      where: {
-        providerAccountId: discordId
-      }
-    });
+    const account = await db.getDiscordAccount(discordId);
     if (!account) {
       return res.json({ error: 'Discord account not found' }).status(404);
     }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: account.userId
-      },
-      include: {
-        statistics: true,
-        guesses: true
-      }
+    const user = await db.getUser({
+      userId: account.userId,
+      includeGuesses: true,
+      includeStatistics: true
     });
     if (!user) {
       return res.json({ error: 'User not found' }).status(404);
@@ -66,11 +55,7 @@ export const getUserStatistics = async (req: Request, res: Response) => {
       return res.json({ error: 'User has no statistics yet' }).status(404);
     }
 
-    const guessedSongs = await prisma.guessedSong.findMany({
-      where: {
-        guessListId: user.guesses.id
-      }
-    });
+    const guessedSongs = await db.getGuessedSongs(user.guesses.id);
 
     res.json({ guesses: guessedSongs, statistics: user.statistics });
   } catch (error: any) {
@@ -91,11 +76,7 @@ const guessStatuses = (songs: GuessedSong[]): string[] => {
 
 export const getLeaderboard = async (_req: Request, res: Response) => {
   try {
-    const allStats = await prisma.statistics.findMany({
-      include: {
-        user: true
-      }
-    });
+    const allStats = await db.getStatistics({ includeUsers: true });
     if (!allStats) return res.json({ error: 'Failed to find leaderboard stats' }).status(404);
 
     const leaderboard: LeaderboardStats = {
@@ -107,14 +88,10 @@ export const getLeaderboard = async (_req: Request, res: Response) => {
     };
 
     for (const userStat of allStats) {
-      const userGuesses = await prisma.guesses.findUnique({
-        where: {
-          userId: userStat.userId
-        },
-        select: {
-          songs: true,
-          user: true
-        }
+      const userGuesses = await db.getUserGuesses({
+        userId: userStat.userId,
+        includeSongs: true,
+        includeUser: true
       });
 
       if (!userGuesses) return res.json({ error: 'Failed to find user guesses from userStat' }).status(404);

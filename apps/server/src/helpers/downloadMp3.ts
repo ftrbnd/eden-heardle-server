@@ -1,4 +1,5 @@
-import { CustomHeardle, DailySong, Song, UnlimitedHeardle, prisma } from '@packages/database';
+import { CustomHeardle, DailySong, Song, UnlimitedHeardle } from '@packages/database';
+import * as db from '@packages/database/queries';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import { readFileSync, promises, unlinkSync } from 'fs';
@@ -76,11 +77,7 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
   switch (heardleType) {
     case Heardle.Daily:
       // get current daily song and ensure it exists
-      const previousDailySong = await prisma.dailySong.findUnique({
-        where: {
-          id: '0'
-        }
-      });
+      const previousDailySong = await db.getDailySong('previous');
       if (!previousDailySong || previousDailySong.heardleDay === null || previousDailySong.heardleDay === undefined) throw new Error(`Couldn't find previous daily song or its day number`);
 
       logger(heardleType, "Removing yesterday's song...");
@@ -109,28 +106,11 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
 
       logger(heardleType, 'Upserting Daily Heardle object...');
 
-      await prisma.dailySong.upsert({
-        where: {
-          id: '1'
-        },
-        update: {
-          name: song.name,
-          album: song.album,
-          cover: song.cover,
-          link: dailyData?.signedUrl,
-          startTime: startTime,
-          heardleDay: previousDailySong.heardleDay + 1
-          // 'nextReset' field is not needed with a cron job
-        },
-        create: {
-          id: '1',
-          name: song.name,
-          album: song.album,
-          cover: song.cover,
-          link: dailyData?.signedUrl ?? song.link,
-          startTime: startTime,
-          heardleDay: previousDailySong.heardleDay + 1
-        }
+      await db.updateDailySong({
+        song,
+        signedUrl: dailyData.signedUrl,
+        startTime,
+        heardleDay: previousDailySong.heardleDay + 1
       });
 
       logger(heardleType, 'Saved audio url to Custom Heardle object in Supabase Database');
@@ -141,12 +121,8 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
       const customId = createId();
 
       // upload custom heardle song to separate supabase storage folder
-      const userAlreadyHasCustomHeardle = await prisma.customHeardle.findUnique({
-        where: {
-          userId
-        }
-      });
-      if (userAlreadyHasCustomHeardle) throw new Error(`User already has a Custom Heardle`);
+      const userCustomHeardle = await db.getUserCustomHeardle(userId);
+      if (userCustomHeardle) throw new Error(`User already has a Custom Heardle`);
 
       logger(heardleType, `Uploading to Supabase...`);
 
@@ -164,17 +140,12 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
 
       logger(heardleType, 'Creating Custom Heardle object...');
 
-      const customHeardle = await prisma.customHeardle.create({
-        data: {
-          id: customId,
-          userId,
-          name: song.name,
-          album: song.album,
-          cover: song.cover,
-          link: customData?.signedUrl ?? song.link,
-          startTime: startTime,
-          duration: song.duration
-        }
+      const customHeardle = await db.createCustomHeardle({
+        song,
+        id: customId,
+        userId,
+        signedUrl: customData.signedUrl,
+        startTime
       });
 
       logger(heardleType, `Saved audio url to Custom Heardle #${customId} in Supabase Database`);
@@ -198,16 +169,11 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
 
       logger(heardleType, 'Creating Unlimited Heardle object...');
 
-      const unlimitedHeardle = await prisma.unlimitedHeardle.create({
-        data: {
-          id: heardleId,
-          name: song.name,
-          album: song.album,
-          cover: song.cover,
-          link: unlimitedData?.signedUrl ?? song.link,
-          startTime: startTime,
-          duration: song.duration
-        }
+      const unlimitedHeardle = await db.createUnlimitedHeardle({
+        song,
+        id: heardleId,
+        signedUrl: unlimitedData.signedUrl,
+        startTime
       });
 
       logger(heardleType, `Saved audio url to Unlimited Heardle #${heardleId} in Supabase Database`);
