@@ -1,4 +1,4 @@
-import { User, GuessedSong, Guesses, Statistics, DailySong, Song, CustomHeardle } from '@prisma/client';
+import { User, GuessedSong, Guesses, Statistics, DailySong, Song, CustomHeardle } from '@packages/database';
 
 export const mockSongs: Song[] = [
   {

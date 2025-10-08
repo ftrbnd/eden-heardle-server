@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Heardle, logger } from '../utils/logger';
-import prisma from '../lib/prisma';
+import { prisma } from '@packages/database';
 import { repeatCreateUnlimitedHeardle } from '../helpers/heardleGenerators';
 
 export const getUnlimitedHeardle = async (_req: Request, res: Response) => {

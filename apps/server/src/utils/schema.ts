@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Song, User } from '@prisma/client';
+import { Song, User } from '@packages/database';
 
 export const postSchema = z.object({
   song: z.custom<Song>(),

@@ -1,6 +1,5 @@
-import prisma from '../lib/prisma';
+import { prisma, DailySong, Song, UnlimitedHeardle } from '@packages/database';
 import { downloadMp3 } from './downloadMp3';
-import { DailySong, Song, UnlimitedHeardle } from '@prisma/client';
 import { updateDatabase } from './updateDatabase';
 import { Heardle, logger } from '../utils/logger';
 import supabase from '../lib/supabase';
@@ -10,6 +9,8 @@ export async function getRandomSong(heardleType: Heardle): Promise<Song> {
   try {
     // get a new random song
     const songsCount = await prisma.song.count();
+    if (songsCount === 0) throw new Error('Database has no songs.');
+
     const skip = Math.floor(Math.random() * songsCount);
     const randomSongs = await prisma.song.findMany({
       take: 1,

@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { Heardle, logger } from '../utils/logger';
 import { setDailySong } from '../helpers/heardleGenerators';
-import prisma from '../lib/prisma';
-import { GuessedSong } from '@prisma/client';
+import { prisma, GuessedSong } from '@packages/database';
 import { LeaderboardStats } from '../utils/schema';
 import { announcementSchema, redis } from '../lib/redis';
 

@@ -1,9 +1,8 @@
-import { CustomHeardle, DailySong, Song, UnlimitedHeardle } from '@prisma/client';
+import { CustomHeardle, DailySong, Song, UnlimitedHeardle, prisma } from '@packages/database';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import { readFileSync, promises, unlinkSync } from 'fs';
 import { Blob } from 'buffer';
-import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
 import { logger, Heardle } from '../utils/logger';
 import { createId } from '@paralleldrive/cuid2';

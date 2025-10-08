@@ -1,7 +1,6 @@
 import '../utils/env';
 
-import { Song } from '@prisma/client';
-import prisma from '../lib/prisma';
+import { prisma, Song } from '@packages/database';
 import ytdl from '@distube/ytdl-core';
 import supabase from '../lib/supabase';
 import { createWriteStream, readFileSync, unlinkSync } from 'fs';

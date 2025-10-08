@@ -1,5 +1,4 @@
-import { DailySong, Statistics, User } from '@prisma/client';
-import prisma from '../lib/prisma';
+import { DailySong, Statistics, User, prisma } from '@packages/database';
 import { Heardle, logger } from '../utils/logger';
 
 export async function userGuessedCorrectly(user: User): Promise<boolean> {

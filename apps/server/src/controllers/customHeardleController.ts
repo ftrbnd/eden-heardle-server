@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
-import prisma from '../lib/prisma';
+import { prisma, CustomHeardle } from '@packages/database';
 import { downloadMp3 } from '../helpers/downloadMp3';
 import { Heardle, logger } from '../utils/logger';
-import { CustomHeardle } from '@prisma/client';
 import supabase from '../lib/supabase';
 import { deleteSchema, postSchema } from '../utils/schema';
 
