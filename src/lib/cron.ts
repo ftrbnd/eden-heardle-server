@@ -3,9 +3,12 @@ import { CronJob } from 'cron';
 import { setDailySong, repeatCreateUnlimitedHeardle } from '../helpers/heardleGenerators';
 
 export const registerDailyHeardleCronJob = () => {
-  if (process.env.NODE_ENV === 'test') return;
+  const environment = env.NODE_ENV;
+  if (environment === 'test') return;
 
-  const cron = new CronJob(`${env.DAILY_HEARDLE_CRON_UTC_MINUTE} ${env.DAILY_HEARDLE_CRON_UTC_HOUR} * * *`, setDailySong, null, true, 'utc');
+  const time = environment === 'development' ? '*/5 * * * *' : `${env.DAILY_HEARDLE_CRON_UTC_MINUTE} ${env.DAILY_HEARDLE_CRON_UTC_HOUR} * * *`;
+  console.log(`[${environment.toUpperCase()}] environment cron time: ${time}`);
+  const cron = new CronJob(time, setDailySong, null, true, 'utc');
 
   return cron;
 };

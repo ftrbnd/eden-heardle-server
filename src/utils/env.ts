@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-const path = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+const path = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
 dotenv.config({ path });
 
 import z from 'zod';
