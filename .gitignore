@@ -1,5 +1,3 @@
-node_modules/
-dist/
-*.env*
-*.mp3
-coverage/
+.turbo
+node_modules
+.env*
