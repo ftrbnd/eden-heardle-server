@@ -6,7 +6,9 @@ export const registerDailyHeardleCronJob = () => {
   const environment = env.NODE_ENV;
   if (environment === 'test') return;
 
-  const time = environment === 'development' ? '*/5 * * * *' : `${env.DAILY_HEARDLE_CRON_UTC_MINUTE} ${env.DAILY_HEARDLE_CRON_UTC_HOUR} * * *`;
+  const devMinuteFrequency = env.DAILY_HEARDLE_DEV_MINUTE_FREQUENCY;
+
+  const time = environment === 'development' ? `*/${devMinuteFrequency} * * * *` : `${env.DAILY_HEARDLE_CRON_UTC_MINUTE} ${env.DAILY_HEARDLE_CRON_UTC_HOUR} * * *`;
   console.log(`[${environment.toUpperCase()}] environment cron time: ${time}`);
   const cron = new CronJob(time, setDailySong, null, true, 'utc');
 

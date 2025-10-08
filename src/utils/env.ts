@@ -14,6 +14,7 @@ const envSchema = z.object({
 
   DAILY_HEARDLE_CRON_UTC_HOUR: z.coerce.number().or(z.literal('*')),
   DAILY_HEARDLE_CRON_UTC_MINUTE: z.coerce.number().or(z.literal('*')),
+  DAILY_HEARDLE_DEV_MINUTE_FREQUENCY: z.coerce.number().optional().default(5),
 
   UNLIMITED_HEARDLE_CRON_UTC_HOUR: z.coerce.number(),
   UNLIMITED_HEARDLE_CRON_UTC_MINUTE: z.coerce.number(),

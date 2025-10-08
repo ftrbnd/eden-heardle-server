@@ -1,7 +1,7 @@
 import { CustomHeardle, DailySong, Song, UnlimitedHeardle } from '@prisma/client';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
-import { readFileSync, promises } from 'fs';
+import { readFileSync, promises, unlinkSync } from 'fs';
 import { Blob } from 'buffer';
 import prisma from '../lib/prisma';
 import supabase from '../lib/supabase';
@@ -224,6 +224,9 @@ export async function downloadMp3(song: Song, startTime: number, heardleType: He
     const mp3File = await getMp3File(heardleType, newFilename);
 
     const heardleSong = await uploadToDatabase(heardleType, mp3File, song, startTime, userId);
+
+    unlinkSync(songFilename);
+    unlinkSync('daily_song.mp3');
 
     return heardleSong;
   } catch (err: unknown) {
