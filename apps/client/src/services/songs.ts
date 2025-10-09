@@ -1,4 +1,4 @@
-import { DailySong, Song } from '@prisma/client';
+import { DailySong, Song } from '@packages/database';
 
 const songsUrlEndpoint = '/api/songs';
 

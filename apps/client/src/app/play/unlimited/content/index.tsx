@@ -2,7 +2,7 @@
 
 import { GuessCard } from '@/components/GuessCard';
 import Navbar from '@/app/play/content/Navbar';
-import { GuessedSong, UnlimitedHeardle } from '@prisma/client';
+import { GuessedSong, UnlimitedHeardle } from '@packages/database';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { correctlyGuessedHeardle, finishedHeardle } from '@/utils/helpers';

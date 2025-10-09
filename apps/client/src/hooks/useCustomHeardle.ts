@@ -1,6 +1,6 @@
 import { createCustomHeardle, deleteCustomHeardle } from '@/services/customHeardles';
 import { getUserCustomHeardle } from '@/services/users';
-import { Song } from '@prisma/client';
+import { Song } from '@packages/database';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 

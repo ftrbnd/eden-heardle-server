@@ -1,4 +1,4 @@
-import prisma from '@/utils/db';
+import * as db from '@packages/database/queries';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -8,11 +8,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   if (!id) return NextResponse.json({ error: 'Custom Heardle id is required' }, { status: 400 });
 
   try {
-    const customHeardle = await prisma.customHeardle.findUnique({
-      where: {
-        id
-      }
-    });
+    const customHeardle = await db.getCustomHeardle({ where: { id } });
     if (!customHeardle) return NextResponse.json({ error: 'Custom Heardle song not found' }, { status: 404 });
 
     return NextResponse.json({ customHeardle }, { status: 200 });

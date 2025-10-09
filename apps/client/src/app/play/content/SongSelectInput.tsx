@@ -5,7 +5,7 @@ import useSongs from '@/hooks/useSongs';
 import { LocalGuessedSong } from '@/utils/types';
 import { finishedHeardle } from '@/utils/helpers';
 import { createId } from '@paralleldrive/cuid2';
-import { Song, DailySong, CustomHeardle, GuessedSong, UnlimitedHeardle } from '@prisma/client';
+import { Song, DailySong, CustomHeardle, GuessedSong, UnlimitedHeardle } from '@packages/database';
 import { useEffect, ChangeEvent, Dispatch, SetStateAction, useRef, forwardRef } from 'react';
 
 interface SelectProps {

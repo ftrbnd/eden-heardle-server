@@ -9,7 +9,7 @@ import { createEmbed, discordWebhook } from '../lib/webhook';
 export async function getRandomSong(heardleType: Heardle): Promise<Song> {
   try {
     // get a new random song
-    const randomSong = await db.getRandomSong('song');
+    const [randomSong] = await db.getRandomSong('song');
     logger(heardleType, `Random song: ${randomSong.name}`);
 
     return randomSong;

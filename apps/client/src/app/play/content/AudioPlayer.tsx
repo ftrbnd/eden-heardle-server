@@ -4,7 +4,7 @@ import { LocalGuessedSong } from '@/utils/types';
 import { finishedHeardle } from '@/utils/helpers';
 import { IconDefinition, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle } from '@prisma/client';
+import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle } from '@packages/database';
 import { useEffect, useRef, useState } from 'react';
 
 interface AudioProps {

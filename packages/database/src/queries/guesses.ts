@@ -1,4 +1,13 @@
+import { GuessedSong } from '../../generated/prisma';
 import { prisma } from '../client';
+
+export async function createDefaultUserGuesses(userId: string) {
+  await prisma.guesses.create({
+    data: {
+      userId
+    }
+  });
+}
 
 export async function getGuessedSongs(userGuessListId: string) {
   const guessedSongs = await prisma.guessedSong.findMany({
@@ -20,13 +29,34 @@ export async function getUserGuesses({ userId, includeSongs, includeUser }: GetU
     where: {
       userId
     },
-    select: {
+    include: {
       songs: includeSongs,
       user: includeUser
     }
   });
 
   return userGuesses;
+}
+
+export async function addUserGuess(userId: string, song: GuessedSong) {
+  const updatedGuesses = await prisma.guesses.update({
+    where: {
+      userId
+    },
+    data: {
+      songs: {
+        create: {
+          correctStatus: song.correctStatus,
+          cover: song.cover,
+          name: song.name,
+          album: song.album
+        }
+      }
+    },
+    include: { songs: true }
+  });
+
+  return updatedGuesses;
 }
 
 export async function deleteAllGuesses() {

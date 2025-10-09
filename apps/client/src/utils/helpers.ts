@@ -1,4 +1,4 @@
-import { GuessedSong } from '@prisma/client';
+import { GuessedSong } from '@packages/database';
 import { LocalGuessedSong } from './types';
 import { twMerge } from 'tailwind-merge';
 import { clsx, ClassValue } from 'clsx';

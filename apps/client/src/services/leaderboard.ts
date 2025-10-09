@@ -1,11 +1,11 @@
 import { LeaderboardStats } from '@/utils/types';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@packages/database';
 
 const LEADERBOARD_ENDPOINT = '/api/leaderboard';
 const FIRST_ENDPOINT = '/api/first';
 
 type FirstCompletedWithUserStatistics = Prisma.FirstCompletedDailyGetPayload<{
-  include: { user: { include: { statistics: true } } };
+  include: { User: { include: { statistics: true } } };
 }>;
 
 export const getLeaderboard = async () => {

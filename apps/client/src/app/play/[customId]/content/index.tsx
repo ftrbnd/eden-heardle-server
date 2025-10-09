@@ -2,7 +2,7 @@
 
 import { GuessCard } from '@/components/GuessCard';
 import Navbar from '@/app/play/content/Navbar';
-import { GuessedSong } from '@prisma/client';
+import { GuessedSong } from '@packages/database';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
 import { getUser } from '@/services/users';

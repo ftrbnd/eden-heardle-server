@@ -6,7 +6,7 @@ export async function getAllSongs() {
   return songs;
 }
 
-export async function getRandomSong(table: 'song' | 'unlimitedHeardle') {
+export async function getRandomSong(table: 'song' | 'unlimitedHeardle', amount?: number) {
   let count = 0;
   if (table === 'song') count = await prisma.song.count();
   else if (table === 'unlimitedHeardle') count = await prisma.unlimitedHeardle.count();
@@ -19,15 +19,14 @@ export async function getRandomSong(table: 'song' | 'unlimitedHeardle') {
 
   if (table === 'song')
     randomSongs = await prisma.song.findMany({
-      take: 1,
+      take: amount ?? 1,
       skip
     });
   else if (table === 'unlimitedHeardle')
     randomSongs = await prisma.unlimitedHeardle.findMany({
-      take: 1,
+      take: amount ?? 1,
       skip
     });
 
-  const randomSong = randomSongs[0];
-  return randomSong;
+  return randomSongs;
 }

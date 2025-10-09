@@ -1,20 +1,11 @@
-import { Song } from '@prisma/client';
+import { Song } from '@packages/database';
 import { GuessCard } from '../GuessCard';
 import Link from 'next/link';
-import prisma from '@/utils/db';
+import * as db from '@packages/database/queries';
 
 async function getThreeRandomSongs() {
   try {
-    const songsCount = await prisma.song.count();
-    const skip = Math.floor(Math.random() * songsCount);
-
-    let songs: Song[] = [];
-    while (songs.length !== 3) {
-      songs = await prisma.song.findMany({
-        skip: skip,
-        take: 3
-      });
-    }
+    const songs = await db.getRandomSong('song', 3);
 
     return songs;
   } catch (err) {

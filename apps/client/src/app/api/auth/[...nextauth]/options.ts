@@ -1,4 +1,5 @@
-import prisma from '@/utils/db';
+import * as db from '@packages/database/queries';
+import { prisma } from '@packages/database/client';
 import { serverEnv } from '@/utils/env';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextAuthOptions } from 'next-auth';
@@ -27,22 +28,8 @@ export const options: NextAuthOptions = {
   },
   events: {
     async createUser(message) {
-      await prisma.statistics.create({
-        data: {
-          currentStreak: 0,
-          maxStreak: 0,
-          gamesPlayed: 0,
-          gamesWon: 0,
-          accuracy: 0,
-          userId: message.user.id
-        }
-      });
-
-      await prisma.guesses.create({
-        data: {
-          userId: message.user.id
-        }
-      });
+      await db.createDefaultUserStatistics(message.user.id);
+      await db.createDefaultUserGuesses(message.user.id);
     }
   }
 };

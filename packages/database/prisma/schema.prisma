@@ -110,7 +110,7 @@ model Song {
 }
 
 model CustomHeardle {
-  id        String  @id
+  id            String  @id @default(cuid())
   userId    String  @unique
   name      String
   album     String?
@@ -122,7 +122,7 @@ model CustomHeardle {
 }
 
 model UnlimitedHeardle {
-  id        String  @id
+  id            String  @id @default(cuid())
   name      String
   album     String?
   cover     String
@@ -132,7 +132,7 @@ model UnlimitedHeardle {
 }
 
 model FirstCompletedDaily {
-  id     String  @id
+  id            String  @id @default(cuid())
   userId String? @unique
   User   User?   @relation(fields: [userId], references: [id])
 }

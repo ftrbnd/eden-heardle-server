@@ -47,6 +47,7 @@ export async function setDailySong(song: DailySong) {
   return newDailySong;
 }
 
+// TODO: update 'previous' to 'current'
 export async function getDailySong(day: 'previous' | 'next') {
   const song = await prisma.dailySong.findUnique({
     where: {
@@ -55,6 +56,37 @@ export async function getDailySong(day: 'previous' | 'next') {
   });
 
   return song;
+}
+
+export async function createFirstCompletedDaily(userId: string) {
+  const firstCompletedDaily = await prisma.firstCompletedDaily.create({
+    data: {
+      userId
+    },
+    include: {
+      User: {
+        include: {
+          statistics: true
+        }
+      }
+    }
+  });
+
+  return firstCompletedDaily;
+}
+
+export async function getFirstCompletedDaily() {
+  const first = await prisma.firstCompletedDaily.findFirst({
+    include: {
+      User: {
+        include: {
+          statistics: true
+        }
+      }
+    }
+  });
+
+  return first;
 }
 
 export async function deleteFirstCompletedDaily() {

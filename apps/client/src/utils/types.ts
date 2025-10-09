@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { User } from '@packages/database';
 
 export interface LocalGuessedSong {
   name: string;

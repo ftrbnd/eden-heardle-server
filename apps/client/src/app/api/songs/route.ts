@@ -1,9 +1,9 @@
-import prisma from '@/utils/db';
+import * as db from '@packages/database/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const songs = await prisma.song.findMany();
+    const songs = await db.getAllSongs();
     if (!songs) return NextResponse.json({ error: 'Songs collection not found' }, { status: 404 });
 
     const sortedSongs = songs.sort((a, b) => {

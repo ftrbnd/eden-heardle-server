@@ -2,7 +2,7 @@ import { ModalButton } from '@/components/buttons/RedirectButton';
 import { statusSquares, onCustomHeardlePage } from '@/utils/helpers';
 import { faArrowRotateRight, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle, User } from '@prisma/client';
+import { CustomHeardle, DailySong, GuessedSong, UnlimitedHeardle, User } from '@packages/database';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';

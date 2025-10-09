@@ -1,5 +1,5 @@
 import { clientEnv } from '@/utils/env';
-import { UnlimitedHeardle } from '@prisma/client';
+import { UnlimitedHeardle } from '@packages/database';
 
 const UNLIMITED_HEARDLE_ENDPOINT_EXPRESS = clientEnv.NEXT_PUBLIC_EXPRESS_URL;
 

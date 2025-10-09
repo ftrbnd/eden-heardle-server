@@ -5,7 +5,7 @@ import { repeatCreateUnlimitedHeardle } from '../helpers/heardleGenerators';
 
 export const getUnlimitedHeardle = async (_req: Request, res: Response) => {
   try {
-    const unlimitedHeardle = db.getRandomSong('unlimitedHeardle');
+    const [unlimitedHeardle] = await db.getRandomSong('unlimitedHeardle');
 
     res.json({ unlimitedHeardle });
   } catch (error: any) {

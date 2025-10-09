@@ -2,7 +2,7 @@
 
 import { faCheck, faCloudArrowUp, faLink, faTrash, faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Song } from '@prisma/client';
+import { Song } from '@packages/database';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';

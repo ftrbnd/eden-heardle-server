@@ -1,4 +1,4 @@
-import { Song } from '../../generated/prisma';
+import { Song, Prisma } from '../../generated/prisma';
 import { prisma } from '../client';
 
 interface CreateCustomHeardleParams {
@@ -19,6 +19,21 @@ export async function createCustomHeardle({ song, id, userId, signedUrl, startTi
       link: signedUrl ?? song.link,
       startTime: startTime,
       duration: song.duration
+    }
+  });
+
+  return customHeardle;
+}
+
+interface GetCustomHeardleParams {
+  where: Prisma.CustomHeardleWhereUniqueInput;
+  includeUser?: boolean;
+}
+export async function getCustomHeardle({ where, includeUser }: GetCustomHeardleParams) {
+  const customHeardle = await prisma.customHeardle.findUnique({
+    where,
+    include: {
+      User: includeUser
     }
   });
 

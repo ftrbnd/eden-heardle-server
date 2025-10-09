@@ -1,4 +1,4 @@
-import { GuessedSong, Song, Statistics } from '@prisma/client';
+import { GuessedSong, Song, Statistics } from '@packages/database';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { createId } from '@paralleldrive/cuid2';
@@ -109,7 +109,7 @@ const useGuesses = () => {
 
   const getGuessType = (): GuessType => (session ? 'session' : 'local');
 
-  return { guesses: session ? sessionGuesses ?? [] : localUser.guesses, loadingGuesses: sessionStatus === 'loading' || initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
+  return { guesses: session ? (sessionGuesses ?? []) : localUser.guesses, loadingGuesses: sessionStatus === 'loading' || initialLoadingSessionGuesses, guessType: getGuessType(), submitGuess };
 };
 
 export default useGuesses;

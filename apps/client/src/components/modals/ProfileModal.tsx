@@ -1,6 +1,6 @@
 import { faGem } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { User } from '@prisma/client';
+import { User } from '@packages/database';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useEffect, useRef, MouseEvent } from 'react';

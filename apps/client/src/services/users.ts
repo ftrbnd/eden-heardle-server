@@ -1,4 +1,4 @@
-import { CustomHeardle, GuessedSong, Statistics, User } from '@prisma/client';
+import { CustomHeardle, GuessedSong, Statistics, User } from '@packages/database';
 
 const USERS_ENDPOINT = '/api/users';
 

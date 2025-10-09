@@ -3,20 +3,16 @@ import SettingsModal from '@/components/modals/SettingsModal';
 import CustomHeardlePageContent from './content';
 import CustomHeardleModal from '@/components/modals/CustomHeardleModal';
 import { Metadata } from 'next';
-import prisma from '@/utils/db';
+import * as db from '@packages/database/queries';
 
 interface CustomPageProps {
   params: { customId: string };
 }
 
 export async function generateMetadata({ params }: CustomPageProps): Promise<Metadata> {
-  const customHeardle = await prisma.customHeardle.findUnique({
-    where: {
-      id: params.customId
-    },
-    include: {
-      user: true
-    }
+  const customHeardle = await db.getCustomHeardle({
+    where: { id: params.customId },
+    includeUser: true
   });
 
   if (!customHeardle) {
@@ -26,7 +22,7 @@ export async function generateMetadata({ params }: CustomPageProps): Promise<Met
   }
 
   return {
-    title: `${customHeardle?.user.name}'s Custom EDEN Heardle`
+    title: `${customHeardle.User.name}'s Custom EDEN Heardle`
   };
 }
 

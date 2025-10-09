@@ -1,5 +1,5 @@
-import prisma from '@/utils/db';
-import { Statistics } from '@prisma/client';
+import * as db from '@packages/database/queries';
+import { Statistics } from '@packages/database';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -9,11 +9,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   if (!userId) return NextResponse.json({ error: 'User id is required' }, { status: 400 });
 
   try {
-    const stats = await prisma.statistics.findUnique({
-      where: {
-        userId
-      }
-    });
+    const stats = await db.getUserStatistics(userId);
     if (!stats) return NextResponse.json({ error: 'Failed to find user stats' }, { status: 404 });
 
     return NextResponse.json({ stats }, { status: 200 });
@@ -29,21 +25,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     const { guessedSong }: { guessedSong: boolean } = await req.json();
 
-    const oldStats = await prisma.statistics.findUnique({
-      where: {
-        userId
-      }
-    });
+    const oldStats = await db.getUserStatistics(userId);
     if (!oldStats) return NextResponse.json({ error: "Failed to find user's stats" }, { status: 404 });
 
-    const guesses = await prisma.guesses.findUnique({
-      where: {
-        userId
-      },
-      include: {
-        songs: true
-      }
-    });
+    const guesses = await db.getUserGuesses({ userId, includeSongs: true });
     if (!guesses) return NextResponse.json({ error: "Failed to find user's guesses" }, { status: 404 });
 
     let gameAccuracy = 0;
@@ -66,17 +51,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       firstStreak: oldStats.firstStreak // firstStreak is updated in dedicated route
     };
 
-    const updatedStats = await prisma.statistics.update({
-      where: {
-        userId
-      },
-      data: {
-        gamesPlayed: newStats.gamesPlayed,
-        gamesWon: newStats.gamesWon,
-        currentStreak: newStats.currentStreak,
-        maxStreak: newStats.maxStreak,
-        accuracy: newStats.accuracy
-      }
+    const updatedStats = await db.updateUserStatistics({
+      gamesPlayed: newStats.gamesPlayed,
+      gamesWon: newStats.gamesWon,
+      currentStreak: newStats.currentStreak,
+      maxStreak: newStats.maxStreak,
+      accuracy: newStats.accuracy
     });
 
     return NextResponse.json({ stats: updatedStats }, { status: 200 });

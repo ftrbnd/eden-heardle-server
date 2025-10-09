@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 import { options } from './api/auth/[...nextauth]/options';
-import prisma from '@/utils/db';
+import * as db from '@packages/database/queries';
 import SignInButton from '@/components/buttons/SignInButton';
 import RulesButton from '@/components/buttons/RulesButton';
 import { PlayButton } from '@/components/buttons/PlayButton';
@@ -9,22 +9,13 @@ import Banner from '@/components/ads/Banner';
 
 async function getUserDetails() {
   const session = await getServerSession(options);
-  if (!session) return { user: null, guesses: null };
+  if (!session || !session.user.id) return { user: null, guesses: null };
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: session.user.id
-      }
-    });
-
-    const userGuesses = await prisma.guesses.findUnique({
-      where: {
-        userId: session.user.id
-      },
-      select: {
-        songs: true
-      }
+    const user = await db.getUser({ userId: session.user.id });
+    const userGuesses = await db.getUserGuesses({
+      userId: session.user.id,
+      includeSongs: true
     });
 
     return { user, guesses: userGuesses?.songs };
@@ -36,13 +27,9 @@ async function getUserDetails() {
 
 async function getHeardleDayNumber() {
   try {
-    const dayNumber = await prisma.dailySong.findFirst({
-      select: {
-        heardleDay: true
-      }
-    });
+    const dailySong = await db.getDailySong('previous');
 
-    return dayNumber?.heardleDay;
+    return dailySong?.heardleDay;
   } catch (err) {
     console.log('Failed to get Heardle Day Number: ', err);
     return -1;

@@ -1,5 +1,5 @@
 import { clientEnv } from '@/utils/env';
-import { CustomHeardle, Song } from '@prisma/client';
+import { CustomHeardle, Song } from '@packages/database';
 
 const CUSTOM_HEARDLE_ENDPOINT_EXPRESS = clientEnv.NEXT_PUBLIC_EXPRESS_URL;
 const CUSTOM_HEARDLE_ENDPOINT_NEXT = '/api/customHeardles';
