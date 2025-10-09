@@ -10,7 +10,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./queries": "./src/queries.ts"
+    "./queries": "./src/queries/index.ts"
   },
   "devDependencies": {
     "prisma": "5.20.0",
