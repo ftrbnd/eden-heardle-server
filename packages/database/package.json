@@ -10,6 +10,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./client": "./src/client.ts",
     "./queries": "./src/queries/index.ts"
   },
   "devDependencies": {
