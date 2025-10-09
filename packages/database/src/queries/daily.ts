@@ -35,7 +35,7 @@ export async function updateDailySong({ song, signedUrl, startTime, heardleDay }
 }
 
 /** Sets the new daily song by upserting at id "0" */
-export async function setDailySong(song: DailySong) {
+export async function setDailySong(song: Omit<DailySong, 'id'>) {
   const newDailySong = await prisma.dailySong.upsert({
     where: {
       id: '0'
@@ -47,11 +47,13 @@ export async function setDailySong(song: DailySong) {
   return newDailySong;
 }
 
-// TODO: update 'previous' to 'current'
-export async function getDailySong(day: 'previous' | 'next') {
+export async function getDailySong(day: 'current' | 'next') {
   const song = await prisma.dailySong.findUnique({
     where: {
-      id: day === 'previous' ? '0' : day === 'next' ? '1' : undefined
+      id: day === 'next' ? '1' : '0'
+    },
+    omit: {
+      id: true
     }
   });
 

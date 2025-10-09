@@ -52,7 +52,7 @@ export async function getNextDailySong() {
   return nextDailySong;
 }
 
-export async function updateDailySong(nextDailySong: DailySong) {
+export async function updateDailySong(nextDailySong: Omit<DailySong, 'id'>) {
   // set saved next daily song to current daily song
   const newDailySong = await db.setDailySong(nextDailySong);
   return newDailySong;

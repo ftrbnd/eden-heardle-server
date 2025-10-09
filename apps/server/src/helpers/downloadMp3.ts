@@ -73,11 +73,12 @@ export async function getMp3File(heardleType: Heardle, fileName: string): Promis
   });
 }
 
-export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, song: Song, startTime: number, userId?: string): Promise<DailySong | CustomHeardle | UnlimitedHeardle> {
+export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, song: Song, startTime: number, userId?: string): Promise<Omit<DailySong, 'id'> | CustomHeardle | UnlimitedHeardle> {
   switch (heardleType) {
     case Heardle.Daily:
       // get current daily song and ensure it exists
-      const previousDailySong = await db.getDailySong('previous');
+      const previousDailySong = await db.getDailySong('current');
+      console.log(previousDailySong);
       if (!previousDailySong || previousDailySong.heardleDay === null || previousDailySong.heardleDay === undefined) throw new Error(`Couldn't find previous daily song or its day number`);
 
       logger(heardleType, "Removing yesterday's song...");

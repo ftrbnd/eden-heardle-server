@@ -22,7 +22,7 @@ export const retryDailyHeardle = (_req: Request, res: Response) => {
 
 export const getDailySong = async (_req: Request, res: Response) => {
   try {
-    const song = await db.getDailySong('previous');
+    const song = await db.getDailySong('current');
 
     res.json({ song });
   } catch (error: any) {

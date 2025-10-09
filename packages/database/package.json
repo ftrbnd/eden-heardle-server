@@ -14,10 +14,10 @@
     "./queries": "./src/queries/index.ts"
   },
   "devDependencies": {
-    "prisma": "5.20.0",
+    "prisma": "^6.17.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@prisma/client": "5.20.0"
+    "@prisma/client": "^6.17.0"
   }
 }

@@ -27,7 +27,7 @@ async function getUserDetails() {
 
 async function getHeardleDayNumber() {
   try {
-    const dailySong = await db.getDailySong('previous');
+    const dailySong = await db.getDailySong('current');
 
     return dailySong?.heardleDay;
   } catch (err) {
