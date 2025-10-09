@@ -14,7 +14,7 @@ export async function userGuessedCorrectly(user: User): Promise<boolean> {
 }
 
 export async function updateStatistics(payload: Statistics) {
-  const newStats = await db.updateUserStatistics(payload);
+  const newStats = await db.updateUserStatistics(payload.userId, payload);
   return newStats;
 }
 

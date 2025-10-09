@@ -50,7 +50,7 @@ export const updateFirstCompletedDaily = async (userId: string | undefined) => {
     const { first }: { first: FirstCompletedWithUserStatistics } = await response.json();
     return first;
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     throw new Error('Failed to update FirstCompletedDaily table');
   }

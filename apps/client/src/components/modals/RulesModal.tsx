@@ -9,7 +9,7 @@ async function getThreeRandomSongs() {
 
     return songs;
   } catch (err) {
-    console.log('Failed to get three random songs for example: ', err);
+    console.error('Failed to get three random songs for example: ', err);
     return [];
   }
 }

@@ -20,7 +20,7 @@ async function getUserDetails() {
 
     return { user, guesses: userGuesses?.songs };
   } catch (err) {
-    console.log('Failed to get user details: ', err);
+    console.error('Failed to get user details: ', err);
     return { user: null, guesses: null };
   }
 }
@@ -31,7 +31,7 @@ async function getHeardleDayNumber() {
 
     return dailySong?.heardleDay;
   } catch (err) {
-    console.log('Failed to get Heardle Day Number: ', err);
+    console.error('Failed to get Heardle Day Number: ', err);
     return -1;
   }
 }

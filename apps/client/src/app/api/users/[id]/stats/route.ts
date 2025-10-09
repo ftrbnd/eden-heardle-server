@@ -32,31 +32,18 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     if (!guesses) return NextResponse.json({ error: "Failed to find user's guesses" }, { status: 404 });
 
     let gameAccuracy = 0;
-    if (guesses?.songs) {
-      // find index of first green square
-      const greenSquareIndex = guesses.songs.findIndex((guess) => guess.correctStatus === 'CORRECT');
+    // find index of first green square
+    const greenSquareIndex = guesses.songs.findIndex((guess) => guess.correctStatus === 'CORRECT');
 
-      // calculate accuracy for this game [0,6]
-      gameAccuracy = greenSquareIndex === -1 ? 0 : 6 - greenSquareIndex;
-    }
+    // calculate accuracy for this game [0,6]
+    gameAccuracy = greenSquareIndex === -1 ? 0 : 6 - greenSquareIndex;
 
-    const newStats: Statistics = {
+    const updatedStats = await db.updateUserStatistics(userId, {
       gamesPlayed: oldStats.gamesPlayed + 1,
       gamesWon: guessedSong ? oldStats.gamesWon + 1 : oldStats.gamesWon,
       currentStreak: guessedSong ? oldStats.currentStreak + 1 : 0,
       maxStreak: Math.max(oldStats.maxStreak, guessedSong ? oldStats.currentStreak + 1 : 0),
-      accuracy: oldStats.accuracy + gameAccuracy,
-      id: 'fakeid',
-      userId: 'fakeuserid',
-      firstStreak: oldStats.firstStreak // firstStreak is updated in dedicated route
-    };
-
-    const updatedStats = await db.updateUserStatistics({
-      gamesPlayed: newStats.gamesPlayed,
-      gamesWon: newStats.gamesWon,
-      currentStreak: newStats.currentStreak,
-      maxStreak: newStats.maxStreak,
-      accuracy: newStats.accuracy
+      accuracy: oldStats.accuracy + gameAccuracy
     });
 
     return NextResponse.json({ stats: updatedStats }, { status: 200 });

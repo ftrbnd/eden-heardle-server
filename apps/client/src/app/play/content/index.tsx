@@ -55,7 +55,7 @@ export default function PlayContent({ children }: { children: ReactNode }) {
                     <GuessCard key={index} name={song.name} album={song.album || ''} cover={song.cover} correctStatus={song.correctStatus} showAnimation={true} />
                   ))}
                   {guesses.length === 0 && <WelcomeCard heardleDay={dailySong?.heardleDay} />}
-                  {finishedHeardle(guesses) && remainingGuesses.map(() => <Banner data-ad-slot="3330886325" data-ad-format="auto" data-full-width-responsive="true" isGuessCard />)}
+                  {finishedHeardle(guesses) && remainingGuesses.map((_guess, i) => <Banner key={i} data-ad-slot="3330886325" data-ad-format="auto" data-full-width-responsive="true" isGuessCard />)}
                 </>
               )}
             </div>

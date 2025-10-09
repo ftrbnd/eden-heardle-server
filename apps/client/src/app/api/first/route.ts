@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const first = await db.getFirstCompletedDaily();
-    if (!first) return NextResponse.json({ error: 'Failed to find FirstCompletedDaily' }, { status: 404 });
 
     return NextResponse.json({ first }, { status: 200 });
   } catch (err) {
@@ -20,8 +19,7 @@ export async function PATCH(req: NextRequest) {
     const firstAlreadyCompleted = await db.getFirstCompletedDaily();
 
     if (firstAlreadyCompleted) {
-      await db.updateUserStatistics({
-        userId,
+      await db.updateUserStatistics(userId, {
         firstStreak: 0
       });
 
@@ -33,7 +31,7 @@ export async function PATCH(req: NextRequest) {
     const prevStats = await db.getUserStatistics(userId);
     if (!prevStats) return NextResponse.json({ error: 'Stats not found' }, { status: 404 });
 
-    await db.updateUserStatistics({
+    await db.updateUserStatistics(userId, {
       userId,
       firstStreak: prevStats.firstStreak + 1
     });

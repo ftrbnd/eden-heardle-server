@@ -79,7 +79,7 @@ const useGuesses = () => {
       return { prevGuesses };
     },
     onError: (error, _variables, context) => {
-      console.log('GUESS MUTATION ERROR: ', error);
+      console.error('GUESS MUTATION ERROR: ', error);
       queryClient.setQueryData(['guesses'], context?.prevGuesses);
     },
     onSuccess: async (newGuesses) => {

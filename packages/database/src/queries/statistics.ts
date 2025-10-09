@@ -38,10 +38,10 @@ export async function getUserStatistics(userId: string) {
   return stats;
 }
 
-export async function updateUserStatistics(statistics: Partial<Statistics>) {
+export async function updateUserStatistics(userId: string, statistics: Partial<Statistics>) {
   const stats = await prisma.statistics.update({
     where: {
-      userId: statistics.userId
+      userId: userId
     },
     data: statistics
   });
