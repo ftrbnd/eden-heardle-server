@@ -9,7 +9,8 @@
     "start": "NODE_ENV=production node dist/server.js",
     "build": "tsc",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --detectOpenHandles",
-    "storage:download": "NODE_ENV=development tsx src/scripts/download.ts"
+    "storage:download": "NODE_ENV=development tsx src/scripts/download.ts",
+    "heroku-prebuild": "yarn install && yarn build"
   },
   "dependencies": {
     "@distube/ytdl-core": "^4.16.12",

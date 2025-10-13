@@ -51,23 +51,24 @@ jobs:
         working-directory: ./packages/database
       - name: Unit tests
         run: yarn test
-  deploy:
-    needs: [unit_tests]
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh 
-      - uses: akhileshns/heroku-deploy@v3.14.15
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "eden-heardle-server"
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: "apps/server"
+  # deploy:
+  #   needs: [unit_tests]
+    # if: github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Install Heroku CLI
+  #       run: |
+  #         curl https://cli-assets.heroku.com/install.sh | sh 
+  #     - uses: akhileshns/heroku-deploy@v3.14.15
+  #       with:
+  #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+  #         heroku_app_name: "eden-heardle-server"
+  #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
+  #         appdir: "apps/server"
+          
   tag_release:
-    needs: [deploy]
+    needs: [unit_tests]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
