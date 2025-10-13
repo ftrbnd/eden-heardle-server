@@ -7,14 +7,21 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev --skip-generate",
     "db:deploy": "prisma migrate deploy",
-    "build": "yarn db:generate && tsc"
+    "build": "tsc"
   },
-  "main": "./src/index.ts",
-  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./queries": "./src/queries/index.ts"
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./src/client.ts",
+      "default": "./dist/client.js"
+    },
+    "./queries": {
+      "types": "./src/queries/index.ts",
+      "default": "./dist/queries/index.js"
+    }
   },
   "devDependencies": {
     "typescript": "^5.3.3"
