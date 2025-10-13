@@ -1,5 +1,7 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
+
 <a name="readme-top"></a>
+
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
 *** that would make this better, please fork the repo and create a pull request
@@ -15,7 +17,7 @@
     <img src="https://i.imgur.com/rQmm1FM.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">EDEN Heardle Server</h3>
+<h3 align="center">EDEN Heardle (Server)</h3>
 
   <p align="center">
     An Express server that handles creating Custom and Daily Heardles for EDEN Heardle
@@ -27,8 +29,6 @@
     <a href="https://github.com/ftrbnd/eden-heardle-server/issues">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -53,39 +53,35 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 This server has 2 responsibilities:
-* Choose a new random song every day at 4am UTC with a daily cron job
-* Handle POST and DELETE api requests from [EDEN Heardle](https://eden-heardle.io) when users interact with the Custom Heardle modal
+
+- Choose a new random song every day at 4am UTC with a daily cron job
+- Handle POST and DELETE api requests from [EDEN Heardle](https://eden-heardle.io) when users interact with the Custom Heardle modal
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
-* [![Heroku][Heroku]][Heroku-url]
-* [![Typescript][Typescript]][Typescript-url]
-* [![Node][Node.js]][Node-url]
-* [![Express][Express]][Express-url]
-* [![Ffmpeg][Ffmpeg]][Ffmpeg-url]
-* [![Prisma][PrismaOrm]][Prisma-url]
-* [![Supabase][Supabase]][Supabase-url]
+- [![Heroku][Heroku]][Heroku-url]
+- [![Express][Express]][Express-url]
+- [![Ffmpeg][Ffmpeg]][Ffmpeg-url]
+- [![Node][Node.js]][Node-url]
+- [![Typescript][Typescript]][Typescript-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- GETTING STARTED -->
+
 ## Getting Started
 
 ### Prerequisites
-* [Node.js](https://nodejs.org/en/) 18 or higher
-* Database urls and key from [Supabase](https://supabase.com)
+
+- [Node.js](https://nodejs.org/en/) 18 or higher
+- Database urls and key from [Supabase](https://supabase.com)
 
 ### Installation
 
@@ -101,7 +97,7 @@ This server has 2 responsibilities:
    ```sh
    npx prisma generate
    ```
-5. Start the local dev server
+4. Start the local dev server
    ```sh
    npm run dev
    ```
@@ -109,30 +105,38 @@ This server has 2 responsibilities:
 ### Configuration
 
 Create a `.env` file at the root and fill out the values:
+
 ```env
   DATABASE_URL=
+  DIRECT_URL=
+
   SUPABASE_KEY=
   SUPABASE_URL=
 
   # Set the hour and minute to your preference in UTC time
-  CRON_UTC_HOUR=4
-  CRON_UTC_MINUTE=0
+  DAILY_HEARDLE_CRON_UTC_HOUR=0
+  DAILY_HEARDLE_CRON_UTC_MINUTE=0
+  DAILY_HEARDLE_DEV_MINUTE_FREQUENCY=5
 
+  UNLIMITED_HEARDLE_CRON_UTC_HOUR=
+  UNLIMITED_HEARDLE_CRON_UTC_MINUTE=
+
+  DISCORD_TOKEN= # same value as DISCORD_SECRET in client's DISCORD_SECRET
+  REDIS_URL=
   # The domain EDEN Heardle is running on, change the port if needed
   WHITELISTED_DOMAINS=http://localhost:3000
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a
+star! Thanks again!
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -142,8 +146,8 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
 <!-- CONTACT -->
+
 ## Contact
 
 Giovanni Salas - [@finalcalI](https://twitter.com/finalcali) - giosalas25@gmail.com
@@ -152,10 +156,9 @@ Project Link: [https://github.com/ftrbnd/eden-heardle-server](https://github.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [product-screenshot]: https://i.imgur.com/OzETWxS.png
 [website-leaderboard-screenshot]: https://i.imgur.com/dVr4AOB.png
 [discord-leaderboard-screenshot]: https://i.imgur.com/3TyTIKe.png
