@@ -14,7 +14,8 @@
   },
   "packageManager": "yarn@1.22.22",
   "engines": {
-    "node": ">=22"
+    "node": "22.x",
+    "yarn": "^1.22"
   },
   "workspaces": [
     "apps/*",
