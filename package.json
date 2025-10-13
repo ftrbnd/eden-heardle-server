@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "heroku-prebuild": "turbo run build --filter=!./apps/web"
+    "heroku-prebuild": "yarn install && turbo run build --filter=!./apps/web"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
