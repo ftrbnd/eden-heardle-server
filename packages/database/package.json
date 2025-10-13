@@ -10,18 +10,9 @@
     "build": "tsc"
   },
   "exports": {
-    ".": {
-      "types": "./src/index.ts",
-      "default": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./src/client.ts",
-      "default": "./dist/client.js"
-    },
-    "./queries": {
-      "types": "./src/queries/index.ts",
-      "default": "./dist/queries/index.js"
-    }
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./queries": "./src/queries/index.ts"
   },
   "devDependencies": {
     "typescript": "^5.3.3"
