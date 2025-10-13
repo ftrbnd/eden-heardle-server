@@ -1,5 +1,8 @@
 name: Server deployment pipeline
 
+defaults:
+  run:
+    working-directory: ./apps/server
 on:
   workflow_dispatch:
   push:
@@ -9,10 +12,6 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
-
-defaults:
-  run:
-    working-directory: ./apps/server
 
 env:
   DATABASE_URL: ${{secrets.DATABASE_URL}}
