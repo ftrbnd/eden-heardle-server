@@ -50,6 +50,7 @@ jobs:
       - name: Prisma generate
         run: yarn db:generate
   unit_tests:
+    needs: [db_generate]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
