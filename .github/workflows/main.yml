@@ -45,6 +45,8 @@ jobs:
           node-version: 22.x
       - name: Install dependencies
         run: yarn install
+      - name: Prisma generate
+        run: yarn db:generate
       - name: Unit tests
         run: yarn test
   deploy:
