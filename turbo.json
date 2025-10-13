@@ -3,7 +3,7 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "^db:generate", "db:deploy"],
+      "dependsOn": ["^build", "db:deploy"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"],
       "env": ["DATABASE_URL"]
@@ -13,15 +13,16 @@
       "persistent": true,
       "cache": false
     },
+    "db:deploy": {
+      "dependsOn": ["db:generate"],
+      "cache": false
+    },
     "db:generate": {
       "cache": false
     },
     "db:migrate": {
       "cache": false,
       "persistent": true
-    },
-    "db:deploy": {
-      "cache": false
     }
   }
 }
