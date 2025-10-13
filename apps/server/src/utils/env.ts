@@ -19,6 +19,7 @@ const envSchema = z.object({
   UNLIMITED_HEARDLE_CRON_UTC_HOUR: z.coerce.number(),
   UNLIMITED_HEARDLE_CRON_UTC_MINUTE: z.coerce.number(),
 
+  CLIENT_DOMAIN: z.string().optional(),
   WHITELISTED_DOMAINS: z.string(),
   WEBHOOK_URL: z.string().url(),
   DISCORD_TOKEN: z.string(),

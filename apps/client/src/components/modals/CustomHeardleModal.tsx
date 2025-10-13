@@ -12,6 +12,7 @@ import SignInButton from '../buttons/SignInButton';
 import { motion } from 'framer-motion';
 import useCustomHeardle from '@/hooks/useCustomHeardle';
 import useSongs from '@/hooks/useSongs';
+import { rootURL } from '@/utils/domain';
 
 interface SelectProps {
   onSongSelect: (song: Song) => void;
@@ -147,7 +148,7 @@ export default function CustomHeardleModal() {
 
     setCopied(true);
 
-    await navigator.clipboard.writeText(`https://eden-heardle.io/play/${customHeardle.data?.id}`);
+    await navigator.clipboard.writeText(`${rootURL}/play/${customHeardle.data?.id}`);
 
     setTimeout(() => {
       setCopied(false);

@@ -5,6 +5,9 @@ import { downloadMp3 } from '../helpers/downloadMp3';
 import { Heardle, logger } from '../utils/logger';
 import supabase from '../lib/supabase';
 import { deleteSchema, postSchema } from '../utils/schema';
+import { env } from '../utils/env';
+
+const clientUrl = env.CLIENT_DOMAIN ? `https://${env.CLIENT_DOMAIN}` : 'http://localhost:3000';
 
 const createCustomHeardle = async (req: Request, res: Response) => {
   try {
@@ -13,7 +16,7 @@ const createCustomHeardle = async (req: Request, res: Response) => {
     logger(Heardle.Custom, `POST request from User #${userId}`);
 
     const customHeardle = (await downloadMp3(song, startTime, Heardle.Custom, userId)) as CustomHeardle;
-    const link = `https://eden-heardle.io/play/${customHeardle.id}`;
+    const link = `${clientUrl}/play/${customHeardle.id}`;
 
     logger(Heardle.Custom, 'Successfully created Custom Heardle');
     res.json({ message: 'Successfully created Custom Heardle', link });
