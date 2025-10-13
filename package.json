@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "heroku-prebuild": "turbo build --filter=!./apps/web"
+    "heroku-prebuild": "turbo run build --filter=!./apps/web"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
@@ -15,8 +15,7 @@
   },
   "packageManager": "yarn@1.22.22",
   "engines": {
-    "node": "22.x",
-    "yarn": "^1.22"
+    "node": "22.x"
   },
   "workspaces": [
     "apps/*",
