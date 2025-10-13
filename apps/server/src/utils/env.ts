@@ -5,6 +5,7 @@ dotenv.config({ path });
 
 import z from 'zod';
 
+// test
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   DIRECT_URL: z.string().url(),
