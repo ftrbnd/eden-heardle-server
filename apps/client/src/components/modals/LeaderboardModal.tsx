@@ -104,7 +104,7 @@ const StatTable = ({ type, stat, isPending }: { type: IndividualLeaderboardStat[
           stat.map((stat, index) => (
             <tr key={`${stat.type}-${index}`} className="flex items-center w-full bg-base-200 rounded-box px-2 shadow-md">
               <th className="w-8">{index + 1}</th>
-              <ProfileColumn user={stat.user} isFirst={stat.user.id === firstCompletedDaily?.userId} streak={firstCompletedDaily?.User?.statistics?.firstStreak} />
+              <ProfileColumn user={stat.user} isFirst={stat.user.id === firstCompletedDaily?.userId} streak={firstCompletedDaily?.user?.statistics?.firstStreak} />
               <td className="text-right"> {stat.type === 'Today' ? statusSquares(stat.data) : stat.data}</td>
             </tr>
           ))

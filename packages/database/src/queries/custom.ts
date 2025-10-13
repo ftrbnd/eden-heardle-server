@@ -33,7 +33,7 @@ export async function getCustomHeardle({ where, includeUser }: GetCustomHeardleP
   const customHeardle = await prisma.customHeardle.findUnique({
     where,
     include: {
-      User: includeUser
+      user: includeUser
     }
   });
 

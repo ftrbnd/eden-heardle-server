@@ -31,7 +31,7 @@ export default function StatsModal() {
     refetchIntervalInBackground: true
   });
 
-  const userFirstCompletedDaily = session ? firstCompletedDaily?.User?.id === session?.user.id : false;
+  const userFirstCompletedDaily = session ? firstCompletedDaily?.user?.id === session?.user.id : false;
 
   const copyToClipboard = async (e: MouseEvent) => {
     e.preventDefault();

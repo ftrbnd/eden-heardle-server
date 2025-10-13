@@ -66,7 +66,7 @@ export async function createFirstCompletedDaily(userId: string) {
       userId
     },
     include: {
-      User: {
+      user: {
         include: {
           statistics: true
         }
@@ -80,7 +80,7 @@ export async function createFirstCompletedDaily(userId: string) {
 export async function getFirstCompletedDaily() {
   const first = await prisma.firstCompletedDaily.findFirst({
     include: {
-      User: {
+      user: {
         include: {
           statistics: true
         }

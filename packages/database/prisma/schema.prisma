@@ -43,8 +43,8 @@ model User {
   image               String?
   earlySupporter      Boolean?             @default(false)
   accounts            Account[]
-  CustomHeardle       CustomHeardle?
-  FirstCompletedDaily FirstCompletedDaily?
+  customHeardle       CustomHeardle?
+  firstCompletedDaily FirstCompletedDaily?
   guesses             Guesses?
   sessions            Session[]
   statistics          Statistics?
@@ -118,7 +118,7 @@ model CustomHeardle {
   link      String
   startTime Int
   duration  Int?
-  User      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UnlimitedHeardle {
@@ -134,5 +134,5 @@ model UnlimitedHeardle {
 model FirstCompletedDaily {
   id            String  @id @default(cuid())
   userId String? @unique
-  User   User?   @relation(fields: [userId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
 }

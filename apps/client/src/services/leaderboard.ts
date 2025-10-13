@@ -5,7 +5,7 @@ const LEADERBOARD_ENDPOINT = '/api/leaderboard';
 const FIRST_ENDPOINT = '/api/first';
 
 type FirstCompletedWithUserStatistics = Prisma.FirstCompletedDailyGetPayload<{
-  include: { User: { include: { statistics: true } } };
+  include: { user: { include: { statistics: true } } };
 }>;
 
 export const getLeaderboard = async () => {
