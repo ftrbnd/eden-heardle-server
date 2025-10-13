@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "heroku-prebuild": "yarn install && turbo run build --filter=!./apps/client"
+    "heroku-prebuild": "yarn install && turbo run build --filter=eden-heardle-server..."
   },
   "dependencies": {
     "turbo": "^2.5.4"
