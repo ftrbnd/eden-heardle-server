@@ -9,7 +9,8 @@
     "start": "NODE_ENV=production node dist/server.js",
     "build": "tsc",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --detectOpenHandles",
-    "storage:download": "NODE_ENV=development tsx src/scripts/download.ts"
+    "storage:download": "NODE_ENV=development tsx src/scripts/download.ts",
+    "db:generate": "@packages/database db:generate"
   },
   "dependencies": {
     "@distube/ytdl-core": "^4.16.12",
@@ -54,6 +55,6 @@
   },
   "engines": {
     "node": "22.x",
-    "yarn": "^1.22"
+    "yarn": "1.22.22"
   }
 }
