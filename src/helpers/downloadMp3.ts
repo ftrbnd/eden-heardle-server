@@ -96,7 +96,9 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
 
       logger(heardleType, `Uploading to Supabase...`);
 
-      const { error: dailyUploadError } = await supabase.storage.from('daily_song').upload(`daily_song_${previousDailySong.heardleDay + 1}.mp3`, mp3File as any);
+      const { error: dailyUploadError } = await supabase.storage.from('daily_song').upload(`daily_song_${previousDailySong.heardleDay + 1}.mp3`, mp3File as any, {
+        upsert: true
+      });
       if (dailyUploadError) {
         throw new Error(dailyUploadError.message);
       }
