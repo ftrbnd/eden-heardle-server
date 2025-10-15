@@ -136,7 +136,8 @@ export async function uploadToDatabase(heardleType: Heardle, mp3File: Mp3File, s
         }
       });
 
-      logger(heardleType, 'Saved audio url to Custom Heardle object in Supabase Database');
+      logger(heardleType, 'Saved audio url to Daily Heardle object in Supabase Database');
+      unlinkSync('daily_song.mp3');
 
       return previousDailySong;
     case Heardle.Custom:
@@ -228,7 +229,6 @@ export async function downloadMp3(song: Song, startTime: number, heardleType: He
     const heardleSong = await uploadToDatabase(heardleType, mp3File, song, startTime, userId);
 
     unlinkSync(songFilename);
-    unlinkSync('daily_song.mp3');
 
     return heardleSong;
   } catch (err: unknown) {
