@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2016",
+    "target": "es2022",
     "module": "es2022",
     "outDir": "dist",
     "esModuleInterop": true,
