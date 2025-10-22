@@ -25,12 +25,11 @@ const envSchema = z.object({
   DISCORD_TOKEN: z.string(),
   REDIS_URL: z.string().url(),
 
-  VERCEL_WEBHOOK_SECRET: z.string(),
-  VERCEL_PROJECT_ID: z.string(),
-  VERCEL_API_TOKEN: z.string(),
+  VERCEL_WEBHOOK_SECRET: z.string().optional(),
+  VERCEL_PROJECT_ID: z.string().optional(),
+  VERCEL_API_TOKEN: z.string().optional(),
 
-  PORT: z.coerce.number(),
-  PAPERTRAIL_API_TOKEN: z.string(),
+  PORT: z.coerce.number().optional(),
   NODE_ENV: z.enum(['production', 'development', 'test'])
 });
 

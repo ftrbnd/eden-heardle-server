@@ -17,6 +17,7 @@ const payloadSchema = z.object({
 type Payload = z.infer<typeof payloadSchema>;
 
 const verifySignature: RequestHandler = (req, res, next) => {
+  if (!env.VERCEL_WEBHOOK_SECRET) return res.status(500).json({ error: 'Missing webhook secret' });
   const payload = req.body.toString();
   const signature = crypto.createHmac('sha1', env.VERCEL_WEBHOOK_SECRET).update(payload).digest('hex');
 
