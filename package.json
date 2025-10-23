@@ -3,12 +3,14 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start": "turbo run start",
+    "start:client": "turbo run start --filter=eden-heardle-client...",
+    "start:server": "turbo run start --filter=eden-heardle-server...",
     "build:client": "turbo run db:generate && turbo run build --filter=eden-heardle-client...",
     "build:server": "turbo run db:generate && turbo run build --filter=eden-heardle-server...",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:deploy": "turbo run db:deploy"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
